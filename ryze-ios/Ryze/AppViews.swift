@@ -24,8 +24,13 @@ struct PillButton: View { let title: String; var system: String? = nil; var styl
     var bg: Color { style == .primary ? Brand.text : style == .dark ? .black : Brand.surface }; var fg: Color { style == .primary ? .black : style == .dark ? .white : Brand.text } }
 struct IconTile: View { let system: String; var color: Color = Brand.yellow; var size: CGFloat = 44
     var body: some View { Image(systemName: system).font(.system(size: size * 0.42, weight: .semibold)).symbolRenderingMode(.hierarchical).foregroundColor(color).frame(width: size, height: size).background(color.opacity(0.15)).clipShape(RoundedRectangle(cornerRadius: 13)) } }
-struct Avatar: View { let name: String; var size: CGFloat = 40; var you = false
-    var body: some View { Text(String(name.prefix(1)).uppercased()).font(.system(size: size * 0.4, weight: .bold)).foregroundColor(you ? .black : Brand.text).frame(width: size, height: size).background(you ? Brand.yellow : Brand.surface).overlay(Circle().stroke(you ? Brand.yellow : Brand.hairline, lineWidth: 1)).clipShape(Circle()) } }
+struct Avatar: View { let name: String; var size: CGFloat = 40; var you = false; var imageData: Data? = nil
+    var body: some View {
+        Group {
+            if let d = imageData, let ui = UIImage(data: d) { Image(uiImage: ui).resizable().scaledToFill() }
+            else { Text(String(name.prefix(1)).uppercased()).font(.system(size: size * 0.4, weight: .bold)).foregroundColor(you ? .black : Brand.text).frame(maxWidth: .infinity, maxHeight: .infinity).background(you ? Brand.yellow : Brand.surface) }
+        }
+        .frame(width: size, height: size).clipShape(Circle()).overlay(Circle().stroke(you ? Brand.yellow : Brand.hairline, lineWidth: 1)) } }
 struct Bar: View { var v: Double; var body: some View { ProgressBar(value: v) } }
 struct Ring: View { var v: Double; var size: CGFloat = 52
     var body: some View { ZStack { Circle().stroke(Brand.hairline, lineWidth: 5); Circle().trim(from: 0, to: max(0.02, min(1, v))).stroke(Brand.yellow, style: StrokeStyle(lineWidth: 5, lineCap: .round)).rotationEffect(.degrees(-90)) }.frame(width: size, height: size) } }
@@ -99,15 +104,16 @@ struct AmountSheet: View {
 // MARK: - Tab bar
 struct MainTabView: View {
     @EnvironmentObject var game: GameModel
+    @AppStorage("ryze_lang") private var lang = "en"
     @State private var sel = Int(ProcessInfo.processInfo.environment["RYZE_TAB"] ?? "0") ?? 0
     var body: some View {
         ZStack(alignment: .top) {
             TabView(selection: $sel) {
-                HomeView(sel: $sel).tag(0).tabItem { Label("Home", systemImage: "house.fill") }
-                CardsView().tag(1).tabItem { Label("Cards", systemImage: "creditcard.fill") }
-                PayView().tag(2).tabItem { Label("Pay", systemImage: "paperplane.fill") }
-                AssistantView().tag(3).tabItem { Label("Assistant", systemImage: "sparkles") }
-                RewardsHub().tag(4).tabItem { Label("Rewards", systemImage: "gift.fill") }
+                HomeView(sel: $sel).tag(0).tabItem { Label(T("Home", "Ballina"), systemImage: "house.fill") }
+                CardsView().tag(1).tabItem { Label(T("Cards", "Kartat"), systemImage: "creditcard.fill") }
+                PayView().tag(2).tabItem { Label(T("Pay", "Paguaj"), systemImage: "paperplane.fill") }
+                AssistantView().tag(3).tabItem { Label(T("Assistant", "Asistenti"), systemImage: "sparkles") }
+                RewardsHub().tag(4).tabItem { Label(T("Rewards", "Shpërblime"), systemImage: "gift.fill") }
             }.tint(Brand.yellow)
             CelebrationOverlay(trigger: game.celebrate).ignoresSafeArea()
             if let t = game.toast { ToastBanner(toast: t).padding(.top, 6).transition(.move(edge: .top).combined(with: .opacity)) }
@@ -123,15 +129,16 @@ struct HomeView: View {
     @EnvironmentObject var bank: BankModel
     @Binding var sel: Int
     @State private var rizNudge = true
+    @AppStorage("ryze_lang") private var lang = "en"
     enum HSheet: Int, Identifiable { case add, profile, grow; var id: Int { rawValue } }
     @State private var homeSheet: HSheet? = nil
     var nearestGoal: Goal? { bank.goals.min { ($0.saved / $0.target) > ($1.saved / $1.target) } }
     var body: some View {
         ScreenScroll {
-            TopBar(name: game.name, onProfile: { homeSheet = .profile }, onAnalytics: { homeSheet = .grow })
+            TopBar(name: game.name, imageData: game.avatarData, onProfile: { homeSheet = .profile }, onAnalytics: { homeSheet = .grow })
             // Total balance hero — signature void surface + gold glow + odometer digits
             VStack(alignment: .leading, spacing: 8) {
-                HStack { eyebrow("Total balance"); Spacer(); Button { withAnimation(.smooth(duration: 0.35)) { bank.hideBalance.toggle() } } label: { Image(systemName: bank.hideBalance ? "eye.slash" : "eye").foregroundColor(Brand.mute).font(.system(size: 15)).symbolEffect(.bounce, value: bank.hideBalance) } }
+                HStack { eyebrow(T("Total balance", "Bilanci total")); Spacer(); Button { withAnimation(.smooth(duration: 0.35)) { bank.hideBalance.toggle() } } label: { Image(systemName: bank.hideBalance ? "eye.slash" : "eye").foregroundColor(Brand.mute).font(.system(size: 15)).symbolEffect(.bounce, value: bank.hideBalance) } }
                 ZStack(alignment: .leading) {
                     Text(money(bank.totalALL)).font(.system(size: 46, weight: .bold, design: .rounded)).foregroundStyle(LinearGradient(colors: [.white, Color.white.opacity(0.78)], startPoint: .top, endPoint: .bottom)).contentTransition(.numericText()).blur(radius: bank.hideBalance ? 16 : 0).opacity(bank.hideBalance ? 0 : 1)
                     if bank.hideBalance { Text("•• ••• L").font(.system(size: 46, weight: .bold, design: .rounded)).foregroundColor(Brand.text) }
@@ -149,15 +156,15 @@ struct HomeView: View {
             // Account chips
             ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 10) {
                 ForEach(bank.accounts) { a in HStack(spacing: 8) { Image(systemName: a.icon).foregroundColor(Brand.yellow); VStack(alignment: .leading, spacing: 1) { Text(a.name).font(.system(size: 12)).foregroundColor(Brand.mute); Text(bank.hideBalance ? "•••" : money(a.balance, a.currency)).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text) } }.padding(.horizontal, 14).frame(height: 56).background(Brand.surface).overlay(RoundedRectangle(cornerRadius: 14).stroke(Brand.hairline, lineWidth: 1)).clipShape(RoundedRectangle(cornerRadius: 14)) }
-                Button { homeSheet = .grow } label: { HStack(spacing: 6) { Image(systemName: "plus"); Text("Savings") }.font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.mute).padding(.horizontal, 16).frame(height: 56).overlay(RoundedRectangle(cornerRadius: 14).stroke(Brand.hairline, lineWidth: 1)) }
+                Button { homeSheet = .grow } label: { HStack(spacing: 6) { Image(systemName: "plus"); Text(T("Savings", "Kursime")) }.font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.mute).padding(.horizontal, 16).frame(height: 56).overlay(RoundedRectangle(cornerRadius: 14).stroke(Brand.hairline, lineWidth: 1)) }
             } }
             // Quick actions
             HStack(spacing: 4) {
-                QuickAction(icon: "plus", label: "Add", prominent: true) { homeSheet = .add }
-                QuickAction(icon: "paperplane.fill", label: "Send") { sel = 2 }
-                QuickAction(icon: "arrow.down.left", label: "Request") { sel = 2 }
-                QuickAction(icon: "arrow.left.arrow.right", label: "Exchange") { homeSheet = .grow }
-                QuickAction(icon: "ellipsis", label: "More") { sel = 4 }
+                QuickAction(icon: "plus", label: T("Add", "Shto"), prominent: true) { homeSheet = .add }
+                QuickAction(icon: "paperplane.fill", label: T("Send", "Dërgo")) { sel = 2 }
+                QuickAction(icon: "arrow.down.left", label: T("Request", "Kërko")) { sel = 2 }
+                QuickAction(icon: "arrow.left.arrow.right", label: T("Exchange", "Këmbe")) { homeSheet = .grow }
+                QuickAction(icon: "ellipsis", label: T("More", "Më shumë")) { sel = 4 }
             }
             // Gamification strip (slim)
             Button { sel = 4 } label: { AppCard { HStack(spacing: 14) {
@@ -170,7 +177,7 @@ struct HomeView: View {
             // Riz nudge
             if rizNudge { AppCard { HStack(spacing: 12) { IconTile(system: "sparkles", size: 40); VStack(alignment: .leading, spacing: 2) { Text("Riz").font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.yellow); Text("You spent 20% more on eating out this week. Want to set a budget?").font(.system(size: 13)).foregroundColor(Brand.mute) }; Spacer(); Button { rizNudge = false } label: { Image(systemName: "xmark").foregroundColor(Brand.faint).font(.system(size: 12)) } } } }
             // Transactions
-            HStack { eyebrow("Transactions"); Spacer(); Image(systemName: "magnifyingglass").foregroundColor(Brand.mute).font(.system(size: 13)) }
+            HStack { eyebrow(T("Transactions", "Transaksionet")); Spacer(); Image(systemName: "magnifyingglass").foregroundColor(Brand.mute).font(.system(size: 13)) }
             VStack(spacing: 0) { ForEach(Array(bank.transactions.prefix(7))) { t in
                 HStack(spacing: 12) { IconTile(system: t.icon, color: t.amount > 0 ? Brand.good : Brand.text, size: 40)
                     VStack(alignment: .leading, spacing: 2) { Text(t.merchant).font(.system(size: 15, weight: .medium)).foregroundColor(Brand.text); Text("\(t.category) · \(t.day)").font(.system(size: 12)).foregroundColor(Brand.faint) }

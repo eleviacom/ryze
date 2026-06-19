@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 extension Color {
     init(hex: UInt, alpha: Double = 1) {
@@ -8,15 +9,20 @@ extension Color {
                   blue: Double(hex & 0xff) / 255,
                   opacity: alpha)
     }
+    init(lightHex: UInt, darkHex: UInt) {
+        self = Color(uiColor: UIColor { t in UIColor(t.userInterfaceStyle == .dark ? Color(hex: darkHex) : Color(hex: lightHex)) })
+    }
 }
+
+func T(_ en: String, _ sq: String) -> String { (UserDefaults.standard.string(forKey: "ryze_lang") ?? "en") == "sq" ? sq : en }
 
 // Revolut system + Raiffeisen yellow as the single scarce stamp.
 enum Brand {
     static let void = Color(hex: 0x000000)            // reserved for the balance hero only
-    static let bg = Color(hex: 0x0B0B0D)              // warm graphite canvas
-    static let elev1 = Color(hex: 0x141417)
-    static let elev2 = Color(hex: 0x1B1B1F)
-    static let elev3 = Color(hex: 0x232328)
+    static let bg = Color(lightHex: 0xF2F2F6, darkHex: 0x0B0B0D)
+    static let elev1 = Color(lightHex: 0xF5F5F8, darkHex: 0x141417)
+    static let elev2 = Color(lightHex: 0xFFFFFF, darkHex: 0x1B1B1F)
+    static let elev3 = Color(lightHex: 0xE9E9EE, darkHex: 0x232328)
     static let surface = elev2                         // keep name for existing refs
     static let surfaceDeep = Color(hex: 0x0A0A0A)
     static let surfacePressed = elev3
@@ -26,10 +32,10 @@ enum Brand {
     static let goldEdge = Color(hex: 0xFFF0A8)
     static var gold: LinearGradient { LinearGradient(stops: [.init(color: Color(hex: 0xFFE45C), location: 0), .init(color: Color(hex: 0xF2C200), location: 0.45), .init(color: Color(hex: 0xCF9A00), location: 1)], startPoint: .top, endPoint: .bottom) }
     static let onAccent = Color.black
-    static let text = Color.white
-    static let mute = Color.white.opacity(0.62)
-    static let faint = Color.white.opacity(0.40)
-    static let hairline = Color.white.opacity(0.08)
+    static let text = Color(lightHex: 0x0E0F12, darkHex: 0xFFFFFF)
+    static let mute = Color(lightHex: 0x5C6066, darkHex: 0x9EA3AB)
+    static let faint = Color(lightHex: 0x9AA0A6, darkHex: 0x6B7178)
+    static let hairline = Color(uiColor: UIColor { t in t.userInterfaceStyle == .dark ? UIColor.white.withAlphaComponent(0.08) : UIColor.black.withAlphaComponent(0.10) })
     static let good = Color(hex: 0x3CE0A0)
     static let danger = Color(hex: 0xE23B4A)
     static let violet = Color(hex: 0x7C5CFF)

@@ -52,6 +52,8 @@ final class GameModel: ObservableObject {
     @Published var squad = GameModel.seedSquad
     @Published var aiMission: Mission? = nil
     @Published var toast: Toast? = nil
+    @Published var avatarData: Data? = nil
+    @Published var plan: String = "free"
     @Published var celebrate = 0
     let referralCode = "RYZE-\(Int.random(in: 1000...9999))"
 
@@ -60,9 +62,12 @@ final class GameModel: ObservableObject {
             name = "Klevi"; xp = 320; coins = 480; streak = 4; kycVerified = true; onboarded = true
             if let i = missions.firstIndex(where: { $0.id == "ob-verify" }) { missions[i].progress = 1; missions[i].claimed = true }
         }
+        if let pl = ProcessInfo.processInfo.environment["RYZE_PLAN"] { plan = pl }
     }
 
     var li: LevelInfo { levelInfo(xp) }
+    var planLabel: String { ["free": "Ryze Free", "plus": "Ryze Plus", "pro": "Ryze Pro", "metal": "Ryze Metal"][plan] ?? "Ryze Free" }
+    func setPlan(_ id: String) { plan = id; fire("Welcome to \(planLabel)", 0, 0) }
     var tier: Tier { tierForLevel(li.level).0 }
     var tierIndex: Int { tierForLevel(li.level).1 }
 
