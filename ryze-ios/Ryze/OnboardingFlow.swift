@@ -9,7 +9,7 @@ struct OnboardingFlow: View {
 
     var body: some View {
         ZStack {
-            Brand.bg.ignoresSafeArea()
+            Brand.void.ignoresSafeArea()
 
             switch model.phase {
             case .value: WelcomeCarousel(model: model)
@@ -236,13 +236,10 @@ struct StepBody: View {
 // MARK: - Success + stub home
 struct SuccessView: View {
     let onStart: () -> Void
-    @State private var pop = false
     var body: some View {
         VStack(spacing: 0) {
             Spacer()
-            Image("success").resizable().scaledToFit().frame(height: 280)
-                .scaleEffect(pop ? 1 : 0.7).opacity(pop ? 1 : 0)
-                .onAppear { withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) { pop = true } }
+            SuccessSeal()
             VStack(spacing: 12) {
                 Text("Welcome to Ryze").display(38).foregroundColor(Brand.text).fixedSize(horizontal: false, vertical: true).multilineTextAlignment(.center)
                 Text("Your Raiffeisen account is open and ready. Your card is on its way, and your first quests are waiting.")
@@ -353,5 +350,26 @@ struct LogoHero: View {
         }
         .frame(height: UIScreen.main.bounds.height * 0.42)
         .onAppear { withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) { glow = true } }
+    }
+}
+
+// Final-card branded seal: real Raiffeisen logo + hexagon signature ring + celebration burst.
+struct SuccessSeal: View {
+    @State private var pop = false
+    @State private var burst = 0
+    var body: some View {
+        ZStack {
+            Circle().fill(RadialGradient(colors: [Brand.yellow.opacity(0.28), .clear], center: .center, startRadius: 6, endRadius: 165)).frame(width: 300, height: 300)
+            CelebrationOverlay(trigger: burst).frame(width: 300, height: 300)
+            Hexagon().stroke(Brand.yellow.opacity(0.35), lineWidth: 2).frame(width: 188, height: 188).rotationEffect(.degrees(pop ? 0 : 40))
+            Circle().stroke(Brand.gold, lineWidth: 4).frame(width: 150, height: 150).opacity(0.55)
+            ZStack(alignment: .bottomTrailing) {
+                LogoTile(size: 110).shadow(color: Brand.yellow.opacity(0.4), radius: 22, y: 8)
+                Image(systemName: "checkmark.circle.fill").font(.system(size: 34)).foregroundStyle(.white, Brand.good).background(Circle().fill(Brand.void).padding(3)).offset(x: 8, y: 8)
+            }
+        }
+        .frame(height: 300)
+        .scaleEffect(pop ? 1 : 0.72).opacity(pop ? 1 : 0)
+        .onAppear { withAnimation(.spring(response: 0.55, dampingFraction: 0.6)) { pop = true }; burst += 1 }
     }
 }

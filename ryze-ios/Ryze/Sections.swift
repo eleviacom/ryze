@@ -97,13 +97,13 @@ struct RewardsHub: View {
                 RoundedRectangle(cornerRadius: 22).fill(RadialGradient(colors: [Brand.yellow.opacity(0.22), Brand.surface], center: .top, startRadius: 10, endRadius: 320))
                 VStack(spacing: 6) {
                     Text("Ryze Free plan").font(.system(size: 14)).foregroundColor(Brand.mute)
-                    HStack(spacing: 8) { Image(systemName: "hexagon.fill").foregroundColor(Brand.yellow).font(.system(size: 26)); Text("\(game.coins)").font(.system(size: 44, weight: .bold)).foregroundColor(Brand.text) }
+                    HStack(spacing: 8) { Image(systemName: "hexagon.fill").foregroundColor(Brand.yellow).font(.system(size: 26)).symbolEffect(.bounce, value: game.celebrate); Text("\(game.coins)").font(.system(size: 44, weight: .bold, design: .rounded)).foregroundStyle(LinearGradient(colors: [.white, Color.white.opacity(0.8)], startPoint: .top, endPoint: .bottom)).contentTransition(.numericText()).animation(.snappy, value: game.coins) }
                     Text("1 point / 200 L spent").font(.system(size: 13)).foregroundColor(Brand.mute)
                     Button { rewardsSheet = .plans } label: { Text("Upgrade").font(.system(size: 14, weight: .semibold)).foregroundColor(.black).padding(.horizontal, 22).frame(height: 38).background(Brand.gold).clipShape(Capsule()) }.padding(.top, 6)
                 }.padding(.vertical, 26)
             }.frame(maxWidth: .infinity)
             HStack(spacing: 4) {
-                QuickAction(icon: "plus", label: "Earn") {}
+                QuickAction(icon: "plus", label: "Earn", prominent: true) {}
                 QuickAction(icon: "arrow.down.circle.fill", label: "Redeem") {}
                 QuickAction(icon: "sparkles", label: "Plan perks") { rewardsSheet = .plans }
                 QuickAction(icon: "ellipsis", label: "More") {}

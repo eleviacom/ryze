@@ -10,6 +10,7 @@ struct PrimaryButton: View {
                 .frame(maxWidth: .infinity).frame(height: 54)
                 .background(Brand.text).clipShape(Capsule())
         }
+        .buttonStyle(PressStyle())
         .opacity(enabled ? 1 : 0.35)
         .animation(.easeOut(duration: 0.15), value: enabled)
     }
@@ -23,7 +24,7 @@ struct GhostButton: View {
             Text(title).font(.system(size: 17, weight: .semibold)).foregroundColor(Brand.text)
                 .frame(maxWidth: .infinity).frame(height: 54)
                 .overlay(Capsule().stroke(Brand.text, lineWidth: 1))
-        }
+        }.buttonStyle(PressStyle())
     }
 }
 
@@ -124,6 +125,6 @@ struct LogoTile: View {
 struct Eyebrow: View {
     let text: String
     var body: some View {
-        Text(text.uppercased()).font(.system(size: 12, weight: .semibold)).tracking(1.4).foregroundColor(Brand.faint)
+        HStack(spacing: 7) { Capsule().fill(Brand.yellow).frame(width: 14, height: 2); Text(text.uppercased()).font(.system(size: 11, weight: .semibold)).tracking(1.4).foregroundColor(Brand.faint) }
     }
 }

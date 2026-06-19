@@ -3,15 +3,24 @@ import SwiftUI
 // MARK: - Shared components
 struct AppCard<C: View>: View { @ViewBuilder var content: C
     var body: some View { content.padding(18).frame(maxWidth: .infinity, alignment: .leading)
-        .background(LinearGradient(colors: [Color(hex: 0x1D2027), Color(hex: 0x141619)], startPoint: .top, endPoint: .bottom))
-        .overlay(RoundedRectangle(cornerRadius: 24).stroke(.white.opacity(0.06), lineWidth: 1))
+        .background(ZStack {
+            RoundedRectangle(cornerRadius: 24).fill(LinearGradient(colors: [Brand.elev2, Brand.elev1], startPoint: .top, endPoint: .bottom))
+            RoundedRectangle(cornerRadius: 24).fill(LinearGradient(colors: [Color.white.opacity(0.06), .clear], startPoint: .top, endPoint: .center))
+        })
+        .specularBorder(24)
         .clipShape(RoundedRectangle(cornerRadius: 24))
-        .shadow(color: .black.opacity(0.55), radius: 16, y: 9) } }
+        .shadow(color: .black.opacity(0.6), radius: 2, y: 1)
+        .shadow(color: .black.opacity(0.4), radius: 22, y: 14) } }
 struct FeaturedCard<C: View>: View { @ViewBuilder var content: C
-    var body: some View { content.padding(18).frame(maxWidth: .infinity, alignment: .leading).background(Brand.gold).clipShape(RoundedRectangle(cornerRadius: 24)).shadow(color: Brand.yellow.opacity(0.30), radius: 20, y: 10) } }
+    var body: some View { content.padding(18).frame(maxWidth: .infinity, alignment: .leading)
+        .background(Brand.gold)
+        .overlay(LinearGradient(colors: [Color.white.opacity(0.30), .clear], startPoint: .topLeading, endPoint: .center).blendMode(.softLight))
+        .overlay(RoundedRectangle(cornerRadius: 24).strokeBorder(Brand.goldEdge.opacity(0.5), lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 24))
+        .shadow(color: Brand.yellow.opacity(0.26), radius: 22, y: 12) } }
 struct PillButton: View { let title: String; var system: String? = nil; var style: Style = .primary; var enabled = true; let action: () -> Void
     enum Style { case primary, soft, dark }
-    var body: some View { Button { if enabled { action() } } label: { HStack(spacing: 6) { if let s = system { Image(systemName: s).font(.system(size: 13, weight: .semibold)) }; Text(title).font(.system(size: 14, weight: .semibold)) }.foregroundColor(fg).padding(.horizontal, 16).frame(height: 40).background(bg).overlay(Capsule().stroke(style == .soft ? Brand.hairline : .clear, lineWidth: 1)).clipShape(Capsule()) }.opacity(enabled ? 1 : 0.4) }
+    var body: some View { Button { if enabled { action() } } label: { HStack(spacing: 6) { if let s = system { Image(systemName: s).font(.system(size: 13, weight: .semibold)) }; Text(title).font(.system(size: 14, weight: .semibold)) }.foregroundColor(fg).padding(.horizontal, 16).frame(height: 40).background(bg).overlay(Capsule().stroke(style == .soft ? Brand.hairline : .clear, lineWidth: 1)).clipShape(Capsule()) }.buttonStyle(PressStyle()).opacity(enabled ? 1 : 0.4) }
     var bg: Color { style == .primary ? Brand.text : style == .dark ? .black : Brand.surface }; var fg: Color { style == .primary ? .black : style == .dark ? .white : Brand.text } }
 struct IconTile: View { let system: String; var color: Color = Brand.yellow; var size: CGFloat = 44
     var body: some View { Image(systemName: system).font(.system(size: size * 0.42, weight: .semibold)).symbolRenderingMode(.hierarchical).foregroundColor(color).frame(width: size, height: size).background(color.opacity(0.15)).clipShape(RoundedRectangle(cornerRadius: 13)) } }
@@ -20,7 +29,7 @@ struct Avatar: View { let name: String; var size: CGFloat = 40; var you = false
 struct Bar: View { var v: Double; var body: some View { ProgressBar(value: v) } }
 struct Ring: View { var v: Double; var size: CGFloat = 52
     var body: some View { ZStack { Circle().stroke(Brand.hairline, lineWidth: 5); Circle().trim(from: 0, to: max(0.02, min(1, v))).stroke(Brand.yellow, style: StrokeStyle(lineWidth: 5, lineCap: .round)).rotationEffect(.degrees(-90)) }.frame(width: size, height: size) } }
-private func eyebrow(_ s: String) -> some View { Text(s.uppercased()).font(.system(size: 12, weight: .semibold)).tracking(1.2).foregroundColor(Brand.faint) }
+private func eyebrow(_ s: String) -> some View { HStack(spacing: 7) { Capsule().fill(Brand.yellow).frame(width: 14, height: 2); Text(s.uppercased()).font(.system(size: 11, weight: .semibold)).tracking(1.4).foregroundColor(Brand.faint) } }
 struct ScreenScroll<C: View>: View {
     @ViewBuilder var content: C
     var body: some View {
@@ -36,11 +45,17 @@ struct ScreenScroll<C: View>: View {
 struct StatCard: View { let value: String; let label: String
     var body: some View { VStack(alignment: .leading, spacing: 2) { Text(value).font(.system(size: 20, weight: .bold)).foregroundColor(Brand.text); Text(label).font(.system(size: 12)).foregroundColor(Brand.mute) }.padding(14).frame(maxWidth: .infinity, alignment: .leading).background(Brand.surface).overlay(RoundedRectangle(cornerRadius: 12).stroke(Brand.hairline, lineWidth: 1)).clipShape(RoundedRectangle(cornerRadius: 12)) } }
 struct DarkButton: View { let title: String; var system: String? = nil; let action: () -> Void
-    var body: some View { Button(action: action) { HStack(spacing: 7) { if let s = system { Image(systemName: s) }; Text(title).font(.system(size: 16, weight: .semibold)) }.foregroundColor(.white).frame(maxWidth: .infinity).frame(height: 50).background(Color.black).clipShape(Capsule()) } } }
+    var body: some View { Button(action: action) { HStack(spacing: 7) { if let s = system { Image(systemName: s) }; Text(title).font(.system(size: 16, weight: .semibold)) }.foregroundColor(.white).frame(maxWidth: .infinity).frame(height: 50).background(Color.black).clipShape(Capsule()) }.buttonStyle(PressStyle()) } }
 struct ToastBanner: View { let toast: Toast
     var body: some View { HStack(spacing: 12) { Text(toast.label).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text).lineLimit(1); if toast.xp > 0 { Text("+\(toast.xp) XP").font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.good) }; if toast.coins != 0 { Text("\(toast.coins > 0 ? "+" : "")\(toast.coins)").font(.system(size: 14, weight: .semibold)).foregroundColor(toast.coins < 0 ? Brand.mute : Brand.yellow) } }.padding(.vertical, 12).padding(.horizontal, 18).background(Brand.surface).overlay(Capsule().stroke(Brand.hairline, lineWidth: 1)).clipShape(Capsule()) } }
-struct QuickAction: View { let icon: String; let label: String; let action: () -> Void
-    var body: some View { Button(action: action) { VStack(spacing: 7) { Image(systemName: icon).font(.system(size: 18, weight: .bold)).foregroundColor(.black).frame(width: 52, height: 52).background(Brand.gold).clipShape(Circle()).shadow(color: Brand.yellow.opacity(0.35), radius: 9, y: 4); Text(label).font(.system(size: 12, weight: .medium)).foregroundColor(Brand.mute) } }.frame(maxWidth: .infinity) } }
+struct QuickAction: View { let icon: String; let label: String; var prominent: Bool = false; let action: () -> Void
+    var body: some View { Button(action: action) { VStack(spacing: 7) {
+        Image(systemName: icon).font(.system(size: 18, weight: .semibold)).foregroundColor(prominent ? .black : Brand.text)
+            .frame(width: 52, height: 52)
+            .background(Circle().fill(prominent ? AnyShapeStyle(Brand.gold) : AnyShapeStyle(Brand.elev2)))
+            .overlay(Circle().strokeBorder(prominent ? Color.clear : Brand.hairline, lineWidth: 1))
+            .shadow(color: prominent ? Brand.yellow.opacity(0.30) : .clear, radius: prominent ? 10 : 0, y: 5)
+        Text(label).font(.system(size: 12, weight: .medium)).foregroundColor(Brand.mute) } }.buttonStyle(PressStyle()).frame(maxWidth: .infinity) } }
 struct MissionRowView: View { @EnvironmentObject var game: GameModel; let m: Mission
     var body: some View { AppCard { VStack(spacing: 10) {
         HStack(spacing: 14) { IconTile(system: m.aiGenerated ? "sparkles" : m.icon)
@@ -94,6 +109,7 @@ struct MainTabView: View {
                 AssistantView().tag(3).tabItem { Label("Assistant", systemImage: "sparkles") }
                 RewardsHub().tag(4).tabItem { Label("Rewards", systemImage: "gift.fill") }
             }.tint(Brand.yellow)
+            CelebrationOverlay(trigger: game.celebrate).ignoresSafeArea()
             if let t = game.toast { ToastBanner(toast: t).padding(.top, 6).transition(.move(edge: .top).combined(with: .opacity)) }
         }
         .animation(.spring(response: 0.4), value: game.toast)
@@ -113,12 +129,23 @@ struct HomeView: View {
     var body: some View {
         ScreenScroll {
             TopBar(name: game.name, onProfile: { homeSheet = .profile }, onAnalytics: { homeSheet = .grow })
-            // Total balance hero
-            VStack(alignment: .leading, spacing: 6) {
-                HStack { eyebrow("Total balance"); Spacer(); Button { bank.hideBalance.toggle() } label: { Image(systemName: bank.hideBalance ? "eye.slash" : "eye").foregroundColor(Brand.mute).font(.system(size: 14)) } }
-                Text(bank.hideBalance ? "•••••" : money(bank.totalALL)).font(.system(size: 44, weight: .bold)).foregroundColor(Brand.text)
-                Text(bank.hideBalance ? "" : "\(money(bank.accounts[1].balance, "EUR")) · \(money(bank.savedTotal)) saved").font(.system(size: 14)).foregroundColor(Brand.mute)
-            }.padding(.top, 4)
+            // Total balance hero — signature void surface + gold glow + odometer digits
+            VStack(alignment: .leading, spacing: 8) {
+                HStack { eyebrow("Total balance"); Spacer(); Button { withAnimation(.smooth(duration: 0.35)) { bank.hideBalance.toggle() } } label: { Image(systemName: bank.hideBalance ? "eye.slash" : "eye").foregroundColor(Brand.mute).font(.system(size: 15)).symbolEffect(.bounce, value: bank.hideBalance) } }
+                ZStack(alignment: .leading) {
+                    Text(money(bank.totalALL)).font(.system(size: 46, weight: .bold, design: .rounded)).foregroundStyle(LinearGradient(colors: [.white, Color.white.opacity(0.78)], startPoint: .top, endPoint: .bottom)).contentTransition(.numericText()).blur(radius: bank.hideBalance ? 16 : 0).opacity(bank.hideBalance ? 0 : 1)
+                    if bank.hideBalance { Text("•• ••• L").font(.system(size: 46, weight: .bold, design: .rounded)).foregroundColor(Brand.text) }
+                }
+                Text(bank.hideBalance ? " " : "\(money(bank.accounts[1].balance, "EUR")) · \(money(bank.savedTotal)) saved").font(.system(size: 14)).foregroundColor(Brand.mute)
+            }
+            .padding(20).frame(maxWidth: .infinity, alignment: .leading)
+            .background(ZStack {
+                RoundedRectangle(cornerRadius: 24).fill(Brand.void)
+                RoundedRectangle(cornerRadius: 24).fill(RadialGradient(colors: [Color(hex: 0xF2C200).opacity(0.13), .clear], center: .topLeading, startRadius: 8, endRadius: 280))
+            })
+            .specularBorder(24).clipShape(RoundedRectangle(cornerRadius: 24))
+            .shadow(color: .black.opacity(0.5), radius: 20, y: 12)
+            .animation(.snappy(duration: 0.5), value: bank.totalALL)
             // Account chips
             ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 10) {
                 ForEach(bank.accounts) { a in HStack(spacing: 8) { Image(systemName: a.icon).foregroundColor(Brand.yellow); VStack(alignment: .leading, spacing: 1) { Text(a.name).font(.system(size: 12)).foregroundColor(Brand.mute); Text(bank.hideBalance ? "•••" : money(a.balance, a.currency)).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text) } }.padding(.horizontal, 14).frame(height: 56).background(Brand.surface).overlay(RoundedRectangle(cornerRadius: 14).stroke(Brand.hairline, lineWidth: 1)).clipShape(RoundedRectangle(cornerRadius: 14)) }
@@ -126,7 +153,7 @@ struct HomeView: View {
             } }
             // Quick actions
             HStack(spacing: 4) {
-                QuickAction(icon: "plus", label: "Add") { homeSheet = .add }
+                QuickAction(icon: "plus", label: "Add", prominent: true) { homeSheet = .add }
                 QuickAction(icon: "paperplane.fill", label: "Send") { sel = 2 }
                 QuickAction(icon: "arrow.down.left", label: "Request") { sel = 2 }
                 QuickAction(icon: "arrow.left.arrow.right", label: "Exchange") { homeSheet = .grow }
@@ -171,7 +198,7 @@ struct PayView: View {
             ScreenScroll {
                 Text("Pay").font(.system(size: 34, weight: .bold)).foregroundColor(Brand.text)
                 HStack(spacing: 4) {
-                    QuickAction(icon: "plus", label: "Add") { showAdd = true }
+                    QuickAction(icon: "plus", label: "Add", prominent: true) { showAdd = true }
                     QuickAction(icon: "qrcode", label: "Scan") {}
                     QuickAction(icon: "building.columns.fill", label: "Bank") {}
                     QuickAction(icon: "person.2.fill", label: "Split") {}

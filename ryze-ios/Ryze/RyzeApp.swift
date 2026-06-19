@@ -22,6 +22,6 @@ struct RootView: View {
             else if game.onboarded { MainTabView() } else { OnboardingFlow() }
         }
         .animation(.easeInOut, value: game.onboarded)
-        .fontDesign(.rounded)
+        .fontDesign(.rounded).monospacedDigit()
     }
 }
