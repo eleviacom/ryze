@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "Ryze",
+    "slug": "ryze",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/raiffeisen-logo.png",
+    "scheme": "ryze",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "icon": "./assets/images/raiffeisen-logo.png",
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#FFE600",
+        "foregroundImage": "./assets/images/raiffeisen-logo.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#000000",
+          "image": "./assets/images/raiffeisen-logo.png",
+          "imageWidth": 120,
+          "android": {
+            "backgroundColor": "#000000",
+            "image": "./assets/images/raiffeisen-logo.png",
+            "imageWidth": 120
+          }
+        }
+      ],
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}

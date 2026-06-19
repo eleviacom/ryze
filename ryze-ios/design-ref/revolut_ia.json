@@ -1,0 +1,148 @@
+{
+  "tabs": [
+    {
+      "name": "Home",
+      "sfSymbol": "house.fill",
+      "purpose": "Balance-centric command center: total wealth, ALL/EUR accounts, quick actions, live transactions feed, and a slim gamification strip (streak + level). The anchor of the app, replacing the old quests-first home.",
+      "keyScreens": [
+        "Home dashboard (total balance hero + account selector)",
+        "Account detail (ALL or EUR balance, per-currency transactions)",
+        "Transaction detail (merchant, category, note, split action)",
+        "Add money / top-up flow",
+        "Transaction search",
+        "Notifications inbox"
+      ]
+    },
+    {
+      "name": "Pay",
+      "sfSymbol": "paperplane.fill",
+      "purpose": "Revolut-style Payments Hub: send/request/split money, frequent-contacts row, QR, bank transfers, and a chat-like per-contact payments feed. The marquee build of this pass and the social/viral core for youth.",
+      "keyScreens": [
+        "Pay hub (action row + frequent contacts + sections)",
+        "Send money (contact picker, amount, note/emoji)",
+        "Request money (single + multiple recipients)",
+        "Per-contact chat/payment thread",
+        "Split bill (from a transaction) + Groups",
+        "QR / scan to pay",
+        "Bank transfer (SEPA/local) + Beneficiaries",
+        "Payment status / receipt"
+      ]
+    },
+    {
+      "name": "Cards",
+      "sfSymbol": "creditcard.fill",
+      "purpose": "Virtual + physical card management with security controls: freeze, reveal details/PIN, toggles (online/contactless/ATM), per-card limits, notifications, and youth-relevant no-overdraft safety. Card skins unlockable via XP/level.",
+      "keyScreens": [
+        "Cards carousel (virtual + physical)",
+        "Card detail (reveal PAN/CVV/PIN, freeze)",
+        "Card security toggles + per-card limit",
+        "Order physical card + delivery tracking",
+        "Card design / skin picker (XP-unlockable)"
+      ]
+    },
+    {
+      "name": "Grow",
+      "sfSymbol": "chart.line.uptrend.xyaxis",
+      "purpose": "Money & insights: Savings Vaults, Pockets, goals with progress, round-ups, auto-save, spending analytics/budgets, and ALL<->EUR exchange. The 'build the habit' surface where saving progress feeds gamification.",
+      "keyScreens": [
+        "Grow overview (total saved + goals)",
+        "Savings Vault / Pocket detail (goal ring, round-up config)",
+        "Create goal / Pocket",
+        "Spending analytics (categories, period, charts)",
+        "Budgets + alerts",
+        "Exchange / Convert (ALL<->EUR)"
+      ]
+    },
+    {
+      "name": "Profile",
+      "sfSymbol": "person.crop.circle.fill",
+      "purpose": "Identity, rewards, and account: RyzeTag/avatar, level/tier + badges, Rewards Store, referrals, security & privacy, notifications, statements, Riz AI buddy, and support. Folds the old standalone Quests/Invite/Rewards tabs in here plus a gamification dashboard.",
+      "keyScreens": [
+        "Profile header (avatar, RyzeTag, level/tier badge)",
+        "Rewards & gamification dashboard (XP, badges, leaderboard, quests)",
+        "Rewards Store (RyzePoints redemptions)",
+        "Referrals / Invite",
+        "Security & Privacy (passcode, biometrics, devices, hide balance)",
+        "Notification preferences",
+        "Statements & documents",
+        "Riz AI buddy",
+        "Help & support"
+      ]
+    }
+  ],
+  "homeLayout": [
+    "Top bar: avatar/RyzeTag (left) + slim streak flame with day count and search/notifications icons (right)",
+    "Total balance hero: one large aggregated figure (spendable ALL + EUR, optionally + savings as 'Total wealth') with hide/blur toggle",
+    "Account selector chips directly under the hero: ALL account, EUR account, +Savings — tap to drill into account detail",
+    "Quick actions row (one-tap): Add money, Send, Request, Exchange, More",
+    "Live transactions feed (reverse-chronological): merchant name, category icon, amount, with instant-push parity; tap opens enriched detail with Split action",
+    "Grow snapshot tile: 'Saved this month' + nearest goal progress ring (entry into Grow tab)",
+    "Gamification strip (slim, non-dominant): level/tier progress bar + 1-2 active quest chips tied to REAL actions (e.g. 'First transfer', 'Round-up 5 days'), tappable into Profile dashboard",
+    "Riz nudge card (contextual, dismissible): one bite-size insight or prompt (e.g. 'You spent 20% more on eating out — set a budget?')"
+  ],
+  "paymentsHub": {
+    "summary": "A dedicated Pay tab that is the home for all money movement, modeled on Revolut's Payments hub but reframed for Albanian youth (ALL+EUR, SEPA/local rails, RyzeTag handles). It opens contacts-first: a top action row (Send, Request, Scan/QR, Bank transfer), a horizontally-scrollable frequent-contacts row for one-tap pay, then sections for Requests, Scheduled, Group bills/Split, and Beneficiaries. Tapping a contact opens a chat-like thread where messaging and money live together. Every completed payment emits an event the Gamification service consumes for XP/streaks, making payments the primary earn loop instead of busywork.",
+    "capabilities": [
+      "Send money P2P (instant, free Ryze-to-Ryze) in ALL or EUR",
+      "Request money from one contact, with one-tap reminder/nudge",
+      "Request from multiple people at once with per-person paid/unpaid status",
+      "Find/add friends by phone, email, RyzeTag (username handle) or QR",
+      "Personal QR code + shareable RyzeTag payment link (works for off-network via SMS/email fallback, doubling as a referral hook)",
+      "Chat-like per-contact thread: messages + GIFs/stickers + inline send/request, with live status (sent/pending/paid/declined)",
+      "Split a transaction evenly or by custom shares; trigger from any feed transaction",
+      "Group bills: persistent shared-expense groups with net balances, group chat, and auto reminders (flatmates, trips)",
+      "Note + emoji/GIF on every payment for expressive, social context",
+      "Bank transfer to external accounts via SEPA/local rails with saved beneficiaries",
+      "Scheduled & recurring payments (standing orders) — later phase",
+      "Payment status tracking + shareable receipts",
+      "Add money / top-up as the gating prerequisite surfaced from the hub"
+    ],
+    "chatModel": "Per-contact thread = an iMessage-for-money timeline. Each contact has one persistent thread showing the running history of sends, requests, splits and text messages between you, newest at bottom. Inline composer offers: text, emoji/GIF/sticker, and a money chip (Send / Request) that drops a rich payment bubble into the thread with amount, note and live status (pending -> paid -> with receipt). Group threads back Group Bills with net-balance summary pinned at top and automatic reminders posted into the thread. Messaging is gated to 18+ and only allowed where there is a saved contact or prior payment history (anti-abuse). Threads are the connective tissue: a Split from a transaction lands as a request bubble in each participant's thread, and an unpaid request shows a one-tap Remind. Backed by the Payments microservice (money) + a lightweight chat/notification channel via the BFF; end-to-end-encryptable message store kept separate from the ledger.",
+    "screens": [
+      "Pay hub (action row + frequent contacts + Requests/Scheduled/Groups/Beneficiaries sections)",
+      "Contact picker (phone-contact sync, on-Ryze indicator, RyzeTag/QR search)",
+      "Send money (amount in ALL/EUR, note, emoji/GIF, confirm with biometric step-up)",
+      "Request money (single + multi-recipient, with reminders)",
+      "Per-contact chat/payment thread",
+      "Group bill / split detail (members, net balances, group chat, reminders)",
+      "Split-from-transaction sheet (even vs custom shares)",
+      "QR / scan to pay + personal QR display",
+      "Bank transfer (recipient + IBAN/BIC, confirmation of payee) and Beneficiaries list",
+      "Payment status / shareable receipt"
+    ]
+  },
+  "gamificationWeave": [
+    "Reframe quests as REAL banking actions: missions now reward first transfer, first split, first savings goal, first salary/top-up, round-up streaks — not generic engagement. Re-use the existing Mission/GameModel but change the triggers.",
+    "Event-driven: the Payments, Cards, and Savings flows emit 'transaction completed / goal funded / round-up swept' events that the Gamification microservice consumes to grant XP and RyzePoints. Spending and saving in the real app IS the game.",
+    "Two currencies, clear roles: XP (engagement, drives Level/Tier, never tied to spend amount to avoid encouraging overspending) and RyzePoints (a spendable loyalty currency earned on real card spend, redeemable in the Rewards Store).",
+    "Home stays banking-first: gamification appears only as a slim level/tier bar + 1-2 quest chips + the streak flame. The full dashboard (badges, leaderboard, all quests) lives in Profile, not as its own tab.",
+    "Saving habit gamified honestly: goal progress rings, milestone badges, and a saving streak overlay on Grow; round-up multiplier framed as a 'boost' tied to streaks (with overdraw guards on thin youth balances).",
+    "Leaderboard is friends-scoped and opt-in, ranked on XP (not spend), preserving privacy and avoiding a spend-to-win dynamic.",
+    "Referrals pay out in RyzePoints + a small ALL/EUR cash bonus, and only unlock on real qualifying actions (invitee adds money + first transfer); surfaced right after the user's own first successful transfer.",
+    "Card self-expression: unlock card skins/colors via XP/level milestones, tying the Cards microservice to Gamification.",
+    "Riz AI buddy delivers bite-size money lessons as XP-rewarded quests and contextual nudges (budget set, subscription found), making financial literacy part of the loop without grinding.",
+    "Good-citizen loop: charity round-ups earn a distinct badge + XP, but giving is never framed as a grind."
+  ],
+  "buildOrderNow": [
+    "1. Restructure the tab bar: Home / Pay / Cards / Grow / Profile (5 tabs). Replace the current Home/Quests/Invite/Rewards/Profile. Fold Quests+Invite+Rewards into the Profile gamification dashboard. (Edit MainTabView in AppViews.swift.)",
+    "2. Build the balance-centric Home: total balance hero with hide/blur, ALL/EUR account selector chips, quick-actions row, and the live transactions feed. Demote gamification to a slim strip. This is the single biggest 'feels like a bank' change.",
+    "3. Define core banking data models + a mock BFF layer: Account (currency, balance), Transaction (merchant, category, amount, status), Contact (RyzeTag), Card. Wire a thin service interface now so real microservices (User, Payments, Cards) can slot in behind it later.",
+    "4. Ship the Payments Hub shell: Pay tab with action row, frequent-contacts row, and sections. Then Send money and Request money end-to-end (mock instant Ryze-to-Ryze), with note/emoji and biometric step-up.",
+    "5. Add the per-contact chat-like thread with inline payment bubbles + live status — the marquee social-payments experience.",
+    "6. Add Split-from-transaction (even/custom) wired from the Home feed, with off-network SMS/link fallback that reuses referrals.",
+    "7. Build Cards tab: virtual card with reveal details, freeze/unfreeze, online/contactless/ATM toggles, per-card notifications, and no-overdraft youth safety.",
+    "8. Build Grow tab v1: Savings Vault/Pocket with a goal + progress ring, manual + recurring auto-save and round-ups, plus a spending-analytics summary (categories) — the saving habit surface.",
+    "9. Wire the event bus so completed payments / funded goals grant XP + RyzePoints, and rebuild the Profile gamification dashboard (level/tier, badges, leaderboard, quests reframed to real actions) + Rewards Store with Albanian-relevant redemptions.",
+    "10. Security baseline across all flows: 6-digit passcode, biometric unlock, biometric/3DS step-up on transfers and card-detail reveal, and hide-balance — table stakes for a real bank.",
+    "11. Add money / top-up flow (gates Pay) and Add-to-Apple-Pay provisioning entry on Cards.",
+    "12. Notifications: instant transaction/spend push parity into the Home feed and a Notification preferences screen in Profile."
+  ],
+  "notes": [
+    "Codebase today (Ryze/*.swift) is quests-first: MainTabView (AppViews.swift:92) ships Home/Quests/Invite/Rewards/Profile, and GameModel (Game.swift:39) holds Mission/Reward/Badge/Leader/Squad. The pivot reuses GameModel but changes mission triggers to real banking events and relocates the UI into Profile.",
+    "Theme is already correct for the brief: true-black Revolut UI with Raiffeisen yellow (0xFFE600) as the single scarce accent (Theme.swift). Keep yellow as a stamp (active state, primary CTA), not a fill, so the banking surfaces read premium.",
+    "Architecture: introduce a BFF-shaped service layer in the app now (protocol-based mock services for User/Payments/Cards/Gamification/Rewards/Notification/Analytics) so the SwiftUI views depend on interfaces, letting the real microservices land behind them without UI rework — satisfies the brief's modular + BFF + microservices mandate.",
+    "Albania specifics: ALL is the primary balance, EUR the secondary (savings/travel/online), with ALL<->EUR exchange in Grow; payments use RyzeTag handles + SEPA/local bank transfer; redemptions are local (mobile top-up, gift cards, transport/food vouchers, event tickets).",
+    "Explicitly out of scope this pass (and per the studies): crypto, commodities, stocks/ETFs (later, gated), eSIM/Stays/Lounges, parental controls and under-18 chores/allowance (Ryze starts at 18), external Open Banking aggregation.",
+    "Privacy/safety guardrails for a youth audience: leaderboard opt-in and XP-ranked (never spend-ranked), no-overdraft cards, round-up overdraw guards, chat gated to 18+ and saved-contact/prior-payment only, and step-up auth on all money-moving and detail-revealing actions."
+  ]
+}

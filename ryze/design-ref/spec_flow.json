@@ -1,0 +1,411 @@
+{
+  "valueSlides": [
+    {
+      "id": "slide-welcome",
+      "title": "Money that finally gets you",
+      "body": "Ryze is the Raiffeisen account built for your twenties. Spend, save, and level up — all in one place that actually feels like yours.",
+      "illustration": "A glowing black phone floating dead-center, its screen showing the Ryze home with a yellow level ring; soft particles of light drifting upward behind it on true-black.",
+      "animationNote": "Entrance: phone scales from 0.9 to 1 with translateY 24->0 over 600ms (Reanimated withTiming, Easing.out(cubic)); the yellow level ring sweeps 0->100% via useDerivedValue. Parallax: on horizontal swipe, the phone translateX tracks scrollX * -0.12 and the light particles track * 0.06, so foreground and background separate. Micro: ring pulses scale 1->1.04->1 on a 2s loop (withRepeat)."
+    },
+    {
+      "id": "slide-open",
+      "title": "Open it in minutes, 100% online",
+      "body": "Not a Raiffeisen customer yet? No problem. No branch, no paperwork, no fees to open. Just your ID and a quick video check — done from your couch.",
+      "illustration": "An ID card and a smiling selfie frame snapping together like puzzle pieces over a dark surface, with a single yellow checkmark stamping on at the moment they connect.",
+      "animationNote": "Entrance: ID card slides in from left (translateX -60->0) and selfie frame from right (60->0), meeting at center; the yellow checkmark pops with a spring (withSpring, damping 12) only after both settle. Parallax: cards track scrollX at different rates (-0.15 and 0.15) so they re-separate as you swipe away. Micro: a thin scan-line sweeps top-to-bottom across the ID once on entrance to imply liveness."
+    },
+    {
+      "id": "slide-belong",
+      "title": "Do more, together",
+      "body": "Free instant payments, real-time exchange, save while you spend, and rewards for inviting your crew. The more you play, the more you belong.",
+      "illustration": "Three small avatar circles connected by glowing hairlines forming a network, a yellow coin orbiting the cluster, set against true-black with faint grid lines.",
+      "animationNote": "Entrance: avatars fade+scale in with 80ms stagger (Reanimated entering FadeInDown.delay(i*80)); connecting hairlines draw on via animated strokeDashoffset; the yellow coin enters last and begins orbiting (useSharedValue angle driven by withRepeat, mapped to translateX/Y with sin/cos in useAnimatedStyle). Parallax: the network cluster tracks scrollX * -0.1, grid lines * 0.04. Micro: coin leaves a brief yellow trail (opacity-decay) as it orbits."
+    }
+  ],
+  "kycSteps": [
+    {
+      "id": "kyc-phone",
+      "title": "What's your number?",
+      "subtitle": "We'll text you a code to confirm it's really you. Your phone is how we keep your account secure.",
+      "fields": [
+        {
+          "key": "countryCode",
+          "label": "Country",
+          "type": "country-picker (mandatory)",
+          "placeholder": "Albania +355",
+          "why": "We need to know your dialing code to send the code to the right place. Defaults to Albania +355."
+        },
+        {
+          "key": "phoneNumber",
+          "label": "Phone number",
+          "type": "tel (mandatory)",
+          "placeholder": "69 123 4567",
+          "why": "By law, a Raiffeisen account must be linked to a verified mobile number. We use it for login, security codes, and important account alerts — never for marketing without your consent."
+        },
+        {
+          "key": "agreePrivacyNotice",
+          "label": "I have read and agree to the Information Notice on the processing of personal data",
+          "type": "checkbox (mandatory)",
+          "placeholder": "",
+          "why": "Under Albanian Law No. 9887 on the Protection of Personal Data, we must tell you how Raiffeisen Bank Sh.a. uses your data before we collect it. Tap to read the full notice."
+        }
+      ],
+      "primaryCta": "Send code",
+      "secondaryCta": "Why do we need it?",
+      "note": "Continue stays disabled until a valid number is entered and the privacy notice is accepted."
+    },
+    {
+      "id": "kyc-phone-otp",
+      "title": "Enter your code",
+      "subtitle": "We sent a 6-digit code to your phone. Pop it in below.",
+      "fields": [
+        {
+          "key": "phoneOtp",
+          "label": "6-digit code",
+          "type": "otp-6 (mandatory)",
+          "placeholder": "------",
+          "why": "Entering the code proves the number belongs to you. This protects your account from being opened by someone else."
+        }
+      ],
+      "primaryCta": "Verify",
+      "secondaryCta": "Resend code",
+      "note": "Auto-advances on the 6th digit. Resend enabled after a 30-second countdown. Continue disabled until 6 digits are entered."
+    },
+    {
+      "id": "kyc-email",
+      "title": "And your email?",
+      "subtitle": "This is where we'll send your statements and account documents.",
+      "fields": [
+        {
+          "key": "email",
+          "label": "Email address",
+          "type": "email (mandatory)",
+          "placeholder": "you@email.com",
+          "why": "We're legally required to give you account documents, statements, and key terms in a durable form. Email is how you'll receive them — so make sure it's one you actually check."
+        }
+      ],
+      "primaryCta": "Send code",
+      "secondaryCta": "Why do we need it?",
+      "note": "Continue disabled until a valid email format is entered."
+    },
+    {
+      "id": "kyc-email-otp",
+      "title": "Confirm your email",
+      "subtitle": "We sent a 6-digit code to your inbox. Check spam if it's hiding.",
+      "fields": [
+        {
+          "key": "emailOtp",
+          "label": "6-digit code",
+          "type": "otp-6 (mandatory)",
+          "placeholder": "------",
+          "why": "This confirms you can receive documents at this address, which we're required to verify before opening your account."
+        }
+      ],
+      "primaryCta": "Verify",
+      "secondaryCta": "Resend code",
+      "note": "Resend enabled after a 30-second countdown. Continue disabled until 6 digits are entered."
+    },
+    {
+      "id": "kyc-identity-intro",
+      "title": "Now, the easy part",
+      "subtitle": "Two quick steps and we'll confirm your identity:\n\n1. Take a photo of your ID card\n2. A 5-second video check — automatic, no human watching.",
+      "fields": [],
+      "primaryCta": "I'm ready",
+      "secondaryCta": "Don't have an identity card?",
+      "note": "Pure intro screen, no inputs. The secondary link routes to accepted alternatives (valid passport or biometric residence permit). This mirrors Raiffeisen's 'The following steps are very easy' screen, elevated to youth tone."
+    },
+    {
+      "id": "kyc-id-capture",
+      "title": "Scan your ID card",
+      "subtitle": "Hold your Albanian ID card inside the frame. We'll read it automatically — front, then back.",
+      "fields": [
+        {
+          "key": "idDocumentType",
+          "label": "Document type",
+          "type": "select (mandatory)",
+          "placeholder": "Albanian ID card",
+          "why": "We must record which government document we verified you with. Defaults to Albanian ID card; passport and biometric residence permit are also accepted."
+        },
+        {
+          "key": "idFrontImage",
+          "label": "Front of document",
+          "type": "camera-capture (mandatory)",
+          "placeholder": "Tap to capture front",
+          "why": "Albanian anti-money-laundering law requires the Bank to verify your identity with an official ID before opening an account. We read your name, date of birth, document number, and expiry directly from the card."
+        },
+        {
+          "key": "idBackImage",
+          "label": "Back of document",
+          "type": "camera-capture (mandatory)",
+          "placeholder": "Tap to capture back",
+          "why": "The back of your ID carries the machine-readable zone we use to confirm the document is genuine and unaltered."
+        }
+      ],
+      "primaryCta": "Use these photos",
+      "secondaryCta": "Why do we need it?",
+      "note": "On-device edge detection auto-captures when the card is framed and sharp. Captured fields (name, date of birth, document number) are extracted to prefill later screens so the user re-types as little as possible. Continue disabled until both sides pass a quality check."
+    },
+    {
+      "id": "kyc-selfie-liveness",
+      "title": "Quick video check",
+      "subtitle": "Look at the camera and follow the prompts. It takes about five seconds and confirms you're a real person — not a photo.",
+      "fields": [
+        {
+          "key": "livenessVideo",
+          "label": "Liveness check",
+          "type": "liveness-capture (mandatory)",
+          "placeholder": "Center your face and start",
+          "why": "This automated check matches your live face to your ID photo and proves you're physically present. It's fully automated — no human reviews your video — and it stops anyone else from opening an account in your name."
+        }
+      ],
+      "primaryCta": "Start video check",
+      "secondaryCta": "How does this work?",
+      "note": "Automated liveness (turn head / blink prompts), no human in the loop, matching Raiffeisen's stated flow. Continue auto-advances on a successful match; offers one retry on failure before routing to support."
+    },
+    {
+      "id": "kyc-name",
+      "title": "Let's confirm your name",
+      "subtitle": "We pulled this from your ID. Just check it matches exactly.",
+      "fields": [
+        {
+          "key": "firstName",
+          "label": "First name",
+          "type": "text (mandatory, prefilled from ID)",
+          "placeholder": "As shown on your ID",
+          "why": "Your legal name must match your ID exactly — it's the name on your account and card."
+        },
+        {
+          "key": "lastName",
+          "label": "Last name",
+          "type": "text (mandatory, prefilled from ID)",
+          "placeholder": "As shown on your ID",
+          "why": "Required to register you as the account holder under your verified legal identity."
+        }
+      ],
+      "primaryCta": "Looks right",
+      "secondaryCta": "Edit",
+      "note": "Prefilled from the ID scan; fields are editable in case OCR misreads a character. Continue disabled if either field is empty."
+    },
+    {
+      "id": "kyc-dob",
+      "title": "Your date of birth",
+      "subtitle": "We pulled this from your ID — just confirm it's correct.",
+      "fields": [
+        {
+          "key": "dateOfBirth",
+          "label": "Date of birth",
+          "type": "date (mandatory, prefilled from ID)",
+          "placeholder": "DD / MM / YYYY",
+          "why": "We must confirm you're at least 18 to open this account on your own, and your date of birth is a legal part of your identity record."
+        }
+      ],
+      "primaryCta": "Confirm",
+      "secondaryCta": "Why do we need it?",
+      "note": "Prefilled from ID. Hard age gate at 18 (youth product targets 18-25); under-18 routes to a guardian/minor-account explainer rather than rejecting. Continue disabled until a valid 18+ date is set."
+    },
+    {
+      "id": "kyc-place-nationality",
+      "title": "Where are you from?",
+      "subtitle": "Your place of birth and nationality, as on your ID.",
+      "fields": [
+        {
+          "key": "nationality",
+          "label": "Nationality",
+          "type": "country-picker (mandatory, prefilled from ID)",
+          "placeholder": "Albanian",
+          "why": "By law the Bank must record the nationality of every account holder. It also helps us set up the right tax and reporting rules for you."
+        },
+        {
+          "key": "countryOfBirth",
+          "label": "Country of birth",
+          "type": "country-picker (mandatory)",
+          "placeholder": "Albania",
+          "why": "Required as part of your identity record under anti-money-laundering rules."
+        },
+        {
+          "key": "placeOfBirth",
+          "label": "City / place of birth",
+          "type": "text (mandatory)",
+          "placeholder": "e.g. Tirana",
+          "why": "Completes your official identity profile, which the Bank is required to hold."
+        }
+      ],
+      "primaryCta": "Continue",
+      "secondaryCta": "Why do we need it?",
+      "note": "Nationality and country of birth prefill from ID where the MRZ provides them. Continue disabled until all three are set."
+    },
+    {
+      "id": "kyc-address",
+      "title": "Where do you live?",
+      "subtitle": "Your current home address. We'll send your card here.",
+      "fields": [
+        {
+          "key": "addressStreet",
+          "label": "Street and number",
+          "type": "text (mandatory)",
+          "placeholder": "Rruga e Durrësit 12",
+          "why": "Anti-money-laundering law requires the Bank to record your residential address. We also ship your physical card here."
+        },
+        {
+          "key": "addressCity",
+          "label": "City",
+          "type": "text (mandatory)",
+          "placeholder": "Tirana",
+          "why": "Part of your required address on file and needed for card delivery."
+        },
+        {
+          "key": "addressPostalCode",
+          "label": "Postal code",
+          "type": "text (optional)",
+          "placeholder": "1001",
+          "why": "Helps your card and any mailed documents arrive faster. Optional where Albanian addresses don't use one."
+        },
+        {
+          "key": "addressCountry",
+          "label": "Country of residence",
+          "type": "country-picker (mandatory)",
+          "placeholder": "Albania",
+          "why": "Your country of residence determines which rules and protections apply to your account."
+        }
+      ],
+      "primaryCta": "Continue",
+      "secondaryCta": "Why do we need it?",
+      "note": "Country of residence defaults to Albania. Continue disabled until street, city, and country are filled."
+    },
+    {
+      "id": "kyc-tax-pep",
+      "title": "A couple of quick declarations",
+      "subtitle": "Two things every bank in Albania has to ask. Honest answers keep your account compliant.",
+      "fields": [
+        {
+          "key": "taxResidencyCountry",
+          "label": "Country of tax residence",
+          "type": "country-picker (mandatory)",
+          "placeholder": "Albania",
+          "why": "International rules (CRS/FATCA) require the Bank to know where you pay tax. For most people in Albania, that's simply Albania."
+        },
+        {
+          "key": "taxIdNumber",
+          "label": "Tax / NID number",
+          "type": "text (conditionally mandatory)",
+          "placeholder": "Your tax identification number",
+          "why": "Required if your tax residence is outside Albania, or where your tax authority issues a TIN. We report nothing to anyone unless the law requires it."
+        },
+        {
+          "key": "usTaxPerson",
+          "label": "I am a U.S. citizen or U.S. tax resident",
+          "type": "toggle (mandatory)",
+          "placeholder": "No",
+          "why": "FATCA requires every bank to ask. Answering 'yes' just means a couple of extra forms — it doesn't stop you opening an account."
+        },
+        {
+          "key": "pepDeclaration",
+          "label": "I am, or am closely related to, a politically exposed person (PEP)",
+          "type": "toggle (mandatory)",
+          "placeholder": "No",
+          "why": "Law requires the Bank to ask whether you hold (or are family/close associate of someone who holds) a high public office. It does not block your account — it just means a little extra review."
+        }
+      ],
+      "primaryCta": "Continue",
+      "secondaryCta": "What's a PEP?",
+      "note": "Tax/NID becomes mandatory when tax residence is not Albania or when 'U.S. tax person' is yes. PEP and U.S.-person toggles default to 'No' and must be explicitly confirmed. Continue disabled until tax residence and both declarations are answered."
+    },
+    {
+      "id": "kyc-occupation-funds",
+      "title": "What do you do?",
+      "subtitle": "Last set of questions — this tells us how you'll mostly use your account.",
+      "fields": [
+        {
+          "key": "occupationStatus",
+          "label": "Your situation",
+          "type": "select (mandatory)",
+          "placeholder": "Student, employed, self-employed, other",
+          "why": "Anti-money-laundering law requires the Bank to understand your economic profile. As a youth account, 'student' is totally normal here."
+        },
+        {
+          "key": "employerOrSchool",
+          "label": "Employer or school",
+          "type": "text (optional)",
+          "placeholder": "e.g. University of Tirana",
+          "why": "Optional context that helps us match the right features and limits to how you'll use the account."
+        },
+        {
+          "key": "sourceOfFunds",
+          "label": "Main source of money",
+          "type": "select (mandatory)",
+          "placeholder": "Salary, family support, scholarship, savings, other",
+          "why": "The Bank is legally required to record where the money in your account generally comes from. This keeps your account safe and compliant — there are no wrong answers."
+        },
+        {
+          "key": "expectedMonthlyInflow",
+          "label": "Roughly how much comes in monthly",
+          "type": "select (mandatory)",
+          "placeholder": "Under 30,000 ALL · 30,000-100,000 ALL · Over 100,000 ALL",
+          "why": "A rough range helps us set sensible default limits and spot anything unusual on your account. You can change it later."
+        }
+      ],
+      "primaryCta": "Continue",
+      "secondaryCta": "Why do we need it?",
+      "note": "Employer/school is optional. Continue disabled until occupation, source of funds, and expected inflow are selected."
+    },
+    {
+      "id": "kyc-consents",
+      "title": "Almost done — the agreements",
+      "subtitle": "Have a read and tick what applies. The first three are required to open your account; the last is your choice.",
+      "fields": [
+        {
+          "key": "agreeTerms",
+          "label": "I accept the Account Terms & Conditions and the Framework Agreement of Raiffeisen Bank Sh.a.",
+          "type": "checkbox (mandatory)",
+          "placeholder": "",
+          "why": "These are the rules of your account and the contract between you and the Bank. Tap to read them in full before you agree."
+        },
+        {
+          "key": "agreeFees",
+          "label": "I have read the Fees & Charges schedule and the Deposit Insurance information",
+          "type": "checkbox (mandatory)",
+          "placeholder": "",
+          "why": "You should know what (if anything) costs money, and that eligible deposits are protected by the Albanian Deposit Insurance Agency (ASD) up to the legal limit. Raiffeisen Bank Sh.a. is licensed and supervised by the Bank of Albania (Banka e Shqipërisë)."
+        },
+        {
+          "key": "agreeDataProcessing",
+          "label": "I consent to Raiffeisen Bank Sh.a. processing my personal data to open and run my account",
+          "type": "checkbox (mandatory)",
+          "placeholder": "",
+          "why": "Under Albanian Law No. 9887 on the Protection of Personal Data, we need your consent to use your information to provide the account. You can withdraw consent for non-essential uses at any time."
+        },
+        {
+          "key": "agreeMarketing",
+          "label": "Send me offers, rewards, and tips from Ryze (optional)",
+          "type": "checkbox (optional)",
+          "placeholder": "",
+          "why": "Only if you want them. Leave it unticked and you'll still get everything you need to run your account. You can change this anytime in Settings."
+        }
+      ],
+      "primaryCta": "Agree and open my account",
+      "secondaryCta": "Read all documents",
+      "note": "PROTOTYPE — all legal wording, document names, and deposit-insurance limits must be confirmed by Raiffeisen Bank Sh.a. legal/compliance before production. Marketing consent must default OFF (no pre-tick) per Albanian data-protection law. Continue disabled until the three mandatory checkboxes are ticked."
+    },
+    {
+      "id": "kyc-notifications",
+      "title": "Stay one step ahead",
+      "subtitle": "Turn on notifications and we'll ping you for security codes, instant payment alerts, streaks, and rewards. You stay in control.",
+      "fields": [
+        {
+          "key": "pushNotificationsOptIn",
+          "label": "Allow notifications",
+          "type": "permission-prompt (optional)",
+          "placeholder": "",
+          "why": "We use notifications for security alerts (like logins and large payments) and to nudge your streaks and rewards. Security alerts can also reach you by other channels if you skip this."
+        }
+      ],
+      "primaryCta": "I want to be notified",
+      "secondaryCta": "Maybe later",
+      "note": "Mirrors Raiffeisen's opt-in screen with both choices weighted equally — 'I want to be notified' (primary white pill) triggers the OS permission prompt; 'Maybe later' continues without it. Fully optional."
+    }
+  ],
+  "successScreen": {
+    "title": "Welcome to Ryze",
+    "body": "Your Raiffeisen account is open and ready. Your card is on its way, and your first quests are waiting. Let's get you to level one — tap in and start playing."
+  }
+}

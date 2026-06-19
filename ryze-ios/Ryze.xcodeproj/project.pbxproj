@@ -1,0 +1,353 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		02A0283F995CF6A64B680A79 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 288CA01C0AF85A7DFED9CDA0 /* Assets.xcassets */; };
+		1C4ADA802BC02F15E8306784 /* Bank.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9588FAAABD5073276B1F5FE /* Bank.swift */; };
+		1C4E8AE21EA34F80DA162DE2 /* Legal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C189DACFA4B4FD65C8E9AECE /* Legal.swift */; };
+		1E58A1A602BCBA2BE0055C1F /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8CE861661007ACC81D5C23A /* Theme.swift */; };
+		27BAFCDFB769EED71703B323 /* OnboardingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437CF8667BB1E0134BAEA85B /* OnboardingModel.swift */; };
+		481C62D8B156BAD6EA7DFA8F /* Riz.swift in Sources */ = {isa = PBXBuildFile; fileRef = B763334074912918593B92B8 /* Riz.swift */; };
+		4E19EC46F89EC14F687E2F90 /* AppViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149ED19E871E9434405C2650 /* AppViews.swift */; };
+		54B6ABBB0FEF50C35B4AB82D /* OnboardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A809D64D30D08A5C5EE9D5 /* OnboardingFlow.swift */; };
+		8CDC17BA1CCC630A15E7CF32 /* Sections.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86C457C70F70AC2187CA030 /* Sections.swift */; };
+		A015FCFAAF99BD7459DFADC8 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB947E4945696C5B0618497C /* Game.swift */; };
+		B44AE11FF177F1FD56592555 /* Plans.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272FB7F58EB95A417ED0E158 /* Plans.swift */; };
+		D8CEE4E7B2BC7B10DDD90DED /* RyzeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29DFDAD4403748500CD237FC /* RyzeApp.swift */; };
+		EFDF2C7A0B943E68EF9AE4D5 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EC5D72C01847AB4D9F7B87 /* Components.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		149ED19E871E9434405C2650 /* AppViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViews.swift; sourceTree = "<group>"; };
+		272FB7F58EB95A417ED0E158 /* Plans.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plans.swift; sourceTree = "<group>"; };
+		288CA01C0AF85A7DFED9CDA0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		29DFDAD4403748500CD237FC /* RyzeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RyzeApp.swift; sourceTree = "<group>"; };
+		437CF8667BB1E0134BAEA85B /* OnboardingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModel.swift; sourceTree = "<group>"; };
+		A9588FAAABD5073276B1F5FE /* Bank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bank.swift; sourceTree = "<group>"; };
+		AB947E4945696C5B0618497C /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
+		B763334074912918593B92B8 /* Riz.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Riz.swift; sourceTree = "<group>"; };
+		BA29FC46072B78C226766C13 /* Ryze.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Ryze.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C189DACFA4B4FD65C8E9AECE /* Legal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Legal.swift; sourceTree = "<group>"; };
+		C9EC5D72C01847AB4D9F7B87 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		D86C457C70F70AC2187CA030 /* Sections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sections.swift; sourceTree = "<group>"; };
+		D9A809D64D30D08A5C5EE9D5 /* OnboardingFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlow.swift; sourceTree = "<group>"; };
+		E8CE861661007ACC81D5C23A /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		07E60B068FCA8F8A0E668C9D /* Ryze */ = {
+			isa = PBXGroup;
+			children = (
+				149ED19E871E9434405C2650 /* AppViews.swift */,
+				288CA01C0AF85A7DFED9CDA0 /* Assets.xcassets */,
+				A9588FAAABD5073276B1F5FE /* Bank.swift */,
+				C9EC5D72C01847AB4D9F7B87 /* Components.swift */,
+				AB947E4945696C5B0618497C /* Game.swift */,
+				C189DACFA4B4FD65C8E9AECE /* Legal.swift */,
+				D9A809D64D30D08A5C5EE9D5 /* OnboardingFlow.swift */,
+				437CF8667BB1E0134BAEA85B /* OnboardingModel.swift */,
+				272FB7F58EB95A417ED0E158 /* Plans.swift */,
+				B763334074912918593B92B8 /* Riz.swift */,
+				29DFDAD4403748500CD237FC /* RyzeApp.swift */,
+				D86C457C70F70AC2187CA030 /* Sections.swift */,
+				E8CE861661007ACC81D5C23A /* Theme.swift */,
+			);
+			path = Ryze;
+			sourceTree = "<group>";
+		};
+		1CF63F5BF16B7048048D7331 = {
+			isa = PBXGroup;
+			children = (
+				07E60B068FCA8F8A0E668C9D /* Ryze */,
+				A80A6BE03EC4ABC570A665F0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A80A6BE03EC4ABC570A665F0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BA29FC46072B78C226766C13 /* Ryze.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3BE24009E733B9EE7F022B3E /* Ryze */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EE95DEBCBDFF6A518ADFDD2D /* Build configuration list for PBXNativeTarget "Ryze" */;
+			buildPhases = (
+				F1F6E1758E24D55A3160CDEE /* Sources */,
+				24D185678BB198A9D427A3A7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Ryze;
+			packageProductDependencies = (
+			);
+			productName = Ryze;
+			productReference = BA29FC46072B78C226766C13 /* Ryze.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F3484E2674913416A7EC0BAC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = A127884E59CF5A69E6C593DD /* Build configuration list for PBXProject "Ryze" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 1CF63F5BF16B7048048D7331;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A80A6BE03EC4ABC570A665F0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3BE24009E733B9EE7F022B3E /* Ryze */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		24D185678BB198A9D427A3A7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				02A0283F995CF6A64B680A79 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F1F6E1758E24D55A3160CDEE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4E19EC46F89EC14F687E2F90 /* AppViews.swift in Sources */,
+				1C4ADA802BC02F15E8306784 /* Bank.swift in Sources */,
+				EFDF2C7A0B943E68EF9AE4D5 /* Components.swift in Sources */,
+				A015FCFAAF99BD7459DFADC8 /* Game.swift in Sources */,
+				1C4E8AE21EA34F80DA162DE2 /* Legal.swift in Sources */,
+				54B6ABBB0FEF50C35B4AB82D /* OnboardingFlow.swift in Sources */,
+				27BAFCDFB769EED71703B323 /* OnboardingModel.swift in Sources */,
+				B44AE11FF177F1FD56592555 /* Plans.swift in Sources */,
+				481C62D8B156BAD6EA7DFA8F /* Riz.swift in Sources */,
+				D8CEE4E7B2BC7B10DDD90DED /* RyzeApp.swift in Sources */,
+				8CDC17BA1CCC630A15E7CF32 /* Sections.swift in Sources */,
+				1E58A1A602BCBA2BE0055C1F /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2392F1D674C76B5D46CD4178 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = al.raiffeisen.ryze;
+				PRODUCT_NAME = Ryze;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		2AE30A13B89D68748C9972B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		2D7BE2C560871C3C10709CA7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		853062E45B52B5544393D8EF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = al.raiffeisen.ryze;
+				PRODUCT_NAME = Ryze;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A127884E59CF5A69E6C593DD /* Build configuration list for PBXProject "Ryze" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D7BE2C560871C3C10709CA7 /* Debug */,
+				2AE30A13B89D68748C9972B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EE95DEBCBDFF6A518ADFDD2D /* Build configuration list for PBXNativeTarget "Ryze" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2392F1D674C76B5D46CD4178 /* Debug */,
+				853062E45B52B5544393D8EF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F3484E2674913416A7EC0BAC /* Project object */;
+}

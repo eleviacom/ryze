@@ -1,0 +1,120 @@
+{
+  "logoUsage": [
+    "INSTALL FIRST — react-native-svg is NOT in package.json (verified: node_modules/react-native-svg absent). Run `npx expo install react-native-svg` to get the SDK-56-pinned version. Every illustration and the Giebelkreuz logo below is authored as react-native-svg (Svg, Path, Rect, Circle, G, Defs, LinearGradient, RadialGradient, Stop, ClipPath). Do NOT hand-roll PNGs — vector keeps the mark crisp on splash, icon and inline, and lets us tint/animate paths.",
+    "THE MARK — Raiffeisen Giebelkreuz is two crossed horse-head gables forming a symmetric cross-of-gables (an X/cross silhouette inside an implied square). Build it ONCE as `<GiebelkreuzMark size color />` in src/components/brand/Giebelkreuz.tsx: a single Svg viewBox='0 0 100 100' containing one filled Path (the two mirrored gable strokes meeting at center) plus its mirror, so the whole glyph is colorable via one `fill` prop. Default fill = C.onAccent (#000000) so the canonical lockup is dark-mark-on-yellow. NEVER recolor the mark to white-on-yellow or yellow-on-black for the official lockup — dark-on-yellow is the brand's locked contrast.",
+    "CANONICAL LOCKUP — `<LogoLockup>` = GiebelkreuzMark (black) centered inside a yellow tile. Two tile shapes: (a) `rounded` 20px-radius (R.lg) square for in-app/inline use, (b) `squircle` for the app icon. The mark occupies ~58% of the tile (generous yellow margin = the Raiffeisen safe area). This is the ONE place yellow is a large surface in onboarding — treat it as the brand stamp, consistent with 'accent is never a button' (a logo tile is identity, not an action).",
+    "APP ICON (app.json `icon` / `ios.icon` / android adaptiveIcon) — replace the current Expo placeholder. Foreground = black Giebelkreuz; background = solid #FFE600. Export the SVG lockup to 1024x1024 PNG (Expo icons must be raster). Android adaptive: adaptiveIcon.backgroundColor='#FFE600', foregroundImage = black mark centered at ~66% within the safe 108dp keyline, monochromeImage = the mark as a single-color silhouette for themed icons. Update app.json (currently backgroundColor '#E6F4FE' and an Expo glyph — both must change to yellow+Giebelkreuz).",
+    "SPLASH (expo-splash-screen plugin) — current config is wrong for Ryze (backgroundColor '#208AEF' blue, splash-icon.png is Expo art). Change to backgroundColor='#000000' (true-black canvas, matches RootLayout fallback View bg C.black) and image = a centered logo lockup PNG at imageWidth ~120: yellow rounded tile + black mark on black so the splash reads as the brand stamp on the canvas. Makes cold-start -> splash -> onboarding seamless (all true-black).",
+    "ANIMATED SPLASH HANDOFF — keep the native splash minimal (static), then on first JS frame mount an in-app `<BrandBoot>` overlay (also true-black) that re-draws the SVG GiebelkreuzMark and runs a 600ms entrance (mark scale 0.86->1 + the yellow tile's fill sweeping in via an animated clip/opacity), then fades to onboarding slide 1. Call SplashScreen.preventAutoHideAsync() in _layout and hideAsync() once Inter fonts + BrandBoot are ready — fonts already gate render in _layout.tsx line 15.",
+    "INLINE USAGE IN ONBOARDING — top-left of the value-prop carousel header, render a SMALL lockup: `<GiebelkreuzMark size={20} color={C.accent}/>` (yellow mark, no tile) next to a wordmark 'Raiffeisen' in T.eyebrow uppercase + 'Ryze' in T.h3. Here the mark may be yellow-on-black because it is a glyph at icon scale, not the official boxed lockup. On KYC screens, show the same tiny lockup in the header beside the X-close so the bank identity is always present (trust cue for account opening).",
+    "CO-BRANDING NOTE — Ryze is the youth sub-brand; lockup pattern is 'Giebelkreuz + Raiffeisen + Ryze'. Keep Giebelkreuz dark-on-yellow as the authority stamp; 'Ryze' uses the white/yellow type system. Do not invent a second logo mark for Ryze — the Inter wordmark is the Ryze identity, the Giebelkreuz is the bank's."
+  ],
+  "illustrations": [
+    {
+      "slideId": "slide-1-welcome",
+      "concept": "Hero 'Giebelkreuz coin stack' — an isometric pile of 3 stacked coins, the top coin embossed with the black Giebelkreuz, reading as 'real money, made playful'. The brand stamp lives ON the money, the single yellow object on a black field.",
+      "svgApproach": "Svg viewBox='0 0 320 320'. Each coin = ellipse top face (rx 84, ry 30) + a side wall built from two vertical lines closed by a bottom ellipse arc (Path) to fake isometric thickness. Top coin face fill=C.accent #FFE600; side wall fill=C.accentPressed #E6CF00 (darker yellow = lit-vs-shadow, our only shading trick — NO drop shadows). Stack 3 coins on Y offset ~22px. Emboss the Giebelkreuz on the top face: GiebelkreuzMark Path at center fill=C.onAccent #000000 ~0.9 opacity + a 1px lighter inner stroke rgba(255,255,255,0.18) along the gable edge to imply relief. Ground = a soft RadialGradient ellipse (Defs Stop0 rgba(255,230,0,0.16)->transparent) behind the base coin = atmospheric glow, not a shadow. Accent: 2 floating 'XP spark' dots (r=3, C.white) as separate <Circle> for the parallax/idle layer.",
+      "palette": "canvas #000000; primary surface #FFE600; shade #E6CF00; emboss #000000; glow rgba(255,230,0,0.16); sparks #ffffff"
+    },
+    {
+      "slideId": "slide-2-open-account",
+      "concept": "'100% online account' — a phone mockup in 3/4 isometric with a yellow account card sliding out of the screen, signalling 'open your account fast, zero fees, fully in-app'. Phone is dark (surface-elevated), card is the yellow stamp.",
+      "svgApproach": "Svg viewBox='0 0 320 360'. Phone body = RoundedRect (rx=28, R.xl) fill=C.surfaceElevated #16181a, 1px stroke C.hairline rgba(255,255,255,0.12) (hairline = edge language, no shadow). Screen = inner RoundedRect (rx=20) fill #0a0a0a (C.surfaceDeep) with 2 skeleton rows (Rect fill rgba(255,255,255,0.08)) + a status pill. CARD = RoundedRect (rx=14, credit-card 1.586:1) fill=C.accent overlapping top-right, rotated ~-8deg; on it black Giebelkreuz (top-left), 4 black dots as chip, thin black line as card number — fill=C.onAccent. A LinearGradient on the card (#FFE600->#FFD400) gives subtle sheen. 'ZERO fees' micro-badge = pill Rect fill rgba(255,255,255,0.06) + C.pos #3CE0A0 dot. The card is a separate <G> so it parallax/translates independently.",
+      "palette": "canvas #000000; phone #16181a; screen #0a0a0a; card #FFE600 sheen->#FFD400; card ink #000000; hairline rgba(255,255,255,0.12); 'free' dot #3CE0A0"
+    },
+    {
+      "slideId": "slide-3-do-more",
+      "concept": "'Do more with your money' — an orbit/constellation of capability tiles (instant payments arrow, FX exchange, save-jar, loan sparkline) circling a central yellow Giebelkreuz hub, showing breadth as one connected system.",
+      "svgApproach": "Svg viewBox='0 0 320 320'. Center hub = Circle r=40 fill=C.accent with black Giebelkreuz inside (fill C.onAccent). 4 satellite tiles on a circle radius ~118: each = RoundedRect 56x56 (rx=16) fill=C.surfaceElevated, 1px C.hairline, with a glyph drawn as Paths (NOT icon font, so they animate): (1) instant payment = two chevrons stroke C.accent; (2) FX = two curved arrows forming a cycle stroke C.white; (3) save = jar Rect with a yellow fill-line Rect at 60% = C.accent; (4) loan/grow = upward sparkline Polyline stroke C.pos #3CE0A0. Connect each tile to hub with a hairline Path (stroke rgba(255,255,255,0.10), dash '2 4') so the system reads connected. Each satellite is its own <G> on its own radius -> staggered orbital float + parallax. ONLY hub + payment chevron are yellow so the stamp stays scarce.",
+      "palette": "canvas #000000; hub #FFE600; hub mark #000000; tiles #16181a; tile edges rgba(255,255,255,0.12); connectors rgba(255,255,255,0.10); glyphs #ffffff + scarce #FFE600 + #3CE0A0"
+    },
+    {
+      "slideId": "kyc-id-capture",
+      "concept": "ID-card + camera frame for the 'Take a photo of your identity card' step — a dark ID card with a yellow corner-bracket capture frame, communicating 'we scan it automatically, no typing'.",
+      "svgApproach": "Svg viewBox='0 0 320 220'. ID card = RoundedRect (rx=16, ID-1 aspect ~1.585) fill=C.surfaceElevated, 1px C.hairline; on it a portrait Rect (rounded, fill rgba(255,255,255,0.10)), 3 data lines (Rect fill rgba(255,255,255,0.08) varying widths), and a black Giebelkreuz watermark at 0.25 opacity bottom-right (issuer mark). Capture frame = 4 L-shaped corner brackets as Paths, stroke=C.accent strokeWidth=3, strokeLinecap='round', insetting the card = the 'align your ID' viewfinder. Add a horizontal scan-line Rect (height 2, fill=C.accent, opacity 0.7) the animation sweeps top->bottom. Brackets + scan line are a separate <G> for the pulse.",
+      "palette": "canvas #000000; card #16181a; data rgba(255,255,255,0.08-0.10); frame #FFE600; scan line #FFE600@0.7; watermark #000000@0.25"
+    },
+    {
+      "slideId": "kyc-liveness-selfie",
+      "concept": "Liveness / 'automatic video verification, no human' — a centered face-outline inside a circular progress ring that fills yellow as liveness completes, reassuring 'automated, private, fast'.",
+      "svgApproach": "Svg viewBox='0 0 280 280'. Outer ring = Circle r=120 stroke C.hairline strokeWidth=2 (track). Progress ring = Circle r=120 stroke=C.accent strokeWidth=4 strokeLinecap='round' with strokeDasharray=circumference and an animated strokeDashoffset (Reanimated useAnimatedProps on AnimatedCircle) sweeping 0->100%. Face = a friendly Path head outline (stroke C.onDarkMute) with two dot eyes (Circle C.white) + a simple smile arc — neutral, not a photo, so it never implies a real person/human reviewer. A faint inner RadialGradient (Stop0 rgba(255,230,0,0.10)->transparent) gives presence. 'No human reviews this' is type, not SVG. The progress Circle is the hero animated element.",
+      "palette": "canvas #000000; track rgba(255,255,255,0.12); progress #FFE600; face stroke rgba(255,255,255,0.72); eyes #ffffff; aura rgba(255,230,0,0.10)"
+    },
+    {
+      "slideId": "kyc-security-shield",
+      "concept": "Trust/data-protection shield for consent + 'Why do we need it?' moments — a shield carrying the Giebelkreuz with a yellow checkmark, signalling 'Bank of Albania supervised, ASD-insured, GDPR-aligned'.",
+      "svgApproach": "Svg viewBox='0 0 240 280'. Shield = a single Path (heater shield: two top shoulders curving to a pointed base) fill=C.surfaceElevated, 1px stroke C.hairline. Inset a second smaller shield Path stroke rgba(255,255,255,0.10) for a double-line crest. Center: black Giebelkreuz (fill C.onAccent) on a small Circle r=34 fill=C.accent = the bank's authority stamp. Check = Path (two-segment tick) stroke=C.accent strokeWidth=5 strokeLinecap/Linejoin='round', drawn last so it sits on top, animated via strokeDasharray draw-on. Keep yellow ONLY to the badge circle + the tick.",
+      "palette": "canvas #000000; shield #16181a; crest line rgba(255,255,255,0.10); badge #FFE600; mark #000000; tick #FFE600"
+    },
+    {
+      "slideId": "kyc-notifications-bell",
+      "concept": "'You are always one step ahead' notifications opt-in — a bell with a single yellow notification dot and soft concentric sound waves, friendly not alarming, matching the 'Maybe later / I want to be notified' choice.",
+      "svgApproach": "Svg viewBox='0 0 240 240'. Bell = a Path (rounded bell body + small Rect clapper + top knob Circle) fill=C.surfaceElevated, 1px stroke C.hairline, with an inner highlight line stroke rgba(255,255,255,0.10). Notification badge = Circle r=12 fill=C.accent top-right (the single yellow object). Sound waves = 2-3 concentric arc Paths (stroke rgba(255,255,255,0.18), round caps) emanating, each its own element so they stagger-pulse outward. Bell tilts ±6deg in a gentle ring animation. Badge + outermost wave are the animated accents.",
+      "palette": "canvas #000000; bell #16181a; highlights rgba(255,255,255,0.10-0.18); badge #FFE600; waves rgba(255,255,255,0.18)"
+    },
+    {
+      "slideId": "success-account-opened",
+      "concept": "Final success state — the yellow Giebelkreuz badge bursting into the existing confetti, marking 'your Ryze account is open, welcome'. Bridges KYC into the gamified app (XP/coins language).",
+      "svgApproach": "Reuse LogoLockup (yellow rounded tile + black Giebelkreuz) at large size, centered, behind it a RadialGradient aura (rgba(255,230,0,0.20)->transparent). Wrap lockup in an Animated.View doing a spring pop (scale 0.6->1.08->1) + a thin C.accent ring drawing on (Circle strokeDasharray draw-on) as a 'sealed' flourish. Then trigger the EXISTING ConfettiHost (react-native-confetti-cannon 1.5.2, already wired in _layout via useGame celebrateNonce) by bumping the celebrate nonce — do NOT add a second confetti lib. Colors already match: [C.accent,C.white,C.stone,C.accentPressed].",
+      "palette": "canvas #000000; tile #FFE600; mark #000000; aura rgba(255,230,0,0.20); confetti #FFE600/#ffffff/#8d969e/#E6CF00"
+    }
+  ],
+  "animations": [
+    {
+      "name": "HorizontalPager (full-screen swipe)",
+      "spec": "Build `<Pager>` in src/components/onboarding/Pager.tsx with gesture-handler Pan (2.31, already in _layout's GestureHandlerRootView) + Reanimated 4.3.1 shared value `tx` (translateX). Each slide is full-screen width (useWindowDimensions). Pan onUpdate: tx.value = -index*W + e.translationX, rubber-band overscroll *0.3 at edges. onEnd: target index from translation (>25% W or velocityX>500), tx.value = withSpring(-target*W, {damping:20, stiffness:180, mass:0.6}). Expose derived `progress = -tx.value / W` shared value as the single source for ProgressSegments + parallax. Continue button drives index with the same spring. Children get per-slide `position = progress - index` in [-1,0,1] via context."
+    },
+    {
+      "name": "ProgressSegments (Revolut top bar)",
+      "spec": "`<ProgressSegments count active>` — N equal-width rounded bars (height 3, R.full, gap 6) pinned top under the safe-area inset (Screen already uses SafeAreaView top). Each bar = track rgba(255,255,255,0.18) + an Animated.View fill width from the Pager `progress` shared value: bar i fill = clamp(progress - i, 0, 1)*100% so the ACTIVE segment fills continuously as you drag (signature Revolut feel). Fill color = C.accent #FFE600 (scarce stamp). Past segments stay 100% yellow, future stay track-grey. useAnimatedStyle per bar reading shared progress — no React re-renders during swipe."
+    },
+    {
+      "name": "Slide entrance / exit (fade + translate + scale)",
+      "spec": "Inside `<Slide>`, read `position` (-1 leaving-left, 0 active, 1 entering-right). Content block useAnimatedStyle: opacity = interpolate(|position|,[0,0.6,1],[1,0.25,0]); a small counter-move translateX = interpolate(position,[-1,0,1],[-24,0,24]) for lead; title/body get staggered translateY via interpolate(position,[0,1],[0,16/28]) so the headline lifts in slightly after the illustration. On first mount of slide 1 only, run entering FadeIn + translateY 12->0, 420ms Easing.out(cubic) after BrandBoot fades. All interpolations are worklet, GPU-driven."
+    },
+    {
+      "name": "Parallax illustration layers",
+      "spec": "Each SVG illustration's sub-<G> layers move at different rates against the Pager `position`. Background glow/aura: translateX = position*18 (slow). Mid object (coin stack / phone / hub): translateX = position*48. Foreground accents (XP sparks, slide-2 card, satellite tiles): translateX = position*80 + rotate position*4deg. Pass `position` shared value into the illustration and apply useAnimatedStyle per layer (wrap each SVG <G> in an Animated.View, or use animated SVG props). Depth without shadows, fully on-brand."
+    },
+    {
+      "name": "Idle micro-motion (life on the active slide)",
+      "spec": "When position ~0 run subtle looping motion so it never feels static: coin-stack sparks bob (translateY withRepeat(withTiming(±4,1600ms),-1,true)); slide-2 card sheen = a thin white Rect / gradient stop sweeping diagonally every ~3s; slide-3 satellites orbit-float (withRepeat staggered by index*150ms); bell tilts ±6deg withRepeat reverse. Gate loops to the active slide (start on focus, cancelAnimation when position leaves 0) to save battery."
+    },
+    {
+      "name": "Animated progress (KYC step + liveness ring)",
+      "spec": "(a) KYC step progress: reuse existing `<ProgressBar>` (game/ui.tsx, Reanimated withTiming 650ms) or ProgressSegments for step N of M. (b) Liveness ring: AnimatedCircle (createAnimatedComponent(Circle)) with useAnimatedProps -> strokeDashoffset circumference->0 over withTiming(2200ms, Easing.inOut) when liveness 'starts'; on complete pulse to C.pos then settle. ID scan-line uses withRepeat(withTiming(top->bottom,1400ms),-1,false) until capture, then stops and the corner brackets flash C.accent (withSequence)."
+    },
+    {
+      "name": "Button press micro-interaction",
+      "spec": "Wrap the white-pill Continue CTA in Pressable+Animated.View. onPressIn: scale withTiming(0.96,90ms) + opacity 0.92; onPressOut: scale withSpring(1,{damping:12,stiffness:320}). Fire Haptics.impactAsync(Light) on press (same pattern as `tap()` in ui.tsx). Disabled = opacity 0.35 (matches existing Button). For 'I want to be notified' primary + 'Maybe later' ghost, same scale recipe. On field-valid -> button-enabled, draw a 1px C.accent focus ring on (border withTiming transparent->C.accent) to cue 'you can continue now'."
+    },
+    {
+      "name": "Field + OTP feedback",
+      "spec": "Field: on focus border animates C.hairline->C.white (220ms) (NOT yellow — accent stays scarce); on error a horizontal shake withSequence(translateX 0,-6,6,-4,4,0 @50ms) + border->C.danger. OtpInput: 4-6 cells; active cell scales 1->1.06 + border C.white; each digit entry pops the filled cell (withSequence 1.12->1); on full+valid all cells flash border C.pos and auto-advance (parent animates Pager). On wrong OTP the row shakes (shared shake worklet) + cells border C.danger, then reset."
+    },
+    {
+      "name": "Success confetti + seal",
+      "spec": "On account-opened: (1) lockup spring pop (withSequence 0.6 -> withSpring 1.08 -> withTiming 1); (2) the 'sealed' ring draws on (AnimatedCircle strokeDashoffset over 500ms); (3) trigger the EXISTING ConfettiHost by incrementing useGame celebrateNonce (store-driven, already mounted globally in _layout.tsx) — reuse, do not add react-native-confetti-cannon a second time. Aura RadialGradient opacity 0->1->0.6. Respect reduce-motion: if AccessibilityInfo.isReduceMotionEnabled skip confetti + use a simple FadeIn on the lockup."
+    },
+    {
+      "name": "Cross-screen / route transition",
+      "spec": "onboarding route already uses Stack animation:'fade' (_layout.tsx line 23) — keep it so the BrandBoot true-black splash hands off to the carousel with zero flash. Between the value carousel and the KYC stack, push KYC as a modal-style screen sliding up (translateY W->0 spring) while the carousel dims (overlay opacity 0->0.4), reinforcing 'now we start the real account opening'. The X-close reverses it (slide down + spring)."
+    }
+  ],
+  "components": [
+    "src/components/brand/Giebelkreuz.tsx — `<GiebelkreuzMark size color />` (single colorable SVG path, the reusable mark) + `<LogoLockup variant='rounded'|'squircle' size />` (yellow tile + black mark, canonical stamp). Source of truth for splash/icon/inline.",
+    "src/components/onboarding/Pager.tsx — `<Pager initialIndex onIndexChange>` full-screen horizontal swipe (gesture-handler Pan + Reanimated spring), exposes a `progress` shared value via context. Children are `<Slide>`s.",
+    "src/components/onboarding/Slide.tsx — `<Slide index>` full-screen layout (illustration top ~55%, then title/body bottom-sheet block, CTA pinned bottom). Reads `position` from Pager context and applies entrance/exit + staggered text interpolations. Bottom content sits on a subtle gradient-to-black so it lifts off the illustration without a card.",
+    "src/components/onboarding/ProgressSegments.tsx — `<ProgressSegments count active />` top Revolut-style segmented bar; per-bar fill animated continuously from Pager `progress`. Yellow fill = scarce stamp.",
+    "src/components/onboarding/illustrations/* — one file per SVG scene: CoinStack.tsx, OpenAccountPhone.tsx, DoMoreOrbit.tsx, IdCapture.tsx, LivenessRing.tsx, SecurityShield.tsx, NotifyBell.tsx, SuccessSeal.tsx. Each takes a `position` shared value for parallax + an `active` flag for idle loops. All pure react-native-svg, brand palette only.",
+    "src/components/onboarding/KycScreen.tsx — `<KycScreen title body whyLabel onWhy onClose progress canContinue onContinue>` the dark full-screen KYC form shell: X-close top-left, tiny LogoLockup, big T.displayLg title, body with inline yellow 'Why do we need it?' link, slot for field(s), pinned white-pill Continue (disabled until valid). Matches the observed Raiffeisen account-opening pattern.",
+    "src/components/onboarding/OtpInput.tsx — `<OtpInput length value onChange onComplete />` segmented code cells with active-cell scale, per-digit pop, success/error flash + shake. Auto-advances step on valid.",
+    "src/components/onboarding/Field.tsx — `<Field label value onChangeText keyboardType valid error countryPrefix? />` 56px input (R.md, C.surfaceElevated, hairline border) with animated focus border (->C.white) and error shake (->C.danger). Includes a CountryPicker variant prefilled to Albania +355.",
+    "src/components/onboarding/ConsentRow.tsx — `<ConsentRow checked onToggle>{label-with-inline-links}</ConsentRow>` tappable checkbox row (animated check draw-on, C.accent tick on a white/elevated box) for the 'I have read and I agree with Information notice regarding the processing of personal data' consent. Inline links open LegalSheet.",
+    "src/components/onboarding/LegalSheet.tsx — `<LegalSheet open onClose title>` bottom sheet (translateY spring + dim backdrop) for disclaimers/'Why do we need it?'/data-protection notice (Albanian Law 9887 / GDPR-aligned, Bank of Albania, ASD insurance). Scrollable, hairline-divided sections, white-pill 'Got it'.",
+    "src/components/onboarding/AiBuddyButton.tsx + AiBuddySheet.tsx — floating `<AiBuddyButton>` (small yellow Giebelkreuz-stamped FAB — the one allowed yellow surface as identity) opening `<AiBuddySheet>` (bottom sheet, chat-style, reuses LegalSheet motion) — the contextual onboarding helper, wired to existing game/ai.ts.",
+    "src/components/onboarding/SuccessSeal.tsx — `<SuccessSeal onDone />` final lockup pop + sealed-ring draw-on; triggers existing ConfettiHost via useGame celebrateNonce (no new confetti dependency). Honors reduce-motion.",
+    "REUSE (do not rebuild): `<Button variant='primary'>`, `<ProgressBar>`, `<Txt>`, `<Screen>`, `<Card>`, `<FeaturedCard>`, `<Tag>` from src/components/game/ui.tsx; `<ConfettiHost>` from src/components/game/ConfettiHost.tsx (already mounted in _layout); tokens C/R/S/T/FONTS from src/constants/brand.ts.",
+    "DEPENDENCY ACTION: `npx expo install react-native-svg` (currently missing). Update app.json: splash backgroundColor #000000 + Giebelkreuz splash image; app icon -> black Giebelkreuz on #FFE600; android adaptiveIcon backgroundColor #FFE600 + monochrome mark."
+  ]
+}

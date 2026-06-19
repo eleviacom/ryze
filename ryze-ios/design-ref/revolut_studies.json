@@ -1,0 +1,1192 @@
+[
+  {
+    "domain": "Home / Accounts surface (total balance, multi-currency accounts, balance card, transactions feed, spending analytics, account switching, quick actions)",
+    "features": [
+      {
+        "name": "Total balance header (aggregated across all accounts/currencies)",
+        "whatRevolutDoes": "Top of home shows one large total balance figure summing all accounts and currency balances (up to 38 currencies). Tapping the account selector beneath it drills into individual accounts. It is the anchor of the entire home screen.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Home (top hero / balance header)"
+      },
+      {
+        "name": "Primary balance card (main account, currency, large numerals)",
+        "whatRevolutDoes": "A prominent balance card displays the active account's balance in large type with currency symbol; it is the visual centerpiece, true-black UI with the account currency clearly labeled. Doubles as entry point to account detail.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "targetSection": "Home (balance card)",
+        "buildPhase": "now"
+      },
+      {
+        "name": "Balance privacy blur (flip-to-hide / shake-to-reveal)",
+        "whatRevolutDoes": "Flipping the phone face-down or shaking it auto-blurs the balance so onlookers can't see it; shake again to reveal. Also a manual hide toggle.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "targetSection": "Home (balance card) + Settings (privacy)",
+        "buildPhase": "soon"
+      },
+      {
+        "name": "Account switching / account selector",
+        "whatRevolutDoes": "An account picker below the balance lets users switch between accounts and currency balances (ALL, EUR, USD, etc.). Revolut 10 made this 'cleaner and clearer' as a holistic view of all money in one place.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "targetSection": "Home (account selector / accounts list)",
+        "buildPhase": "now"
+      },
+      {
+        "name": "Multi-currency accounts (hold/convert ALL + EUR)",
+        "whatRevolutDoes": "Hold balances in many currencies, exchange between them at near-interbank rates (weekday) with weekend markup. Each currency is its own balance under the total.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "targetSection": "Home (accounts list) / Exchange",
+        "buildPhase": "now"
+      },
+      {
+        "name": "In-app currency exchange / convert",
+        "whatRevolutDoes": "Instantly convert between held currencies (e.g., ALL <-> EUR) at live rates with transparent fees; tier-based fee-free limits.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "targetSection": "Home quick action -> Exchange flow",
+        "buildPhase": "soon"
+      },
+      {
+        "name": "Quick actions row (Add money, Send/Transfer, Exchange, Pay/Request, More)",
+        "whatRevolutDoes": "A row of one-tap primary actions directly under the balance for the most-used flows (add money, transfer, exchange, request). Revolut 10 lets users move money in one tap.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "targetSection": "Home (quick actions row)",
+        "buildPhase": "now"
+      },
+      {
+        "name": "Recent transactions feed (reverse-chronological)",
+        "whatRevolutDoes": "Scrollable feed of recent transactions newest-first, with merchant name and category, directly on home. Acts as the running history of money movement.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "targetSection": "Home (transactions feed)",
+        "buildPhase": "now"
+      },
+      {
+        "name": "Enriched transaction detail (merchant name, category, logo, location/map, country)",
+        "whatRevolutDoes": "Tapping a transaction opens detail with merchant name, category, city/country, merchant logo and a map of the location; links recurring/instalment payments to their origin.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "targetSection": "Transaction detail screen",
+        "buildPhase": "soon"
+      },
+      {
+        "name": "Transaction search (merchant, name, note, amount, city, category)",
+        "whatRevolutDoes": "Magnifying glass on home opens search across merchant name, personal name, notes, amount, city/country and category.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "targetSection": "Home (search) / Transactions",
+        "buildPhase": "soon"
+      },
+      {
+        "name": "Spending analytics (breakdown by category, merchant, country)",
+        "whatRevolutDoes": "Auto-categorizes spend and shows breakdown by category, merchant and country down to the percent (bills, eating out, transport, etc.); 'quick glance or deeper dive.'",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "targetSection": "Analytics / Insights tab (entry from Home)",
+        "buildPhase": "now"
+      },
+      {
+        "name": "Income vs spending analytics with time periods (week/month/6mo/year/custom)",
+        "whatRevolutDoes": "Switch timeframe (1 week, 1 month, 6 months, 1 year or custom) and view both spending and income; sort by category, merchant, country, currency or card.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "targetSection": "Analytics / Insights tab",
+        "buildPhase": "soon"
+      },
+      {
+        "name": "Chart visualization toggle (bar / pie / line)",
+        "whatRevolutDoes": "Users switch chart type (bar, pie, line) for their analytics view based on preference.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "targetSection": "Analytics / Insights tab",
+        "buildPhase": "later"
+      },
+      {
+        "name": "Custom spending categories",
+        "whatRevolutDoes": "Assign transactions to categories and create custom categories to fit personal needs.",
+        "appliesToYouthRyze": true,
+        "youthValue": "low",
+        "targetSection": "Analytics / category management",
+        "buildPhase": "later"
+      },
+      {
+        "name": "Budgets with real-time limit notifications",
+        "whatRevolutDoes": "Set budgets (overall or per category); get real-time push when approaching/exceeding a budget limit and on account activity.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "targetSection": "Analytics / Budget + Notifications",
+        "buildPhase": "soon"
+      },
+      {
+        "name": "External account aggregation (link other banks / Open Banking)",
+        "whatRevolutDoes": "Connect external bank accounts to see a comprehensive cross-account view of spending and balances inside Revolut.",
+        "appliesToYouthRyze": false,
+        "youthValue": "low",
+        "targetSection": "Analytics / Linked accounts",
+        "buildPhase": "skip"
+      },
+      {
+        "name": "Customizable home widgets (add/rearrange/remove)",
+        "whatRevolutDoes": "Users add, rearrange and remove home widgets (cards, favourite recipients, tools) so the most-used features are always at hand; favourite recipients enable 1-tap send.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "targetSection": "Home (widget layout)",
+        "buildPhase": "later"
+      },
+      {
+        "name": "Themes / custom backgrounds / wallpapers",
+        "whatRevolutDoes": "Personalize the home with themes, custom backgrounds and wallpapers to match taste.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "targetSection": "Home / Settings (appearance)",
+        "buildPhase": "later"
+      },
+      {
+        "name": "Pockets / sub-accounts (set money aside, bills, group saving)",
+        "whatRevolutDoes": "Pockets are sub-accounts to ring-fence money: secure funds upfront for bills (auto-paid from the pocket) and save toward goals personally or in Group Pockets with friends/family.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "targetSection": "Home (accounts list) / Pockets section",
+        "buildPhase": "soon"
+      },
+      {
+        "name": "Savings Vaults with interest (round-ups, goals)",
+        "whatRevolutDoes": "Savings Vaults to set money aside toward goals and earn interest (Standard and High-Yield), no minimum deposit; supports recurring deposits and round-ups.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "targetSection": "Home (savings) / Vaults section",
+        "buildPhase": "later"
+      },
+      {
+        "name": "Add money / top-up entry point",
+        "whatRevolutDoes": "Prominent 'Add money' action to fund the account via card, bank transfer or other rails, surfaced directly on home.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "targetSection": "Home (quick actions) -> Add money flow",
+        "buildPhase": "now"
+      },
+      {
+        "name": "Recurring / scheduled payments & subscriptions view",
+        "whatRevolutDoes": "Surfaces recurring and instalment payments linked to their origin, helping users see committed/subscription spend.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "targetSection": "Analytics / Scheduled payments",
+        "buildPhase": "later"
+      },
+      {
+        "name": "Real-time spend alerts / push notifications on transactions",
+        "whatRevolutDoes": "Instant push notification on every transaction with amount and merchant, reinforcing the live feel of the feed.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "targetSection": "Home feed + Notification service",
+        "buildPhase": "now"
+      }
+    ]
+  },
+  {
+    "domain": "Payments (Revolut Payments Hub → Ryze): send & request money, P2P instant transfers, pay by contact/phone/QR, split & group bills, payment requests/links, the chat-like social payments feed, scheduled & recurring payments, beneficiaries, and bank transfers (SEPA/local).",
+    "features": [
+      {
+        "name": "Payments Hub (dedicated Pay tab)",
+        "whatRevolutDoes": "Revolut has a dedicated 'Payments' tab in the bottom nav that is the home for all money movement. It opens to a contacts-first grid/list (people you pay), with prominent Send / Request actions at top, plus entry points to Scheduled payments, bank transfers, QR scan, and recent payment activity. It is organized as a hub: top action row (Send, Request, scan/QR, bank transfer), then a horizontally-scrollable row of frequent contacts, then sub-sections (Requests, Scheduled, Group bills, Accounts/beneficiaries).",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Pay tab (hub) — new bottom-nav tab replacing/sharing space with Quests"
+      },
+      {
+        "name": "Send money to a contact (P2P, instant Revolut-to-Revolut)",
+        "whatRevolutDoes": "Tap a contact, enter an amount in any held currency, tap Send. Revolut-to-Revolut transfers are instant and free; 99.6% arrive within ~20 seconds. No account details needed because both sides are on the platform. This is the core 'pay a friend' flow.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Pay > Send"
+      },
+      {
+        "name": "Request money from a contact",
+        "whatRevolutDoes": "Create a payment request to one person; they get a push notification and pay in one tap. Used constantly for 'you owe me'. Requester can send a friendly reminder/nudge with one extra tap if unpaid.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Pay > Request"
+      },
+      {
+        "name": "Request money from multiple people at once",
+        "whatRevolutDoes": "Send the same request to several contacts simultaneously (e.g. collect from a group) and track who has paid vs who hasn't, with per-person status and reminders.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Pay > Request"
+      },
+      {
+        "name": "Find/add friends by phone, email, username (RevTag) or QR",
+        "whatRevolutDoes": "You locate friends on the network by searching their phone number, email, or @RevTag (a unique handle), or by scanning their QR code. The contact picker syncs your phone contacts and shows which are already on Revolut. RevTag is a shareable identifier so people can pay you without exposing bank details.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Pay > Send (contact picker) — username = 'RyzeTag'"
+      },
+      {
+        "name": "Personal QR code to get paid / pay in person",
+        "whatRevolutDoes": "Every user has a personal QR (tied to RevTag/Revolut.me link). Show it and a friend scans with their camera to pre-fill a payment to you; or scan someone's QR to pay them. QR payments behave like a transfer with details auto-filled; you can edit amount/note before confirming. Great for in-person 'pay me back now'.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Pay > QR/Scan"
+      },
+      {
+        "name": "Chat-like payments (Revolut Chat in the Send flow)",
+        "whatRevolutDoes": "Tapping a contact opens a chat window inside the Payments section — an in-app messenger woven into the Send function. You can message, send GIFs/stickers, and send/request money inline in the same thread, with end-to-end encryption. Chat history + real-time notifications let you track who sent what when. Restricted to 18+; messaging only allowed when there is a saved number or prior payment history. This is Revolut's 'super app / social payments' move.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Pay > Chat/Feed (per-contact thread)"
+      },
+      {
+        "name": "Per-contact payment thread / activity feed",
+        "whatRevolutDoes": "Each contact has a running thread showing all past sends, requests, and splits between you two (like a payments timeline / iMessage-for-money), with inline status (paid, pending, declined).",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Pay > Chat/Feed"
+      },
+      {
+        "name": "Split bill on a transaction",
+        "whatRevolutDoes": "After paying with your card, tap a transaction and hit 'Split bill', pick contacts, and split evenly or set custom per-person amounts. Each contact gets a notification of what they owe and pays their share in one tap. If a contact isn't on Revolut, it texts/emails a payment-request link they can open after installing.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Pay > Split (from a transaction) + Home transaction row action"
+      },
+      {
+        "name": "Group Bills (persistent shared-expense groups)",
+        "whatRevolutDoes": "Create a Group from the Transactions tab or from a transaction. Add/remove members, add multiple bills over time (including bills for expenses paid outside Revolut), settle debts, and the app tracks net balances per member. Includes a Group Bills chat and automatic payment reminders. Designed for flatmates, trips, recurring shared costs.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Pay > Split (Groups)"
+      },
+      {
+        "name": "Split evenly vs custom shares / split by items",
+        "whatRevolutDoes": "When splitting, choose an even split with one tap or adjust each person's amount; supports uneven shares so you can apportion exact line items / receipt amounts.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "Pay > Split"
+      },
+      {
+        "name": "Payment request links (Revolut.me)",
+        "whatRevolutDoes": "Generate a shareable secure link (revolut.me/username) or QR to request/receive money from anyone — even people without the app — without exposing your account/card details. Recipients of the link can pay by card, bank account, or Revolut balance. Shareable via WhatsApp/SMS/email.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Pay > Request (shareable link / RyzeTag link)"
+      },
+      {
+        "name": "Reminders / nudges for unpaid requests",
+        "whatRevolutDoes": "For any outstanding request or group bill share, the requester can send a friendly reminder with one tap; Group Bills also sends automatic reminders. Reduces the awkwardness of chasing friends.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Pay > Request / Pay > Split"
+      },
+      {
+        "name": "Scheduled (one-off future) payments",
+        "whatRevolutDoes": "Schedule a transfer to go out on a future date; managed under Payments > Scheduled. Each can be named. Revolut warns 24h ahead if funds are insufficient so you can top up.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Pay > Scheduled"
+      },
+      {
+        "name": "Recurring payments / standing orders",
+        "whatRevolutDoes": "Set up repeating push payments (daily/weekly/monthly) to a person or bank account, each individually named, all listed under Payments > Scheduled. You can edit, deactivate, reactivate, or delete any of them anytime.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Pay > Scheduled"
+      },
+      {
+        "name": "Direct debits (pull payments by merchants)",
+        "whatRevolutDoes": "Lets a company/merchant pull a recurring amount (utilities, subscriptions). Managed in the same scheduled/subscriptions area; you can view and cancel mandates.",
+        "appliesToYouthRyze": false,
+        "youthValue": "low",
+        "buildPhase": "skip",
+        "targetSection": "Pay > Scheduled (out of scope for youth MVP)"
+      },
+      {
+        "name": "Beneficiaries / saved payees",
+        "whatRevolutDoes": "Maintain a list of saved recipients (people and external bank accounts) so repeat transfers don't require re-entering details. Beneficiaries store name + account details + (for external) IBAN/BIC, and confirmation-of-payee name checks.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "Pay > Beneficiaries (saved payees)"
+      },
+      {
+        "name": "Bank transfer to external account (SEPA / local rails)",
+        "whatRevolutDoes": "Send to any external bank account by entering recipient name + account number + BIC/SWIFT (or IBAN). SEPA Instant arrives in seconds where supported; standard SEPA / local bank transfers arrive within hours to a few business days. This is the bridge to non-Ryze accounts.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Pay > Send (Bank transfer) → Beneficiaries"
+      },
+      {
+        "name": "Confirmation of Payee (name check)",
+        "whatRevolutDoes": "When adding/paying an external account, the network verifies the entered recipient name matches the account holder to prevent misdirected payments and fraud.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Pay > Send (Bank transfer) / Beneficiaries"
+      },
+      {
+        "name": "Multi-currency send (ALL + EUR) with FX",
+        "whatRevolutDoes": "Hold balances in 25+ currencies and send in any of them; if recipient/currency differs, Revolut converts at interbank rate (with weekend/over-allowance markup). FX is applied on payment day for scheduled transfers. For Ryze: ALL + EUR with conversion between them.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Pay > Send (currency selector) + Accounts"
+      },
+      {
+        "name": "International money transfer (cross-border)",
+        "whatRevolutDoes": "Send abroad (e.g. UK→Albania) via card transfer (seconds–30 min), Revolut-to-Revolut (instant), or bank transfer (often 3–5 business days), with per-plan international allowance and possible transfer fee. Relevant for youth with family abroad / diaspora remittances.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Pay > Send (International)"
+      },
+      {
+        "name": "Pay non-users via link/SMS (off-network fallback)",
+        "whatRevolutDoes": "If a contact isn't on the platform, split/request flows fall back to an SMS/email payment-request link; the person can pay by card or after installing the app. Keeps the social loop unbroken and doubles as a growth/invite hook.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Pay > Request/Split (off-network fallback) — ties into existing Invite/referrals"
+      },
+      {
+        "name": "Frequent contacts / recents row",
+        "whatRevolutDoes": "The Payments tab surfaces a horizontally-scrollable row of your most-paid people at the top so paying a frequent friend is one tap. Backed by payment-frequency ranking.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Pay tab (hub) — top contacts row"
+      },
+      {
+        "name": "Transaction note / message + GIF/sticker on a payment",
+        "whatRevolutDoes": "Attach a note (and in chat, GIFs/stickers/emoji) to each send or request so the payment carries context ('🍕 pizza', 'rent March'). Makes payments expressive and social rather than cold.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Pay > Send / Pay > Chat/Feed"
+      },
+      {
+        "name": "Payment status tracking & receipts",
+        "whatRevolutDoes": "Every payment shows live status (sent/pending/completed/declined/reverted), a shareable receipt, and lands in both the per-contact thread and the global activity feed; supports share-receipt via link or QR.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "Pay > Chat/Feed + Home activity"
+      },
+      {
+        "name": "Add money / top up the account",
+        "whatRevolutDoes": "Fund the balance via linked card, Apple Pay, or inbound bank transfer (using your own account details/IBAN). Prerequisite for being able to send; surfaced from the Payments/Accounts area.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Accounts / Home (Add money) — gates Pay"
+      },
+      {
+        "name": "Receive money via your own account details / IBAN",
+        "whatRevolutDoes": "Show your account number/IBAN + BIC so others can transfer in like a local bank account (regional details for incoming SEPA/local payments). For under-18 (Kids/Teens) sub-accounts these details don't exist — relevant given Ryze's 18–25 audience can use full details.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Accounts (Receive / account details)"
+      },
+      {
+        "name": "Shared / group savings pot (Group Vaults)",
+        "whatRevolutDoes": "Friends/flatmates create a common pot they all contribute to for shared goals or expenses — an alternative to a joint account, with round-ups and scheduled contributions. Adjacent to payments (collective money) and very on-brand for youth group spending.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Accounts (Group pot) — adjacent to Pay > Split"
+      }
+    ]
+  },
+  {
+    "domain": "Cards (physical + virtual + disposable cards, freeze/unfreeze, card details reveal, spending limits, Apple/Google Pay, card design/customization, security toggles)",
+    "features": [
+      {
+        "name": "Virtual debit card (instant, in-app)",
+        "whatRevolutDoes": "Generates an instant virtual debit card linked to the account with its own 16-digit PAN, CVV and expiry, usable immediately for online/in-app purchases and to add to Apple/Google Pay. No plastic needed; can be created in seconds. Up to 5 multi-use cards per 30 days.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Physical card order + delivery tracking",
+        "whatRevolutDoes": "Order a physical debit card from the Cards page (Add new > physical card), with an in-app delivery status widget showing current status and estimated delivery date; tracked express delivery on paid tiers.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Disposable / single-use virtual card",
+        "whatRevolutDoes": "A virtual card whose number is auto-destroyed and regenerated after a single transaction, isolating your real card data from merchants. Designed for one-off purchases on untrusted sites. One disposable card per account.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Freeze / unfreeze card",
+        "whatRevolutDoes": "Instantly freeze a card from the app to block all payments/transactions, and unfreeze just as easily — used if a card is lost/stolen or fraud is suspected. Protected by 2FA.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Reveal card details (PAN / CVV / expiry)",
+        "whatRevolutDoes": "Tap a card then 'Show details' to reveal the full 16-digit number, CVV and expiry for online purchases; gated so only the card owner can view. Virtual cards have no PIN.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "View / reveal physical card PIN in app",
+        "whatRevolutDoes": "Securely view the physical card's PIN inside the app (PIN/CVC/expiry) without a paper letter; PINs apply only to physical cards.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Per-card spending limits",
+        "whatRevolutDoes": "Set an individual spending limit per card (e.g. a 'Eating out' card capped at a monthly amount); once hit, the card declines further payments. Enables budgeting by giving each card a purpose.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Online / e-commerce payments toggle",
+        "whatRevolutDoes": "Enable or disable online (card-not-present) payments per card independently of other channels.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Contactless payments toggle + contactless limit",
+        "whatRevolutDoes": "Turn contactless on/off per card; Revolut also auto-sets a per-transaction contactless limit.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "now",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "ATM withdrawals toggle",
+        "whatRevolutDoes": "Disable ATM withdrawals on a card to block all cash-withdrawal attempts (and re-enable when needed).",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "now",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Magstripe / swipe payments toggle",
+        "whatRevolutDoes": "Disable magstripe/swipe payments to prevent card cloning, limiting use to chip-and-PIN or contactless.",
+        "appliesToYouthRyze": true,
+        "youthValue": "low",
+        "buildPhase": "later",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Location-based security",
+        "whatRevolutDoes": "Restrict card use to the user's current location / specific geographies, declining transactions that occur far from where the user is.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Add to Apple Pay / Google Pay (tokenization)",
+        "whatRevolutDoes": "Add any physical or virtual card to Apple Pay or Google Pay (where NFC and the wallet are supported) for tap-to-pay; provisioning happens in-app.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Card design / customization (color, art, metal engraving)",
+        "whatRevolutDoes": "Choose card colors/finishes (e.g. Rose Gold, Lavender, Space Gray; metal/steel finishes on top tiers) and personalize with engraved or printed designs; a paid customization option exists. Cards are a design statement.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Multiple cards management (create up to 5 / 30 days)",
+        "whatRevolutDoes": "Hold and manage several cards at once — one per spending purpose — with the ability to create up to 5 multi-use cards every 30 days plus a disposable card.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Terminate / delete a card",
+        "whatRevolutDoes": "Permanently remove a virtual card (or close a physical card) from the account, invalidating its number.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "now",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Replace lost / stolen card",
+        "whatRevolutDoes": "After freezing, report a card lost/stolen and order a replacement (first replacement free), invalidating the old PAN and issuing a new one.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Per-card transaction notifications",
+        "whatRevolutDoes": "Instant push notification on every card payment (merchant, amount, time, location); can be toggled per card. In youth/teen accounts these alerts feed budgeting and oversight.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "No-overdraft / cannot go negative (youth safety)",
+        "whatRevolutDoes": "On under-18 accounts, the card cannot push the balance negative — no overdraft, no debt, reducing scam/over-spend risk.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Card-linked spend timeline (merchant, time, location)",
+        "whatRevolutDoes": "Each card transaction shows a rich entry with merchant name, exact time and physical location, building a clear spend history tied to the card.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Metal / premium tier cards",
+        "whatRevolutDoes": "Exclusive engraved steel/metal cards in multiple colors reserved for the highest paid plans, as a status/perk item.",
+        "appliesToYouthRyze": true,
+        "youthValue": "low",
+        "buildPhase": "later",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "Card delivery tracking number (carrier integration)",
+        "whatRevolutDoes": "Express tiers get a real tracking number / carrier handoff; standard delivery shows only an estimated date.",
+        "appliesToYouthRyze": false,
+        "youthValue": "low",
+        "buildPhase": "skip",
+        "targetSection": "Cards"
+      },
+      {
+        "name": "2FA / biometric gate on sensitive card actions",
+        "whatRevolutDoes": "Sensitive card actions (reveal details, unfreeze, change limits) require two-factor / biometric authentication.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Cards"
+      }
+    ]
+  },
+  {
+    "domain": "Money & Grow (Savings/Vaults/Pockets, round-ups, budgeting & spending analytics, subscriptions, FX/currency exchange, investing) mapped to youth-Ryze (Raiffeisen Albania, 18-25, ALL+EUR)",
+    "features": [
+      {
+        "name": "Savings Vaults (interest-bearing / High-Yield Savings)",
+        "whatRevolutDoes": "Dedicated savings space split from Pockets. Two types: High-Yield Savings targeting the highest APY with daily-accruing interest, and Standard Savings. Money held separately from spendable balance, withdrawable on instant access, earns interest. Funded by one-off transfers, recurring transfers, or round-ups.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Grow / Savings (new top-level Grow tab); Savings card on balance-centric Home"
+      },
+      {
+        "name": "Pockets (personal money buckets)",
+        "whatRevolutDoes": "Successor to personal Vaults: named, customizable sub-balances for budgeting and setting money aside (rent, groceries, a trip). Can pay bills/subscriptions directly from a Pocket, schedule recurring top-ups, ring-fence money from main balance. Non-interest organizational buckets, distinct from interest-earning Savings Vaults.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Grow / Pockets; entry from Home balance card and Payments hub (pay-from-pocket)"
+      },
+      {
+        "name": "Group Pockets / Group Vaults (shared saving)",
+        "whatRevolutDoes": "Shared savings buckets where multiple users contribute to a common goal (trip, gift, shared rent) with visibility of who paid what; a lightweight alternative to a joint account. Highly social/viral and a natural tie-in to split payments and referrals.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Grow / Pockets (Group tab); linked to Payments hub (Split into a Group Pocket)"
+      },
+      {
+        "name": "Savings Goals (target amount + progress tracking)",
+        "whatRevolutDoes": "Each Vault/Pocket can carry a named goal with target amount, optional image, and a visual progress bar; app tracks progress and projects completion from recurring contributions. Prominent in Revolut under-18 product to teach goal-based saving. The goal+progress-bar loop maps directly onto Ryze gamification (XP/badges/quests).",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Grow / Savings & Pockets (goal per vault); progress mirrored into Gamification missions/badges"
+      },
+      {
+        "name": "Spare-change round-ups (to Pocket/Savings)",
+        "whatRevolutDoes": "Automatically rounds each card transaction up to the nearest whole unit and moves the difference into a chosen Pocket/Vault. Works on all linked cards including virtual cards; runs alongside one-off and recurring contributions. Painless automatic saving fitting irregular youth income, generating a micro-event stream for streaks/XP/Riz nudges.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Grow / Savings (round-up per vault); events feed Gamification + Home 'saved this month' tile"
+      },
+      {
+        "name": "Round-up accelerator / multiplier (x2, x3, x5, x10)",
+        "whatRevolutDoes": "Multiplies each round-up by a chosen factor (x1-x10) so e.g. a 0.20 round-up becomes 1.00 at x5, to save faster. A 'turn it up' lever that gamifies saving aggressiveness; secondary to having round-ups at all, and needs overdraw guards on thin youth balances.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "Grow / Savings (round-up config); can be a gamified 'boost' tied to streaks"
+      },
+      {
+        "name": "Recurring / scheduled auto-save transfers",
+        "whatRevolutDoes": "Set automatic daily/weekly/monthly contributions from the main balance into a Vault/Pocket plus one-off top-ups to grow savings consistently. 'Pay yourself first' automation and the backbone of any savings product.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Grow / Savings & Pockets (auto-save schedule); standing orders via Payments microservice"
+      },
+      {
+        "name": "Spending analytics & auto-categorization",
+        "whatRevolutDoes": "Every transaction auto-assigned a category via AI-driven categorization; users can create custom categories. Home analytics shows spending and income by category and merchant with previous-period comparison. Self-awareness driver and the data backbone for budgets, missions and Riz insights; must handle ALL+EUR and local Albanian merchants.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Grow / Insights (Analytics) + summary tile on Home; Analytics microservice, categorization in Payments/User"
+      },
+      {
+        "name": "Budgets / budget limits with alerts",
+        "whatRevolutDoes": "Set overall or per-category monthly/weekly budget limits; real-time notifications warn as you approach or exceed a limit, with progress shown against the budget. Directly tackles youth overspending; a natural mission/streak (stayed under budget 3 weeks).",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Grow / Insights (Budgets); alerts via Notification microservice; adherence feeds Gamification"
+      },
+      {
+        "name": "Income tracking & income-vs-spending overview",
+        "whatRevolutDoes": "Analytics separate incoming money from spending and show net position with period-over-period comparison, giving a cashflow picture. Useful for irregular youth income (part-time, gigs, allowance) but secondary to category spend; ships with the analytics engine.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "Grow / Insights (Analytics) income tab"
+      },
+      {
+        "name": "Subscriptions & recurring-payments tracker",
+        "whatRevolutDoes": "Detects recurring charges (subscriptions, memberships, bills) from direct debits/card payments and lists them in a dedicated section; users can manually flag a transaction as recurring; estimates upcoming charges. Streaming/gaming/app subscriptions are a defining youth spend and surfacing forgotten ones is a strong 'it saved me money' moment.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Grow / Insights (Subscriptions); detection in Analytics microservice"
+      },
+      {
+        "name": "Subscription blocking / cancel control",
+        "whatRevolutDoes": "From the subscriptions list, block a recurring merchant so future card payments are declined, stopping unwanted subscriptions at the card level. High delight but depends on mature merchant-level card-control plumbing.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Grow / Insights (Subscriptions) acting through Cards microservice (merchant lock)"
+      },
+      {
+        "name": "Multi-currency wallet / accounts (ALL + EUR)",
+        "whatRevolutDoes": "Hold and manage balances in many currencies in one account with a multi-currency card; spend in local currency abroad and switch between currency balances. In Albania ALL+EUR is everyday reality (EUR savings, travel, EUR online shopping), so a clean ALL/EUR dual-balance is a strong, locally-relevant differentiator.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Home (ALL/EUR balance switcher) + Grow/Exchange; Payments/User microservices"
+      },
+      {
+        "name": "Currency exchange / FX at near-interbank rates",
+        "whatRevolutDoes": "Convert between currencies in-app at interbank-style rates on weekdays with fee-free monthly allowances by tier; weekend markup (~1%, higher for exotic pairs) and a small fee above allowance. ALL<->EUR conversion beating traditional bank spreads is concretely useful and brand-differentiating; needs an FX rail/pricing decision with Raiffeisen.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Grow / Exchange (Convert); FX pricing in Payments microservice"
+      },
+      {
+        "name": "Instant free Ryze-to-Ryze (Revolut-to-Revolut) transfers",
+        "whatRevolutDoes": "Instant, free transfers between users regardless of currency, distinct from external bank rails. The social, viral backbone of the payments feed and a key acquisition loop; overlaps the money layer (funding/settlement) but is primarily a payments feature.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Payments hub (send/request); Payments microservice (money-layer overlap)"
+      },
+      {
+        "name": "Stocks & ETFs (fractional shares)",
+        "whatRevolutDoes": "Commission-free monthly allowance then a per-order fee (greater of ~0.25%, ~0.12% top tier, or a small minimum); thousands of US/EU stocks plus a growing ETF range with fractional shares from ~1 unit. Aspirational 'first investment' for 18-25 but carries heavy MiFID-style licensing, KYC suitability and reg burden in Albania/EU; ETFs are the responsible entry point, not single stocks. Only after core banking is solid.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Grow / Invest (gated, separate flow); own Investing service behind the BFF, not MVP"
+      },
+      {
+        "name": "Commodities (gold/silver, precious metals)",
+        "whatRevolutDoes": "Buy/hold precious metals (gold, silver, on some entities platinum/palladium), historically a premium-tier feature in the Wealth/Invest tab. Niche, low engagement for youth and carries the same regulatory weight as investing for little incremental value.",
+        "appliesToYouthRyze": false,
+        "youthValue": "low",
+        "buildPhase": "skip",
+        "targetSection": "n/a (would live under Grow/Invest only if a 'gold savings' angle tests well)"
+      },
+      {
+        "name": "Crypto trading (in-app + Revolut X) & crypto round-ups",
+        "whatRevolutDoes": "Buy/sell hundreds of tokens in-app (spot ~1.49%), a separate Revolut X pro venue (0% maker / ~0.09% taker) and stablecoin swaps, plus 'crypto spare change' investing round-ups into a chosen token. High appeal to a youth subset but high volatility/loss risk, heavy/uncertain crypto regulation, and a poor fit for a conservative Raiffeisen-branded bank's duty of care to first-time savers. Should not compete with the savings habit.",
+        "appliesToYouthRyze": false,
+        "youthValue": "low",
+        "buildPhase": "skip",
+        "targetSection": "n/a (explicitly out of scope; if ever, a clearly-gated Grow/Invest sub-flow)"
+      },
+      {
+        "name": "Total Wealth / net-worth summary",
+        "whatRevolutDoes": "Aggregates balances across accounts, savings and investments into a single 'total wealth' figure at the top of the wealth/invest experience. A motivating single number (spendable + saved) reinforcing the balance-centric Home and the saving habit even before any investing exists; can grow into a level/tier visual.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "Home header (Total = spendable + savings) and top of Grow tab; aggregation in BFF/Analytics"
+      }
+    ]
+  },
+  {
+    "domain": "Youth + Lifestyle + Loyalty (Revolut <18/Junior, RevPoints, referrals, cashback, Groups, donations, lifestyle add-ons) mapped to youth-Ryze (Raiffeisen Bank Albania, ages 18-25, ALL + EUR)",
+    "features": [
+      {
+        "name": "RevPoints loyalty currency (earn-on-spend)",
+        "whatRevolutDoes": "A unified points currency earned on eligible card spend (up to 1pt/£ depending on plan), with bonus accelerators: converting spare change to points, completing in-app challenges, and bonus rates on in-app bookings (Stays up to 10pt/£, Experiences 5pt/£, Shops 20pt/£). New users get 3,000 pts after 150 transactions. Points are free, valid 3 years, and are the backbone of the whole rewards layer.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Rewards / Gamification — make XP the engagement currency and add a parallel spendable RevPoints-style currency ('RyzePoints') earned on real card spend"
+      },
+      {
+        "name": "Earn-on-spend mechanics (transaction-triggered rewards)",
+        "whatRevolutDoes": "Awards loyalty points automatically for real card transactions, turning everyday spending into the primary earn loop rather than artificial tasks. This is the bridge that makes a loyalty program feel like banking, not a game.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Payments Hub + Gamification — wire the Payments microservice to emit 'transaction completed' events that the Gamification service consumes to grant XP and points"
+      },
+      {
+        "name": "In-app challenges / quests (points-rewarded)",
+        "whatRevolutDoes": "Time-boxed challenges that award points for real banking actions: make N transactions, send money to another user, set up a Vault/savings goal, add money, refer a friend. Drives habit formation tied to product adoption, not busywork.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Gamification — re-frame existing daily missions/quests so they reward REAL banking actions (first transfer, first split, first goal, first salary deposit) instead of generic engagement"
+      },
+      {
+        "name": "Spare-change round-ups → savings or points",
+        "whatRevolutDoes": "Rounds each card purchase up to the nearest whole unit and sweeps the difference into a savings Pocket/Vault, or accelerates it into points (multiplier 2x-10x). Painless micro-saving that also feeds the loyalty loop.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Home / Savings (Pockets) with a toggle to route round-ups to points — ties into Gamification streaks for consistent saving"
+      },
+      {
+        "name": "Referral program (refer-a-friend bonus)",
+        "whatRevolutDoes": "Unique invite link/code; both referrer and invitee unlock a cash/points reward once the invitee signs up and completes qualifying actions (add money + first transaction). Capped (~5 invitees/campaign), variable reward amounts. Revolut's single biggest growth engine.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Rewards / Referrals (already exists in Ryze) — upgrade to require real qualifying actions and pay out in RyzePoints + small ALL/EUR cash bonus; surface prominently after first successful transfer"
+      },
+      {
+        "name": "Cashback (tier-gated %)",
+        "whatRevolutDoes": "Percentage cashback on card spend scaled by paid plan tier (0.4% Standard up to 1% Ultra), capped at the plan's monthly fee. Largely superseded by RevPoints for retail users; now mainly a Pro/business perk.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Rewards — offer modest category cashback (e.g. food delivery, transport, streaming) as a youth perk; better to lead with points and reserve cashback for a premium/older-youth tier given thin youth-segment margins"
+      },
+      {
+        "name": "Points redemption catalog (rewards store)",
+        "whatRevolutDoes": "Redeem points for airline miles (1:1 transfer to partner programs), travel discounts (Stays/Experiences), and brand discounts via Revolut Pay (e.g. French Connection, Dermalogica). Cannot be cashed out. Redemption lives in the Lifestyle tab.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Rewards Store (already exists) — stock with youth-relevant Albanian/regional redemptions: mobile top-up, gift cards, food/transport vouchers, event tickets, donation matches; powered by Rewards microservice"
+      },
+      {
+        "name": "Raffles / prize draws from points",
+        "whatRevolutDoes": "Lets users spend points to enter raffles for cash prizes, adding variable-reward 'lottery' excitement on top of fixed redemptions.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Rewards Store — a 'spend points to enter' draw section; check Albanian gaming/promo regulation before shipping"
+      },
+      {
+        "name": "Leaderboard (points/competition)",
+        "whatRevolutDoes": "Displays users' points to foster competition; used as a social engagement driver alongside challenges.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "now",
+        "targetSection": "Gamification (leaderboard already exists in Ryze) — keep friends-scoped/opt-in for privacy; rank on XP not on spend to avoid encouraging overspending"
+      },
+      {
+        "name": "Charity round-ups & recurring donations",
+        "whatRevolutDoes": "Round up card payments and donate the spare change to a chosen charity (no minimum, no fees, 100% passes through, 2x-10x accelerator), plus one-off and recurring donations. Strong values/identity signal for younger users.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "Payments Hub / Donations + Gamification — partner with Albanian NGOs; award a distinct 'good-citizen' badge and XP for giving (do NOT make giving feel like grinding)"
+      },
+      {
+        "name": "Groups / shared budgets (ongoing shared expenses)",
+        "whatRevolutDoes": "Group Bills: create a group (2-20 people), track ongoing shared expenses (rent, trips, household), auto-calculate who owes what, send automatic reminders, settle up instantly free between users, multi-currency support, with an in-group chat to discuss and settle.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Payments Hub — core Revolut-style social-payments feature; perfect for students (flatmates, group trips). Build the chat-like payments feed here"
+      },
+      {
+        "name": "Split bill (one-off transaction split)",
+        "whatRevolutDoes": "Split a single past transaction across friends (even non-equal shares); requests sent to each person, settled instantly and free between Revolut users.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Payments Hub — split is table-stakes for the chat-like payments feed; trigger from any transaction in the feed"
+      },
+      {
+        "name": "Send / request money + chat-like payments feed",
+        "whatRevolutDoes": "Instant free peer transfers between Revolut users in 26+ currencies, with requests, notes/emoji, and group chat threads attached to money movement — the conversational payments experience the brief calls for.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Payments Hub (the marquee build) — send/request/split inside a chat-like feed; Payments microservice + BFF, with Gamification consuming events for XP/streaks"
+      },
+      {
+        "name": "Savings Pockets / Vaults with goals",
+        "whatRevolutDoes": "Customizable savings compartments to save toward specific goals, fed manually, via recurring transfers, or via round-ups. For teens these double as a financial-literacy tool.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Home / Savings — goal-based Pockets; gamify with progress rings, milestone badges, and a saving streak (Gamification overlay)"
+      },
+      {
+        "name": "Chores / 'Earn' tasks (under-18 allowance-for-tasks)",
+        "whatRevolutDoes": "In the Kids&Teens product, parents set tasks (household chores) with a payout; the child earns money on completion. A real-money task/quest loop that doubles as financial education.",
+        "appliesToYouthRyze": false,
+        "youthValue": "low",
+        "buildPhase": "skip",
+        "targetSection": "N/A — this is a parent-child mechanic for under-18s; Ryze's 18-25 audience are financially independent. The XP/quest layer already covers the 'earn by doing' motivation without a parent payer"
+      },
+      {
+        "name": "Parental controls / co-parent oversight (under-18)",
+        "whatRevolutDoes": "Parents/guardians (18+) oversee the teen account: set spending limits, freeze card in-app, set trusted contacts, add a co-parent, automate allowance as a recurring 'payday'.",
+        "appliesToYouthRyze": false,
+        "youthValue": "low",
+        "buildPhase": "skip",
+        "targetSection": "N/A — 18-25 users are account holders, not minors. (Self-service card freeze and spending limits DO apply, but as standard Cards features, not parental controls)"
+      },
+      {
+        "name": "Allowance / recurring 'payday' automation",
+        "whatRevolutDoes": "Parents schedule recurring payments so the teen gets a regular allowance ('payday'), normalizing income-and-budget cadence.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Payments / Standing orders — repurpose as scheduled transfers / recurring saving; the 'payday' framing (salary/allowance detection → auto-split to savings) is a strong youth budgeting hook"
+      },
+      {
+        "name": "Account migration at 18 (Junior → adult)",
+        "whatRevolutDoes": "When a user turns 18 they can migrate balance and Pockets from the Kids&Teens account into a full adult personal account — a built-in lifecycle funnel.",
+        "appliesToYouthRyze": false,
+        "youthValue": "low",
+        "buildPhase": "skip",
+        "targetSection": "N/A — Ryze starts at 18; relevant only if Raiffeisen later adds an under-18 product that graduates into Ryze (a strategic note, not a near-term feature)"
+      },
+      {
+        "name": "Financial literacy / education content",
+        "whatRevolutDoes": "In-app and blog learning that teaches budgeting, saving toward goals, and spending tracking in a practical, age-appropriate way; positioned as a core differentiator of the youth product.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "AI buddy 'Riz' + Gamification — deliver bite-size money lessons as quests with XP rewards; Riz nudges and explains. Strong fit for a youth Raiffeisen positioning"
+      },
+      {
+        "name": "eSIM / Mobile Plans",
+        "whatRevolutDoes": "Buy travel data eSIMs in-app for 100+ countries (local/regional/global), plus full Mobile Plans (unlimited calls/texts/data + EU/US roaming, local number, no contract). Earns RevPoints and deepens lifestyle lock-in.",
+        "appliesToYouthRyze": false,
+        "youthValue": "low",
+        "buildPhase": "later",
+        "targetSection": "Lifestyle tab — appealing to youth travelers but heavy partner integration (1GLOBAL-style); defer until core banking + payments are solid. Possible later differentiator for Albanian students traveling in EU"
+      },
+      {
+        "name": "Stays (hotel/accommodation booking)",
+        "whatRevolutDoes": "Book 1.9M+ hotels/homes/guesthouses in-app and earn elevated points (up to 10pt/£). Turns the app into a travel commerce surface.",
+        "appliesToYouthRyze": false,
+        "youthValue": "low",
+        "buildPhase": "later",
+        "targetSection": "Lifestyle tab — high build cost (Booking.com/Nuitee-style partnership) and lower priority for an 18-25 Albanian audience; a 'later' lifestyle add-on, not core"
+      },
+      {
+        "name": "Experiences (tours / tickets / events)",
+        "whatRevolutDoes": "Book 300K+ tours, attractions, and event tickets in-app, earning points (up to 5pt/£). A more youth-relevant slice of the lifestyle suite (concerts, events).",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Lifestyle tab — youth gravitate to events/concerts/festivals; a curated Albanian-events Experiences feed (with points) is a more relevant lifestyle bet than Stays/Lounges"
+      },
+      {
+        "name": "Airport Lounges & Fast Track",
+        "whatRevolutDoes": "Premium-tier access to 1,000+ lounges and Fast Track at 100+ airports, with complimentary food/drink (unlimited on Ultra).",
+        "appliesToYouthRyze": false,
+        "youthValue": "low",
+        "buildPhase": "skip",
+        "targetSection": "N/A — premium-traveler perk mismatched to an 18-25 mass-market youth segment and to early build priorities"
+      },
+      {
+        "name": "Shops (in-app shopping with elevated points)",
+        "whatRevolutDoes": "Buy from partner merchants via Revolut Shops / Revolut Pay, earning the highest point rate (up to 20pt/£) and brand discounts at checkout.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Rewards / Lifestyle — a youth-brand offers wall (local + regional merchants, food delivery, gaming, fashion) with boosted points; lighter than Stays/eSIM to launch via merchant deals"
+      },
+      {
+        "name": "Card customization",
+        "whatRevolutDoes": "Personalize the physical/virtual card design (with possible fees), a strong identity/self-expression hook for younger users.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "Cards — youth love self-expression; offer card skins/colors, some unlockable via XP/levels or badges (ties Cards microservice to Gamification)"
+      },
+      {
+        "name": "Premium subscription tiers (Plus/Premium/Metal/Ultra)",
+        "whatRevolutDoes": "Paid monthly plans that gate higher cashback %, lounges, eSIM/Stays perks, insurance, and limits — Revolut's core monetization of the lifestyle/loyalty stack.",
+        "appliesToYouthRyze": true,
+        "youthValue": "low",
+        "buildPhase": "later",
+        "targetSection": "Monetization (cross-cutting) — a single affordable youth tier (e.g. 'Ryze+') unlocking better points multipliers, card skins, and select perks; keep the core free, monetize lightly given the segment's budget"
+      }
+    ]
+  },
+  {
+    "domain": "Profile, Security & Support — profile/identity, security controls (PIN/passcode, biometrics, device & session management, anti-fraud), notifications, in-app support chat, settings, and statements/documents — modeled on Revolut and mapped to youth-Ryze (Raiffeisen Bank Albania, 18–25, ALL+EUR, true-black UI, gamification woven in).",
+    "features": [
+      {
+        "name": "6-digit app passcode (PIN)",
+        "whatRevolutDoes": "A 6-digit passcode is the primary credential to unlock the app and a fallback when biometrics fail. Changeable in-app (Profile -> Settings -> Security & privacy), resettable via identity re-verification if forgotten, and gates sensitive actions.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Profile -> Security & Privacy"
+      },
+      {
+        "name": "Biometric unlock (Face ID / Touch ID / fingerprint)",
+        "whatRevolutDoes": "Optional biometric login to unlock the app and authorise payments. iOS uses Face ID/Touch ID, Android uses fingerprint/face. Toggled in security settings, requires OS-level biometrics, and falls back to passcode.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Profile -> Security & Privacy"
+      },
+      {
+        "name": "Biometric / 3DS step-up for payments and sensitive actions",
+        "whatRevolutDoes": "Outgoing transfers, adding payees, revealing full card details, and 3D Secure online card payments require step-up auth (biometric or passcode). 3DS prompts arrive in-app and cannot be disabled per-merchant.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Payments Hub (step-up) + Profile -> Security & Privacy"
+      },
+      {
+        "name": "App auto-lock / re-auth on foreground",
+        "whatRevolutDoes": "Re-prompts for biometric/passcode when the app is reopened or after backgrounding so a left-open phone cannot expose the account; authenticated state is short-lived.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Profile -> Security & Privacy"
+      },
+      {
+        "name": "Device & session management (linked devices, log out everywhere)",
+        "whatRevolutDoes": "Shows devices linked to the account and lets users log out from all linked devices via mobile or web. New-device login triggers re-verification; used when a phone is lost/stolen.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "Profile -> Security & Privacy -> Devices & sessions"
+      },
+      {
+        "name": "New-device / unusual-location login detection",
+        "whatRevolutDoes": "Detects login from a new device or unexpected location, triggers extra checks and notifications, and can freeze suspicious activity to prevent account takeover. Each device is bound to the user's biometrics.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Profile -> Security & Privacy (alerts) + Notification service"
+      },
+      {
+        "name": "Selfie / liveness re-verification for sensitive changes",
+        "whatRevolutDoes": "Occasionally asks for an in-app selfie (liveness, face-in-oval capture) to confirm identity when editing personal details or doing high-risk actions; camera-permission driven.",
+        "appliesToYouthRyze": true,
+        "youthValue": "low",
+        "buildPhase": "later",
+        "targetSection": "Profile -> Personal details (re-verify) + KYC reuse"
+      },
+      {
+        "name": "Wealth Protection / Street Mode (location-aware transfer delay under duress)",
+        "whatRevolutDoes": "Users define Trusted Locations; outside them, outgoing transfers above a limit face extra identity checks and a 1-hour delay, creating a window to stop transfer-mugging and phone-snatching fraud.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Profile -> Security & Privacy -> Anti-theft / Trusted locations"
+      },
+      {
+        "name": "Hide balance / privacy mode",
+        "whatRevolutDoes": "Quickly hides balances and amounts on screen (tap-to-reveal / sneak peek) so figures are not visible in public.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Home (balance card) + Profile -> Security & Privacy"
+      },
+      {
+        "name": "In-app support chat (24/7, bot -> human escalation)",
+        "whatRevolutDoes": "Secure in-app chat (Profile -> Help -> Support), 24/7 in 100+ languages. Starts with suggested articles, then a virtual assistant/chatbot, and escalates to a live human agent if unresolved.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Profile -> Help & Support"
+      },
+      {
+        "name": "Help Centre / searchable FAQ & guides",
+        "whatRevolutDoes": "In-app and web Help Centre with categorized FAQs, step-by-step guides, and contextual suggested articles surfaced before chat (card orders, security, transfers).",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "Profile -> Help & Support"
+      },
+      {
+        "name": "Notification preferences center (push / in-app / email, granular)",
+        "whatRevolutDoes": "Central settings to manage push, in-app, and email notifications. Users can opt out of marketing across channels while transactional and security/3DS notifications remain mandatory.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Profile -> Notifications"
+      },
+      {
+        "name": "Instant transaction & spending push alerts",
+        "whatRevolutDoes": "Real-time push on every card payment, transfer in/out, and balance change for immediate spend awareness.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "now",
+        "targetSection": "Notification service + Payments feed"
+      },
+      {
+        "name": "Edit personal details (name, email, phone, address)",
+        "whatRevolutDoes": "Users update email, phone, home address, and (where allowed) name in account settings, with OTP/SCA or re-verification for sensitive changes.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "Profile -> Personal details"
+      },
+      {
+        "name": "Profile identity header (avatar, payment handle/Revtag, plan badge)",
+        "whatRevolutDoes": "Profile screen shows photo/avatar, name, a payment handle (Revtag), and current plan/tier as the entry point to settings and a social/payment identity.",
+        "appliesToYouthRyze": true,
+        "youthValue": "high",
+        "buildPhase": "soon",
+        "targetSection": "Profile -> header"
+      },
+      {
+        "name": "Account statements (per-currency, date range, PDF)",
+        "whatRevolutDoes": "Generate and download electronic account statements, including per-currency statements over a chosen date range, as PDF (no paper).",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "Profile -> Statements & Documents"
+      },
+      {
+        "name": "Account confirmation / proof-of-account (signed & stamped)",
+        "whatRevolutDoes": "Download an account confirmation summarizing account details (IBAN/holder), optionally signed and stamped, for proof of account ownership; shareable via email.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Profile -> Statements & Documents"
+      },
+      {
+        "name": "Confirmation of funds / balance statement",
+        "whatRevolutDoes": "Generates a document showing available funds on a specific date (Statement of Balances) for proof-of-funds needs.",
+        "appliesToYouthRyze": true,
+        "youthValue": "low",
+        "buildPhase": "later",
+        "targetSection": "Profile -> Statements & Documents"
+      },
+      {
+        "name": "Report fraud / report a problem (in-app)",
+        "whatRevolutDoes": "In-app flow to report a scam, fraudulent transfer, or compromised card; offers immediate card freeze and chargeback forms, with email fallback if locked out.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "soon",
+        "targetSection": "Profile -> Help & Support -> Report a problem (+ Cards quick-freeze)"
+      },
+      {
+        "name": "Lost or stolen device / emergency lockdown flow",
+        "whatRevolutDoes": "Guided flow to secure the account if a phone is lost/stolen: log out all devices, freeze cards, and change passcode.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "later",
+        "targetSection": "Profile -> Security & Privacy -> Lost device"
+      },
+      {
+        "name": "Trusted merchants / payees (skip step-up for known recipients)",
+        "whatRevolutDoes": "Label frequently used merchants/vendors or payees as trusted so repeat payments do not require re-approval each time, balancing security and convenience.",
+        "appliesToYouthRyze": true,
+        "youthValue": "low",
+        "buildPhase": "later",
+        "targetSection": "Payments Hub + Profile -> Security & Privacy"
+      },
+      {
+        "name": "Device integrity / OS-security requirements (no jailbreak/root, min OS)",
+        "whatRevolutDoes": "Blocks or restricts the app on jailbroken/rooted/unlocked-bootloader devices and enforces minimum OS/security-update levels to protect the account.",
+        "appliesToYouthRyze": true,
+        "youthValue": "low",
+        "buildPhase": "soon",
+        "targetSection": "App-level security (no dedicated UI) + Profile -> Security messaging"
+      },
+      {
+        "name": "Biometric data consent & privacy/data-rights controls",
+        "whatRevolutDoes": "Provides a biometric information notice and lets users withdraw consent and request access/correction/deletion of biometric data (e.g., via DPO), noting it may limit account use.",
+        "appliesToYouthRyze": true,
+        "youthValue": "low",
+        "buildPhase": "later",
+        "targetSection": "Profile -> Privacy & data + Legal"
+      },
+      {
+        "name": "Close account (self-service in-app)",
+        "whatRevolutDoes": "Self-service account closure (Profile -> Account -> Close account) once balances/vaults are emptied and on the base plan; certain data is retained per regulatory law for years.",
+        "appliesToYouthRyze": true,
+        "youthValue": "low",
+        "buildPhase": "later",
+        "targetSection": "Profile -> Account -> Close account"
+      },
+      {
+        "name": "Settings hub (language, appearance, app preferences)",
+        "whatRevolutDoes": "Central Settings reachable from the profile icon, grouping security, notifications, personal details, app preferences (language, appearance), help, and account actions.",
+        "appliesToYouthRyze": true,
+        "youthValue": "medium",
+        "buildPhase": "now",
+        "targetSection": "Profile -> Settings (root)"
+      },
+      {
+        "name": "Multi-currency account statements (per-currency separation)",
+        "whatRevolutDoes": "Each currency balance can be statemented separately, reflecting Revolut's multi-currency account model.",
+        "appliesToYouthRyze": true,
+        "youthValue": "low",
+        "buildPhase": "later",
+        "targetSection": "Profile -> Statements & Documents"
+      }
+    ]
+  }
+]

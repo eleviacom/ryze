@@ -1,0 +1,215 @@
+[
+  {
+    "checks": [
+      {
+        "claim": "The deposit insurance agency is the Agjencia e Sigurimit të Depozitave (ASD), the Albanian Deposit Insurance Agency.",
+        "verdict": "confirmed",
+        "correction": "Confirmed. Official Albanian name: 'Agjencia e Sigurimit të Depozitave' (acronym ASD), created in 2002, operating asd.gov.al. NUANCE on acronym: the site's English-language branding uses 'Deposit Insurance Agency / Albanian Deposit Insurance Agency' with the English acronym 'ADIA'; the Albanian acronym is 'ASD'. The finding uses 'ASD' as the English acronym, which is the Albanian acronym, not the English one. This is minor and ASD is universally understood, but for English-facing UI copy consider either 'ASD (Agjencia e Sigurimit të Depozitave)' or noting the English acronym is ADIA. Membership is compulsory for all member banks.",
+        "confidence": "high"
+      },
+      {
+        "claim": "Deposit insurance is governed by Law No. 53/2014 'On Deposit Insurance' (Per sigurimin e depozitave), as amended.",
+        "verdict": "confirmed",
+        "correction": "Confirmed. The ASD's own primary document is 'Ligji nr. 53/2014 datë 22.05.2014 \"Për sigurimin e depozitave\" (i ndryshuar)' = Law No. 53/2014 of 22 May 2014 'On Deposit Insurance' (as amended). Citation and 'as amended' qualifier are correct.",
+        "confidence": "high"
+      },
+      {
+        "claim": "Coverage is 100% of insured deposits up to a maximum of 2,500,000 ALL per depositor, per bank.",
+        "verdict": "confirmed",
+        "correction": "Confirmed as current for 2024–2025 and into 2026. ASD pages state coverage is 100% but no more than 2,500,000 ALL per bank (and 2,000,000 ALL per savings & credit association — not relevant to Raiffeisen, a bank). Multiple 2025 sources (ASD 2025 report coverage, ALTAX, Monitor) cite the same 2.5M ALL cap. The per-depositor-per-bank framing is correct. Note: there is active discussion to amend the law to align with the EU (EUR 100,000 directive), but no enacted higher cap was found as of June 2026 — 2,500,000 ALL remains the legal figure.",
+        "confidence": "high"
+      },
+      {
+        "claim": "Approximately 26,000 EUR equivalent (at ~June 2026 rate ~100 ALL = 1.05 EUR), indicative only.",
+        "verdict": "confirmed",
+        "correction": "Confirmed as indicative. At the mid-June 2026 rate (~1 ALL = 0.01054 EUR), 2,500,000 ALL ≈ 26,350 EUR. 'About 26,000 EUR' is accurate and appropriately flagged as indicative; the legally binding figure is the ALL amount. Good practice to keep the ALL as primary.",
+        "confidence": "high"
+      },
+      {
+        "claim": "Foreign-currency deposits are covered and converted to ALL at the Bank of Albania official exchange rate on the day the bank is put into liquidation.",
+        "verdict": "confirmed",
+        "correction": "Confirmed. ASD states foreign-currency deposits are insured and converted to ALL at the Bank of Albania official exchange rate 'on the day the institution goes into liquidation'. The finding's disclosure text says 'on the day of any compensation event' / 'compensation date', which is slightly loose vs. the precise trigger (date of liquidation / Bank of Albania's compulsory-liquidation decision). Recommend tightening to: 'converted to ALL at the Bank of Albania official rate on the day the bank is placed into compulsory liquidation.'",
+        "confidence": "high"
+      },
+      {
+        "claim": "Some deposits are excluded by law (amounts above the limit, anonymous accounts, funds linked to money laundering).",
+        "verdict": "confirmed",
+        "correction": "Confirmed and the examples given are accurate. Full statutory exclusions are broader: amounts above the cap, deposits below 100 ALL, deposits of the bank's administrators/directors and their family, shareholders holding ≥5%, money-laundering/terrorist-financing funds, deposits of legal entities/companies (with limited exceptions), insurance/pension/collective-investment funds, government/public-entity deposits, anonymous or unclear-ownership deposits, and deposits made after the liquidation date. The youth disclosure's short list is fine as a summary.",
+        "confidence": "high"
+      },
+      {
+        "claim": "By law the bank must give the depositor this deposit-insurance information before opening the account (basis for consent 'deposit_guarantee_ack').",
+        "verdict": "uncertain",
+        "correction": "Directionally correct but verify the exact statutory pre-contractual disclosure obligation. EU-aligned deposit-guarantee regimes require member banks to provide a depositor information sheet and obtain acknowledgement before/at account opening; Albania's Law 53/2014 (as amended) imposes information duties on member banks. Could not confirm verbatim that it is a strict 'before you open' precondition vs. an at-onboarding disclosure-and-acknowledgement duty. The consent acknowledgement is reasonable and low-risk; confirm precise wording against the ASD depositor information sheet at final legal review.",
+        "confidence": "medium"
+      },
+      {
+        "claim": "Compensation/payout context implied ('compensation event').",
+        "verdict": "confirmed",
+        "correction": "Confirmed and adds precision: ASD must initiate compensation within 90 working days of the Bank of Albania's compulsory-liquidation announcement, and complete it within 3 months of initiation; depositors have up to 10 years to claim. None of this contradicts the finding; if a payout timeframe is ever surfaced in UI, use these figures rather than a single '3 months'.",
+        "confidence": "high"
+      }
+    ],
+    "overallVerdict": "The deposit-guarantee figure and agency claims are accurate and well-sourced against primary ASD (asd.gov.al) materials. CONFIRMED: agency = Agjencia e Sigurimit të Depozitave (ASD); governing law = Law No. 53/2014 of 22.05.2014 'On Deposit Insurance' (as amended); coverage = 100% up to 2,500,000 ALL per depositor per bank (still current as of June 2026, ~26,000 EUR indicative); foreign-currency deposits covered, converted to ALL at the Bank of Albania official rate at liquidation. Two minor refinements: (1) the English acronym used by ASD's own English site is 'ADIA' — the finding uses the Albanian acronym 'ASD' for the English name; keep ASD but pair it with the full Albanian name (or note ADIA). (2) Tighten the FX-conversion trigger wording to 'the day the bank is placed into compulsory liquidation' rather than 'any compensation event.' One item is UNCERTAIN: the precise statutory 'must disclose before opening' obligation behind the deposit_guarantee_ack consent — directionally right, verify exact wording against the ASD depositor information sheet at legal review. No WRONG findings in this lens."
+  },
+  {
+    "checks": [
+      {
+        "claim": "Under 14: No capacity to act under the Albanian Civil Code; cannot open or operate a bank account independently; only a legal guardian can open a custodial/minor account.",
+        "verdict": "confirmed",
+        "correction": "CONFIRMED with a precise legal citation to add. Albanian Civil Code (Law No. 7850, dated 29.07.1994) Article 8: 'The infant, who has not reached fourteen years old, has no capacity to act. He can perform legal transactions that are suitable for his age and are fulfilled at instance [on the spot], as well as legal transactions that bring benefits without any compensation.' So a child under 14 cannot independently enter into a banking framework agreement; a legal representative (parent/guardian) acts on the child's behalf. Correctly out of scope for an 18-25 product. Cite Article 8.",
+        "confidence": "high"
+      },
+      {
+        "claim": "14-17 (minor with limited capacity): Limited legal capacity; may perform legal acts only with the prior approval of a parent/legal guardian; a bank account generally requires parental/guardian consent and the guardian's co-identification; out of scope for Ryze (18-25 only).",
+        "verdict": "confirmed",
+        "correction": "SUBSTANTIVELY CONFIRMED but the finding OMITS a material banking-specific carve-out and should add the citation. Civil Code Article 7 governs the 14-to-18 minor: such a minor 'can perform legal actions [only] by the previous approval of his or her legal representative' — confirming the consent requirement. HOWEVER the same Article 7 expressly carves out an exception directly relevant to banking: the minor 'can be member of a social organisation, possess everything he gains by his work, TO DEPOSIT HIS SAVINGS AND TO POSSESS THESE DEPOSITS HIMSELF.' Meaning a 14-17 year-old MAY independently deposit and control their own savings/earnings WITHOUT guardian consent, even though opening a full current-account framework agreement (overdraft, card, payment services) requires the guardian's prior approval and co-identification. The blanket statement that a bank account 'generally requires parental/guardian consent' is correct for a full account but is too absolute given the savings carve-out. Albanian bank practice confirms the operational rule: an under-18 must be accompanied by a legal guardian to open an account. For Ryze this group is correctly blocked/redirected (18-25 only). Add citation to Civil Code Article 7 and note the savings exception. (Note: translations disagree on whether Art. 7 vs Art. 8 numbers the 14-18 group, but the substantive three-tier rule is consistent across all sources.)",
+        "confidence": "high"
+      },
+      {
+        "claim": "18 and over: Full juridical capacity (zotësi e plotë për të vepruar) is attained at 18 under the Albanian Civil Code; the applicant may open and operate a personal current account fully independently, sign the framework agreement, give consents in own name; no parental consent required.",
+        "verdict": "confirmed",
+        "correction": "CONFIRMED as the general rule, with one nuance to flag. Civil Code Article 6: 'The person who reaches eighteen years old wins the full rights so that by his acts he gains rights and holds civil obligations' — i.e. full capacity to act at 18, no parental consent needed. NUANCE the finding omits: the SAME Article 6 provides an emancipation-by-marriage exception — a person who marries before 18 (permitted only by court authorisation under Family Code Articles 7-8) 'gains full capacity to act through marriage,' and does not lose it on later divorce/annulment. So 'full capacity at 18' is the rule, but a married minor under 18 may already have full capacity. This does not affect Ryze (which gates strictly on age 18+), but the underlying legal statement 'full capacity is attained AT 18' is slightly incomplete — more precisely, 'at 18, OR earlier upon court-authorised marriage.' The Albanian term 'zotësi e plotë për të vepruar' is correctly used.",
+        "confidence": "high"
+      },
+      {
+        "claim": "18-25 (Ryze/Raiffeisen Youth segment): Eligible for the Raiffeisen Youth product range; same legal requirements as any adult (full KYC, tax self-certification, PEP and source-of-funds declarations, mandatory consents); only difference is product pricing/benefits, not the legal data set.",
+        "verdict": "confirmed",
+        "correction": "CONFIRMED. Raiffeisen Bank Albania markets a youth/student proposition for ages 18-25 (the Raiffeisen Youth fully-digital app account and the student-oriented 'Raiffeisen Start' package, both stated as 18-25), opened online with an ID card and a smartphone camera for verification. Because every applicant is 18+, the full adult legal/KYC data set applies identically; the youth angle is pricing/benefits only. The legal premise is sound. (Verify exact current package names/pricing against the bank's live tariff at production, as marketing names and fees change.)",
+        "confidence": "high"
+      },
+      {
+        "claim": "Regulator: Bank of Albania is the sole licensing/supervisory authority for banks (Law No. 9662/2006 'On Banks'); deposits protected by ASD; data protection overseen by the Information and Data Protection Commissioner (IDP).",
+        "verdict": "confirmed",
+        "correction": "CONFIRMED. The Bank of Albania (Banka e Shqipërisë) licenses and supervises banks under Law No. 9662, dated 18.12.2006 'On Banks in the Republic of Albania.' Deposit protection is provided by the Albanian Deposit Insurance Agency (Agjencia e Sigurimit të Depozitave - ASD). Data protection is supervised by the Information and Data Protection Commissioner (IDP / idp.al). All three named bodies and the banking-law citation are accurate.",
+        "confidence": "high"
+      },
+      {
+        "claim": "Deposit guarantee: ASD covers 100% of insured deposits up to 2,500,000 ALL per depositor, per bank; foreign-currency deposits covered and converted to ALL at the Bank of Albania rate on the day of intervention; governed by Law No. 53/2014 'On Deposit Insurance.'",
+        "verdict": "confirmed",
+        "correction": "CONFIRMED as current. ASD's own materials state the maximum insured deposit is ALL 2,500,000 per depositor per bank (and ALL 2,000,000 per depositor in a savings-and-credit cooperative/SHKK). Foreign-currency deposits are insured up to the same limit and compensated in lek at the exchange rate on the day of intervention by the Bank of Albania. The governing instrument is Law No. 53/2014 'On Deposit Insurance,' as amended. The ~26,000 EUR equivalent is reasonable and correctly flagged as indicative only (the binding figure is the ALL amount). One caution: ASD pages did not, in this check, restate the law number on the consumer page, and the cap has been raised historically — re-verify the live ASD depositor sheet at production, but as of this check 2,500,000 ALL is correct.",
+        "confidence": "high"
+      },
+      {
+        "claim": "Data protection law: the prototype should cite Law No. 124/2024 'On the Protection of Personal Data' (not the repealed Law No. 9887/2008).",
+        "verdict": "confirmed",
+        "correction": "CONFIRMED. Law No. 124/2024 'On the Protection of Personal Data' was approved 19 December 2024, published in the Official Gazette in January 2025, and entered into force 1 February 2025, repealing Law No. 9887, dated 10.03.2008 (as amended). It is aligned with EU GDPR 2016/679 and Directive 2016/680. The project brief's reference to Law 9887 is outdated; the corrected consent/notice texts citing Law 124/2024 are right. (Confirm any transitional provisions with counsel, as the finding notes.)",
+        "confidence": "high"
+      },
+      {
+        "claim": "Banking practice for minors: a minor under 18 needs a legal guardian present, and 18 is the operative age of majority for opening/operating a bank account in Albania (supporting the 'block under-18' design decision).",
+        "verdict": "confirmed",
+        "correction": "CONFIRMED by Albanian bank practice and by guardianship law. Under-18s must be accompanied by a legal guardian to open an account; guardianship terminates at 18 (or earlier upon court-authorised marriage). This supports Ryze gating strictly at 18+ and redirecting/blocking anyone younger. (Minor practical detail seen in market materials: documentation for younger minors differs — ID card for 16-18, birth certificate under 16 — but this is irrelevant to an 18-25 product.)",
+        "confidence": "high"
+      }
+    ],
+    "overallVerdict": "The age-and-guardian findings are substantively CORRECT and well-grounded in Albanian law. The three-tier capacity framework is confirmed against the Civil Code (Law No. 7850/1994): no capacity under 14 (Art. 8), limited capacity 14-17 requiring legal-representative approval (Art. 7), and full capacity 'zotësi e plotë për të vepruar' at 18 (Art. 6). Gating Ryze strictly at 18+ is legally sound and matches Albanian bank practice (under-18s require a guardian present; 18 is the banking age of majority). Two MATERIAL NUANCES the findings omit but should add for full accuracy: (1) Civil Code Art. 7 contains a banking-specific carve-out letting a 14-17 minor independently DEPOSIT and POSSESS their own savings and earnings from work without guardian consent (a full current-account/card/framework agreement still needs guardian approval) — so the blanket 'a bank account always requires parental consent' is slightly over-stated for pure savings; (2) Art. 6 grants full capacity earlier via court-authorised marriage before 18 (emancipation), so 'full capacity attained AT 18' is more precisely 'at 18, or earlier upon marriage.' Neither nuance changes Ryze's design (block under-18). Cross-cutting claims also verified: Bank of Albania as supervisor (Law 9662/2006), ASD deposit cover of 2,500,000 ALL per depositor per bank (current, Law 53/2014), and the corrected data-protection citation to Law 124/2024 (in force 1 Feb 2025, repealing 9887/2008) are all accurate. Recommend adding the explicit Civil Code article numbers (6/7/8) and the two nuances to the prototype's legal notes, and re-verifying the live ASD cap and Raiffeisen youth tariff at production."
+  },
+  {
+    "checks": [
+      {
+        "claim": "Bank of Albania (Banka e Shqipërisë) is the sole authority licensing, regulating and supervising banks under Law No. 9662/2006 'On Banks in the Republic of Albania'.",
+        "verdict": "confirmed",
+        "correction": "Correct. Law No. 9662, dated 18.12.2006, 'On Banks in the Republic of Albania' (amended by Law No. 10481/2011) governs bank licensing, and the Bank of Albania is the licensing/supervisory authority (it also issues Regulation No. 14/2009 on licensing). Raiffeisen Bank Sh.a. is a BoA-supervised licensed bank. Minor note: cite the exact full date '18.12.2006' for production.",
+        "confidence": "high"
+      },
+      {
+        "claim": "Data protection is overseen by the Information and Data Protection Commissioner (IDP), at idp.al.",
+        "verdict": "confirmed",
+        "correction": "Correct. The supervisory authority is the Commissioner for the Right to Information and Protection of Personal Data (IDP / Komisioneri për të Drejtën e Informimit dhe Mbrojtjen e të Dhënave Personale), website idp.al. Current Commissioner: Besnik Dervishi. Either 'idp.al' or 'idp.al/en' is fine.",
+        "confidence": "high"
+      },
+      {
+        "claim": "Deposit guarantee agency: 'Agjencia e Sigurimit të Depozitave (ASD) — Albanian Deposit Insurance Agency'.",
+        "verdict": "confirmed",
+        "correction": "Substantively correct. The Albanian name 'Agjencia e Sigurimit të Depozitave' and acronym 'ASD' are accurate and widely used. Caveat: the agency's own English-language website (asd.gov.al) brands the English name as 'Deposit Insurance Agency' and sometimes uses the acronym 'ADIA' in English; 'Albanian Deposit Insurance Agency / ASD' is acceptable but for verbatim production text prefer the agency's own English styling.",
+        "confidence": "high"
+      },
+      {
+        "claim": "Deposit coverage is 100% up to a maximum of 2,500,000 ALL per depositor, per bank, under Law No. 53/2014 'On Deposit Insurance', as amended; foreign-currency deposits covered and converted to ALL.",
+        "verdict": "confirmed",
+        "correction": "Correct. Law No. 53/2014, dated 22.05.2014, 'On Deposit Insurance' (as amended); coverage is 100% of insurable deposits up to a maximum of 2,500,000 ALL (LEK) per depositor per bank, regardless of number of deposits or currency; foreign-currency deposits are covered and compensation is calculated/paid in ALL. (Savings & credit associations have a lower 2,000,000 ALL cap, not relevant to a bank.) This 2,500,000 ALL figure is current as of June 2026 per asd.gov.al.",
+        "confidence": "high"
+      },
+      {
+        "claim": "2,500,000 ALL is approximately 26,000 EUR at the June 2026 reference rate (~100 ALL = 1.05 EUR).",
+        "verdict": "uncertain",
+        "correction": "The EUR result (~26,000 EUR) is in the right ballpark but the cited rate is wrong. In June 2026 the rate is ~94.6–95.5 ALL per 1 EUR (NOT ~100 ALL = 1.05 EUR / ~95.2 ALL per EUR is the reality), so 2,500,000 ALL ÷ ~95 ≈ 26,300 EUR. So 'about 26,000 EUR' is acceptable as indicative, but correct the stated rate assumption: it is roughly 95 ALL = 1 EUR (i.e., 100 ALL ≈ 1.05 EUR is coincidentally close, but '~100 ALL = 1.05 EUR' phrasing conflates units). The binding figure is the ALL amount; keep EUR as indicative only.",
+        "confidence": "high"
+      },
+      {
+        "claim": "Compensation/conversion of FX deposits is at the Bank of Albania official rate on the day of any compensation/liquidation event.",
+        "verdict": "uncertain",
+        "correction": "Directionally correct and standard practice (FX deposits are converted to ALL for the cap and paid in ALL; compensation is triggered by a BoA intervention and paid within ~3 months). Could not confirm from a primary ASD/BoA document the exact conversion reference date wording ('day put into liquidation' vs 'date of the compensation event'). Verify the precise statutory reference date in Law 53/2014 and ASD regulations before production.",
+        "confidence": "medium"
+      },
+      {
+        "claim": "Full juridical capacity (zotësi e plotë për të vepruar) is attained at 18 under the Albanian Civil Code; 14–17 minors have limited capacity (acts need parental/guardian consent); under 14 have no capacity to act.",
+        "verdict": "confirmed",
+        "correction": "Correct under the Albanian Civil Code: full capacity to act at 18 (also via marriage for a woman under 18); a minor who has reached 14 may perform legal transactions only with prior consent of the legal representative; a child under 14 has no capacity to act (limited everyday/benefit-only acts excepted). The 18+ adult can open and operate a personal current account independently with no parental consent. Scoping Ryze to 18–25 is legally clean.",
+        "confidence": "high"
+      },
+      {
+        "claim": "AML legal basis is Law No. 9917/2008 'On the Prevention of Money Laundering and Financing of Terrorism', as amended, plus Bank of Albania regulations.",
+        "verdict": "confirmed",
+        "correction": "Correct: Law No. 9917, dated 19.05.2008, 'On the Prevention of Money Laundering and the Financing of Terrorism', as amended (multiple amendments through at least 2023). KYC obligations (identify customer, beneficial owner, purpose/nature, PEP and sanctions screening, source of funds, suspicious-activity reporting, false-information offence) are accurately stated. Note the responsible national authority is the FIU (see next item), with BoA issuing AML regulations for banks.",
+        "confidence": "high"
+      },
+      {
+        "claim": "Recipients of data include 'the General Directorate for the Prevention of Money Laundering' (named in the data-processing notice).",
+        "verdict": "wrong",
+        "correction": "Outdated name. As of July 2023 the body was renamed from 'General Directorate for the Prevention of Money Laundering' (GDPML/DPPPP) to the 'Financial Intelligence Agency' (Agjencia e Inteligjencës Financiare / AIF; English 'Financial Intelligence Agency', fiu.gov.al). Replace the GDPML reference in the data-processing notice with 'the Financial Intelligence Agency (AIF)' (Albania's FIU). The DPT (General Directorate of Taxation) remains the correct tax recipient.",
+        "confidence": "high"
+      },
+      {
+        "claim": "By law banks must apply CRS and FATCA: collect country/countries of tax residence, TIN per jurisdiction, and a US-person/FATCA self-certification at account opening.",
+        "verdict": "confirmed",
+        "correction": "Correct. CRS is implemented in Albania by Law No. 4, dated 31.01.2020 (consider citing this specific law rather than only 'CRS'); financial institutions must identify tax residence and TIN of the jurisdiction of tax residence and report to the Albanian Tax Authority (DPT). FATCA applies from 1 July 2014 (US-taxpayer identification and IRS reporting). New customers must provide a self-certification. Raiffeisen Albania publishes a CRS/FATCA self-certification form, confirming this is real practice.",
+        "confidence": "high"
+      },
+      {
+        "claim": "TIN is mandatory at opening (the finding lists TIN/NIPT as mandatory, with an uncertainty about domestic-only residents).",
+        "verdict": "uncertain",
+        "correction": "Under CRS the TIN of the jurisdiction of tax residence is required where the jurisdiction issues one. For an Albania-only resident individual, the practical 'TIN' is effectively the personal identification number (NID/NIPT context: NIPT is the business tax number — for an individual the relevant identifier is the personal NID/NIS). Flagging 'NIPT' for a youth personal account is slightly off; for individuals it is typically the personal identification number, not a NIPT (which is for businesses/self-employed). Confirm exact field with Raiffeisen; keep as mandatory but relabel the individual identifier correctly.",
+        "confidence": "medium"
+      },
+      {
+        "claim": "Personal-data consent should cite Law No. 124/2024 'On the Protection of Personal Data' (not the brief's Law 9887/2008).",
+        "verdict": "confirmed",
+        "correction": "Correct and important. Law No. 9887/2008 was REPEALED. The current law is Law No. 124/2024 'On the Protection of Personal Data' (approved 19.12.2024, promulgated 15.01.2025, published 17.01.2025, in force from 01.02.2025), GDPR-aligned. All consent labels and the data-processing notice should cite Law No. 124/2024, exactly as the findings do. Update the project brief's 9887/2008 reference.",
+        "confidence": "high"
+      },
+      {
+        "claim": "Biometric/facial liveness data is special-category data requiring explicit consent for identity verification during onboarding.",
+        "verdict": "confirmed",
+        "correction": "Correct in principle: under Law 124/2024 (GDPR-aligned) biometric data used to uniquely identify a person is special-category data needing an Article-9-type exception, typically explicit consent, and likely a DPIA. The consent wording is appropriate. Caveat (already flagged in uncertainties): the bank may instead rely on legal obligation/substantial-public-interest (AML) rather than pure consent for the liveness check — confirm the precise legal basis and DPIA with counsel; do not present consent as the sole basis without legal review.",
+        "confidence": "medium"
+      },
+      {
+        "claim": "Required KYC data set (full legal name, DOB/place, nationality, NID + document number, document type/issue/expiry/authority, ID photo front/back, live selfie/liveness, phone, email, residential address, tax residence, TIN, FATCA status, employment, source of funds, PEP declaration, beneficial-owner declaration, account purpose, e-signature).",
+        "verdict": "confirmed",
+        "correction": "The data set is consistent with Albanian KYC/AML (Law 9917/2008), CRS (Law 4/2020) and FATCA requirements and with Raiffeisen ON / Raiffeisen Youth observed onboarding. It is a reasonable, complete superset. Caveats: (1) the bank's actual production forms may ask fewer/more fields or reorder them; (2) 'expected account activity/turnover' banding and source-of-funds vs source-of-wealth granularity are bank-internal AML risk-model choices; (3) gender/place-of-birth specifics depend on the ID document. Treat as a defensible prototype set, not the verbatim Raiffeisen field list.",
+        "confidence": "medium"
+      },
+      {
+        "claim": "Consent labels (personal-data processing under Law 124/2024; framework agreement/T&C/tariff/privacy; deposit-guarantee acknowledgement before opening; KYC/AML truthfulness, beneficial-owner, PEP, no-money-laundering; CRS/FATCA self-certification; biometric; optional marketing/profiling/push).",
+        "verdict": "confirmed",
+        "correction": "Wording is materially correct and well-structured (mandatory vs optional split is appropriate; marketing/profiling/push correctly optional). The deposit-insurance pre-contract disclosure requirement is real (depositors must receive the ASD information sheet before opening). Two cleanups for production: (a) the data-processing recipient list must replace 'GDPML' with 'Financial Intelligence Agency (AIF)'; (b) final consent/notice text must be taken verbatim from Raiffeisen's approved Information Notice, Framework Agreement, Tariff, and the ASD depositor sheet. All texts correctly flagged as prototype needing legal review.",
+        "confidence": "high"
+      },
+      {
+        "claim": "Youth package pricing: Student Package 0 ALL (fee-free ALL current account + LEK debit card, no monthly fee); Youth Pro/Partner 350 ALL / 3 EUR per month with EUR benefits.",
+        "verdict": "confirmed",
+        "correction": "Confirmed against Raiffeisen Albania's published Raiffeisen Youth pages: Student Package = 0 commission for the LEK current account and debit card, no monthly maintenance; Raiffeisen Youth Pro = 350 ALL / 3 EUR per month with 0 commission on LEK+EUR accounts/cards. Note there is also a 'Raiffeisen Start' package for 18–25 higher-education students (no monthly commission). Re-verify exact figures against the live tariff at production (already flagged).",
+        "confidence": "high"
+      },
+      {
+        "claim": "Retention period: data kept for the life of the relationship and afterwards 'generally at least 5 years after the relationship ends' per AML/banking law.",
+        "verdict": "uncertain",
+        "correction": "Directionally correct — Albanian AML law (Law 9917/2008) mandates record retention of at least 5 years after the end of the business relationship/transaction, consistent with FATF/EU norms. However some banking and tax records carry longer statutory periods, and exact periods vary by record type. Acceptable as a prototype summary but confirm the precise retention matrix with the bank's records-retention policy before production.",
+        "confidence": "medium"
+      }
+    ],
+    "overallVerdict": "The findings are largely accurate and well-sourced for an Albanian banking onboarding prototype. Strongly confirmed: Bank of Albania as licensing/supervisory authority under Law 9662/2006; deposit insurance of 100% up to 2,500,000 ALL per depositor per bank under Law 53/2014 (figure current June 2026, FX deposits covered and paid in ALL); IDP as data-protection regulator (idp.al); the switch from repealed Law 9887/2008 to the current GDPR-aligned Law 124/2024 (in force 01.02.2025); AML under Law 9917/2008; CRS (Law 4/2020) and FATCA (from 2014) obligations including TIN and US-person self-certification; Albanian Civil Code full capacity at 18 (so 18-25 scoping is clean); and Raiffeisen Youth pricing (Student Package 0; Youth Pro 350 ALL / 3 EUR per month). ONE MATERIAL ERROR to fix: the data-processing notice names the AML recipient as the 'General Directorate for the Prevention of Money Laundering' (GDPML) — this body was renamed the 'Financial Intelligence Agency (AIF)' in July 2023; update it. Minor corrections: the EUR conversion rate assumption is mis-stated (real June-2026 rate ~95 ALL = 1 EUR, so ~26,300 EUR — the '~26,000 EUR' result is fine, the cited rate is not); for an individual youth account the tax identifier is the personal NID, not a business 'NIPT'; biometric legal basis may be legal-obligation/substantial-public-interest rather than pure consent (confirm + DPIA); retention '5 years' is a defensible floor but some records run longer. All disclosure/consent texts are correctly flagged as prototype drafts requiring final legal review and verbatim adoption of the bank's approved documents."
+  }
+]

@@ -1,0 +1,167 @@
+{
+  "correctedLegal": "## Ryze — Corrected Legal & Disclosure Copy (PROTOTYPE — requires final Raiffeisen legal/compliance sign-off)\n\n**Status:** Hackathon prototype for Raiffeisen Bank Sh.a. (Albania). All texts below are drafts; final consent/notice wording must be adopted **verbatim** from the Bank's approved Information Notice, Framework Agreement, Tariff schedule and the ASD depositor information sheet before any production use.\n\n### Corrected legal facts (from verification)\n- **Supervisor:** Bank of Albania (Banka e Shqipërisë) — sole licensing/supervisory authority for banks under **Law No. 9662, dated 18.12.2006 \"On Banks in the Republic of Albania.\"**\n- **Deposit insurance:** Agjencia e Sigurimit të Depozitave (ASD) — Albanian Deposit Insurance Agency — under **Law No. 53/2014, dated 22.05.2014 \"On Deposit Insurance\" (as amended).** Coverage = **100% of eligible deposits up to 2,500,000 ALL per depositor, per bank** (confirmed current as of June 2026; ~26,000 EUR *indicative only*, real rate ~95 ALL = 1 EUR — the binding figure is the ALL amount). NOTE: ASD's own English site sometimes brands as \"ADIA\"; we pair \"ASD\" with the full Albanian name. FX deposits are covered and **converted to ALL at the Bank of Albania official rate on the day the bank is placed into compulsory liquidation** (corrected from \"compensation event\").\n- **Data protection:** **Law No. 124/2024 \"On the Protection of Personal Data\"** (in force 01.02.2025, GDPR-aligned), which **repealed Law No. 9887/2008.** All consent/notice copy cites **124/2024**, never 9887. Regulator: Information and Data Protection Commissioner (IDP), idp.al.\n- **AML/KYC:** Law No. 9917, dated 19.05.2008 \"On the Prevention of Money Laundering and the Financing of Terrorism\" (as amended). **AML data recipient is the Financial Intelligence Agency (Agjencia e Inteligjencës Financiare — AIF)** — corrected from the renamed/outdated \"General Directorate for the Prevention of Money Laundering (GDPML).\"\n- **Tax:** CRS implemented by **Law No. 4, dated 31.01.2020**; FATCA from 01.07.2014. For an Albania-only resident individual the tax identifier is the **personal identification number (NID)**, **not** a business \"NIPT\" (corrected). Tax recipient: General Directorate of Taxation (DPT).\n- **Age/capacity:** Albanian Civil Code (Law No. 7850/1994) **Art. 6** — full capacity to act (\"zotësi e plotë për të vepruar\") at **18** (or earlier upon court-authorised marriage). 14–17 = limited capacity (Art. 7, with a savings carve-out); under-14 = no capacity (Art. 8). **Ryze gates strictly at 18+; under-18 redirected to a guardian/minor-account explainer.**\n- **Retention:** at least 5 years after the relationship ends (AML floor; some records longer — confirm retention matrix at production).\n- **Biometric (liveness):** special-category data under Law 124/2024; explicit consent used here, **but legal basis (consent vs. AML legal-obligation/substantial-public-interest) + DPIA must be confirmed with counsel** — do not present consent as the sole basis at production.\n\n### Consent copy (exact, youth-appropriate)\n**Mandatory (must be ticked to open):**\n1. `personal_data_processing` — \"I have read and agree to the **Information Notice on the Processing of Personal Data** by Raiffeisen Bank Sh.a., under **Law No. 124/2024 'On the Protection of Personal Data'.**\"\n2. `framework_agreement` — \"I accept the **Framework Agreement**, the **General Terms & Conditions**, the **Tariff/Fees schedule** and the **Privacy Policy** for my account and card.\"\n3. `deposit_guarantee_ack` — \"I confirm I have received and read the depositor information about deposit insurance provided by the **Albanian Deposit Insurance Agency (ASD)** before opening my account.\"\n4. `kyc_aml_declarations` — \"I declare the information I gave is true and complete, that I act on my own behalf as **beneficial owner**, that I am **not a Politically Exposed Person** (or have declared if I am), and that my funds do not derive from money laundering or any illegal activity.\"\n5. `crs_fatca_self_certification` — \"I certify my tax-residency / tax identification number (CRS) and FATCA status are accurate, and I will tell the Bank if they change.\"\n6. `biometric_processing` — \"I consent to the automated processing of my facial image (liveness check) for the **sole purpose** of verifying my identity during onboarding.\" *(legal basis to be confirmed; DPIA required.)*\n\n**Optional (default OFF — no pre-tick, per Law 124/2024):**\n7. `marketing_communications` — \"Send me personalised offers, news and rewards from Raiffeisen by email, SMS, push and in-app. (Optional — turn off anytime.)\"\n8. `push_notifications` — \"Allow notifications so we can alert you about your money and quests. (Optional — 'Maybe later' is fine.)\"\n\n### Information Notice — short body (for LegalSheet)\n\"**Controller:** Raiffeisen Bank Sh.a. (Albania), Tirana; contact the Data Protection Officer via the Bank's official channels.\n**What we process:** identity (name, date/place of birth, NID & document number, nationality), contact (phone, email, address), your ID image and a biometric facial scan for liveness, tax data (residency, tax ID, FATCA), and financial/profile data (occupation, source of funds, activity).\n**Why / legal basis:** (a) to enter into and run your account contract; (b) legal obligations — AML/CTF (Law No. 9917/2008, as amended), CRS (Law No. 4/2020) / FATCA, and banking regulation; (c) your consent for biometric verification and optional marketing/profiling; (d) the Bank's legitimate interest in fraud prevention and security.\n**Recipients:** the Bank's authorised staff and processors, the **Bank of Albania**, the **Financial Intelligence Agency (AIF)**, the General Directorate of Taxation (and, via CRS/FATCA, foreign tax authorities), the **Albanian Deposit Insurance Agency (ASD)**, and others required by law.\n**Retention:** for the life of the relationship and afterwards as required by AML/banking law (generally at least 5 years).\n**Your rights (Law No. 124/2024):** access, rectification, erasure, restriction, objection, portability, and withdrawal of consent at any time (without affecting prior processing); data we must keep by law cannot be deleted on request. Complaints: Information and Data Protection Commissioner (idp.al). Automated identity checks are used only to verify you; no fully automated decision with legal effect is taken without safeguards.\n*Prototype notice — final wording and the Bank's official contacts required before production.*\"\n\n### Deposit-insurance statement (for LegalSheet / consent 3)\n\"**Your money is protected.** Deposits at Raiffeisen Bank Sh.a. are insured by the **Albanian Deposit Insurance Agency (Agjencia e Sigurimit të Depozitave — ASD)** under **Law No. 53/2014 'On Deposit Insurance' (as amended).** Coverage is **100% of eligible deposits up to 2,500,000 ALL (about 26,000 EUR, indicative) per depositor, per bank** — the total across all your eligible accounts here, in any currency. Foreign-currency deposits are converted to ALL at the **Bank of Albania official rate on the day the bank is placed into compulsory liquidation.** Some deposits are excluded by law (amounts above the limit, anonymous accounts, funds linked to money laundering, and others). Full terms: asd.gov.al. *Prototype summary — verify the current limit and exclusions at final review.*\"\n\n### Prototype disclaimer (footer on consent screen)\n\"Ryze is a hackathon prototype concept for Raiffeisen Bank Albania. It is not a live banking service. All legal texts, consents, fees and figures are drafts requiring final legal and compliance review and approval by Raiffeisen Bank Sh.a. before any real use.\"",
+  "screens": [
+    {
+      "id": "slide-welcome",
+      "kind": "value",
+      "title": "Money that finally gets you",
+      "copy": "Ryze is the Raiffeisen account built for your twenties. Spend, save, and level up — all in one place that actually feels like yours.",
+      "elements": "Full-screen swipeable slide. Top: ProgressSegments (3, segment 1 filling). Header: tiny LogoLockup (yellow Giebelkreuz 20px + 'Raiffeisen' eyebrow + 'Ryze' h3). Illustration ~55%: CoinStack.tsx (yellow coin embossed with black Giebelkreuz, glow aura, XP-spark parallax). Bottom: displayLg title + bodyLg body on gradient-to-black. White-pill 'Continue' CTA pinned bottom. AI BUDDY: floating Riz dot (yellow-ringed, bottom-right) appears here with first-run greeting nudge."
+    },
+    {
+      "id": "slide-open",
+      "kind": "value",
+      "title": "Open it in minutes, 100% online",
+      "copy": "Not a Raiffeisen customer yet? No problem. No branch, no paperwork, no fees to open. Just your ID and a quick video check — done from your couch.",
+      "elements": "ProgressSegments (segment 2). Illustration: OpenAccountPhone.tsx (dark phone, yellow card sliding out with Giebelkreuz + 'ZERO fees' green-dot micro-badge, parallax card layer). displayLg title + bodyLg body. White-pill 'Continue'. Riz dot persists (quiet)."
+    },
+    {
+      "id": "slide-belong",
+      "kind": "value",
+      "title": "Do more, together",
+      "copy": "Free instant payments, real-time exchange, save while you spend, and rewards for inviting your crew. The more you play, the more you belong.",
+      "elements": "ProgressSegments (segment 3). Illustration: DoMoreOrbit.tsx (yellow Giebelkreuz hub + 4 satellite capability tiles on hairline connectors, staggered orbital float). displayLg title + bodyLg body. White-pill 'Get started' CTA → pushes the KYC stack as a slide-up modal (carousel dims to 0.4). Riz dot persists."
+    },
+    {
+      "id": "kyc-phone",
+      "kind": "kyc",
+      "title": "What's your number?",
+      "copy": "We'll text you a code to confirm it's really you. Your phone is how we keep your account secure — we never use it for marketing without your say-so.",
+      "elements": "KycScreen shell: X-close top-left + tiny LogoLockup, displayLg title, body, inline yellow 'Why do we need it?' link (opens Riz/LegalSheet). Fields: CountryPicker (default Albania +355, mandatory) + Field tel '69 123 4567' (mandatory). ConsentRow (mandatory): 'I have read and agree to the Information Notice on the processing of personal data, under Law No. 124/2024.' (inline link → LegalSheet). White-pill 'Send code' DISABLED until valid number + consent ticked. AI BUDDY: 'Why do we need it?' link is Riz-powered; nudge chip on first load."
+    },
+    {
+      "id": "kyc-phone-otp",
+      "kind": "kyc",
+      "title": "Enter your code",
+      "copy": "We sent a 6-digit code to your phone. Pop it in below — and keep it private. Raiffeisen staff will never ask for it, and neither will Riz.",
+      "elements": "OtpInput (6 cells, mandatory, auto-advance on 6th digit, per-digit pop, success/error flash+shake). 'Verify' primary (auto-advances on valid). 'Resend code' secondary, enabled after 30s countdown. AI BUDDY: Riz intercepts any OTP pasted into chat with the 'never share codes' safe reply (guardInput regex)."
+    },
+    {
+      "id": "kyc-email",
+      "kind": "kyc",
+      "title": "And your email?",
+      "copy": "This is where we'll send your statements and account documents — so make sure it's one you actually check.",
+      "elements": "KycScreen. Field email 'you@email.com' (mandatory, format-validated). 'Why do we need it?' link (Riz: durable-medium legal requirement). White-pill 'Send code' disabled until valid email."
+    },
+    {
+      "id": "kyc-email-otp",
+      "kind": "kyc",
+      "title": "Confirm your email",
+      "copy": "We sent a 6-digit code to your inbox. Check spam if it's hiding.",
+      "elements": "OtpInput (6 cells). 'Verify' primary. 'Resend code' after 30s. Disabled until 6 digits."
+    },
+    {
+      "id": "kyc-identity-intro",
+      "kind": "kyc",
+      "title": "Now, the easy part",
+      "copy": "Two quick steps and we'll confirm your identity:\n\n1. Take a photo of your ID card\n2. A 5-second video check — automatic, no human watching.",
+      "elements": "Pure intro (no inputs). SecurityShield.tsx illustration (Giebelkreuz crest + yellow tick = Bank-of-Albania-supervised, ASD-insured trust cue). White-pill 'I'm ready'. Secondary link 'Don't have an identity card?' → LegalSheet listing accepted alternatives (valid passport or biometric residence permit). AI BUDDY: Riz explains KYC ('Know Your Customer') in plain language, defines the term, notes no human watches the video."
+    },
+    {
+      "id": "kyc-id-capture",
+      "kind": "kyc",
+      "title": "Scan your ID card",
+      "copy": "Hold your Albanian ID card inside the frame. We'll read it automatically — front, then back. No typing.",
+      "elements": "IdCapture.tsx viewfinder (yellow corner brackets + sweeping scan-line). Field select idDocumentType (default 'Albanian ID card'; passport/residence permit options). Two camera-capture fields: front + back (mandatory, on-device edge auto-capture + quality check). OCR extracts name/DOB/document number to prefill later screens. 'Why do we need it?' link → Riz: AML law (Law 9917/2008) requires verifying identity with an official ID. White-pill 'Use these photos' disabled until both sides pass quality."
+    },
+    {
+      "id": "kyc-selfie-liveness",
+      "kind": "kyc",
+      "title": "Quick video check",
+      "copy": "Look at the camera and follow the prompts. It takes about five seconds and confirms you're a real person — not a photo. It's fully automated; no human reviews your video.",
+      "elements": "LivenessRing.tsx (animated yellow progress ring sweeping 0→100%, neutral non-photo face outline so it never implies a human reviewer). liveness-capture field (mandatory, turn-head/blink prompts). 'How does this work?' secondary → Riz. Auto-advances on successful match; one retry on failure → routes to support. CONSENT: this step is gated by the biometric_processing explicit consent (surface it inline or at consent screen). AI BUDDY: Riz reassures it's automated, private, matched to ID, stops impersonation."
+    },
+    {
+      "id": "kyc-name",
+      "kind": "kyc",
+      "title": "Let's confirm your name",
+      "copy": "We pulled this from your ID. Just check it matches exactly — it's the name on your account and card.",
+      "elements": "Two Fields prefilled from ID OCR (editable for OCR misreads): firstName + lastName (both mandatory). White-pill 'Looks right'; 'Edit' secondary. Disabled if either empty."
+    },
+    {
+      "id": "kyc-dob",
+      "kind": "kyc",
+      "title": "Your date of birth",
+      "copy": "We pulled this from your ID — just confirm it's correct. We need to be sure you're at least 18 to open this account on your own.",
+      "elements": "Date field DD/MM/YYYY (mandatory, prefilled from ID). HARD AGE GATE: 18+ enforced server-side from DOB. Under-18 → guardian/minor-account explainer (Riz: 'Ryze is for 18–25 — come back when you turn 18'), NOT a hard rejection. (Civil Code Art. 6: full capacity at 18.) White-pill 'Confirm' disabled until valid 18+ date."
+    },
+    {
+      "id": "kyc-place-nationality",
+      "kind": "kyc",
+      "title": "Where are you from?",
+      "copy": "Your nationality and place of birth, as on your ID. By law the Bank records this for every account holder.",
+      "elements": "CountryPicker nationality (mandatory, prefilled from MRZ), CountryPicker countryOfBirth (mandatory, default Albania), Field placeOfBirth 'e.g. Tirana' (mandatory). 'Why do we need it?' → Riz (AML identity record). Disabled until all three set."
+    },
+    {
+      "id": "kyc-address",
+      "kind": "kyc",
+      "title": "Where do you live?",
+      "copy": "Your current home address. AML law requires it, and we'll ship your card here.",
+      "elements": "Field addressStreet 'Rruga e Durrësit 12' (mandatory), Field addressCity 'Tirana' (mandatory), Field addressPostalCode '1001' (optional), CountryPicker addressCountry (mandatory, default Albania). White-pill 'Continue' disabled until street + city + country filled."
+    },
+    {
+      "id": "kyc-tax-pep",
+      "kind": "kyc",
+      "title": "A couple of quick declarations",
+      "copy": "Two things every bank in Albania has to ask. For most young people the answers are simple — honest answers keep your account compliant.",
+      "elements": "CountryPicker taxResidencyCountry (mandatory, default Albania; CRS — Law 4/2020). Field taxIdNumber (conditionally mandatory — required when tax residence ≠ Albania or US person = yes; for Albania-only residents this is the personal NID, not a business NIPT). Toggle usTaxPerson (default No; FATCA). Toggle pepDeclaration (default No, explicit confirm; AML). 'What's a PEP?' secondary → Riz (defines in 5 words: 'someone in high public office'). Disabled until tax residence + both toggles answered."
+    },
+    {
+      "id": "kyc-occupation-funds",
+      "kind": "kyc",
+      "title": "What do you do?",
+      "copy": "Last set of questions — this tells us how you'll mostly use your account. As a youth account, 'student' is totally normal here.",
+      "elements": "Select occupationStatus (student/employed/self-employed/other, mandatory), Field employerOrSchool 'e.g. University of Tirana' (optional), Select sourceOfFunds (salary/family support/scholarship/savings/other, mandatory), Select expectedMonthlyInflow ('Under 30,000 ALL · 30,000–100,000 ALL · Over 100,000 ALL', mandatory). 'Why do we need it?' → Riz (AML economic profile, no wrong answers). Disabled until occupation + source + inflow selected."
+    },
+    {
+      "id": "kyc-consents",
+      "kind": "legal",
+      "title": "Almost done — the agreements",
+      "copy": "Have a read and tick what applies. The agreements below are required to open your account; marketing is your choice.",
+      "elements": "Six mandatory ConsentRows (personal-data Law 124/2024; Framework Agreement + T&C + Tariff + Privacy; ASD deposit-insurance acknowledgement; KYC/AML beneficial-owner+PEP+no-laundering declaration; CRS/FATCA self-certification; biometric/liveness consent). Two OPTIONAL ConsentRows DEFAULT OFF (marketing; profiling/personalisation). Inline links open LegalSheet (Information Notice, deposit-insurance statement, AML/KYC notice, terms summary). Prototype-disclaimer footer. 'Read all documents' secondary. White-pill 'Agree and open my account' DISABLED until all mandatory boxes ticked. AI BUDDY: Riz can explain any single consent in plain language but never advises which product to pick."
+    },
+    {
+      "id": "kyc-notifications",
+      "kind": "permission",
+      "title": "Stay one step ahead",
+      "copy": "Turn on notifications and we'll ping you for security codes, instant-payment alerts, streaks, and rewards. You stay in control — change it anytime in Settings.",
+      "elements": "NotifyBell.tsx illustration (yellow badge + soft sound waves). permission-prompt pushNotificationsOptIn (optional). TWO equally-weighted buttons: white-pill 'I want to be notified' (triggers OS permission prompt) + ghost 'Maybe later' (continues without). Mirrors Raiffeisen's opt-in screen. AI BUDDY: Riz notes security alerts can still reach you by other channels if skipped."
+    },
+    {
+      "id": "success-account-opened",
+      "kind": "success",
+      "title": "Welcome to Ryze",
+      "copy": "Your Raiffeisen account is open and ready. Your card is on its way, and your first quests are waiting. Let's get you to level one — tap in and start playing.",
+      "elements": "SuccessSeal.tsx: LogoLockup spring-pop + sealed-ring draw-on + aura, then triggers EXISTING ConfettiHost via useGame celebrateNonce (no new confetti lib). Honors reduce-motion (FadeIn fallback). White-pill 'Start playing' → token-exchange to banking session, set kycStatus='verified', fire 'ob-verify' mission + referral attribution, router.replace into (tabs). AI BUDDY: Riz collapses into a quiet Profile/Home affordance for post-onboarding help; 'application's in, I'll be in the corner' message."
+    }
+  ],
+  "buildOrder": [
+    "0. Brand/asset prep: confirm react-native-svg (already 15.15.4 — the GRAPHICS 'install first' note is STALE, no install needed). Build src/components/brand/Giebelkreuz.tsx (<GiebelkreuzMark size color/> + <LogoLockup variant/>). Update app.json: splash backgroundColor '#208AEF'→'#000000', icon→black Giebelkreuz on #FFE600, android adaptiveIcon.backgroundColor→#FFE600 + monochrome mark. Add BrandBoot true-black SVG entrance overlay; wire SplashScreen.preventAutoHideAsync/hideAsync in _layout.",
+    "1. Tokens are ready (src/constants/brand.ts) — no change. Build the primitive onboarding components: Field.tsx (56px, focus border→white, error shake→danger, CountryPicker default +355), OtpInput.tsx (6 cells, pop/flash/shake, auto-advance), ConsentRow.tsx (animated check, inline links), LegalSheet.tsx (spring bottom sheet for all disclosures).",
+    "2. Build the swipe engine: Pager.tsx (gesture-handler Pan + Reanimated shared value tx, spring snap, exposes progress via context), ProgressSegments.tsx (Revolut continuous-fill bars), Slide.tsx (entrance/exit + staggered text from position). Verify GestureHandlerRootView already wraps app in _layout.",
+    "3. Build the 8 SVG illustrations (CoinStack, OpenAccountPhone, DoMoreOrbit, IdCapture, LivenessRing, SecurityShield, NotifyBell, SuccessSeal), each taking a position shared value (parallax) + active flag (idle loops). Brand palette only, no shadows.",
+    "4. Build KycScreen.tsx shell (X-close + tiny LogoLockup + displayLg title + body + yellow 'Why do we need it?' link + field slot + pinned white-pill Continue, disabled-until-valid). Build SuccessSeal.tsx wiring to existing ConfettiHost via useGame celebrateNonce.",
+    "5. Domain + state: src/onboarding/domain/kyc state machine (pure, enumerated status transitions + consent rules + age gate — add engine.check.ts-style unit tests). src/onboarding/store.ts (zustand VM: step/draft/verification/consents). Extend src/game/store.ts with kycStatus, accountOpened, consents summary; link 'ob-verify' mission to fire when kycStatus='verified'. partialize to NEVER persist OTP/images/tokens.",
+    "6. Data layer: src/onboarding/api.ts behind an injected OnboardingClient interface (DI seam, mirrors game/ai.ts). Ship a MOCK client for the demo (OCR prefill, OTP=any-6-digits, liveness auto-pass) so the hackathon runs offline; real BFF fetch swaps in later.",
+    "7. Routes: create src/app/(onboarding)/ group — _layout.tsx (Stack animation:'fade'), value-carousel screen (3 Slides via Pager), then a KYC Stack pushed as slide-up modal. Wire X-close reverse animation. Extend (tabs)/_layout.tsx Redirect from `onboarded` to also require kycStatus==='verified' for transactional gating.",
+    "8. AI buddy: src/buddy/system-prompt.ts + client.ts already exist — verify Riz persona/guardrails match this spec (Law 124/2024, ASD, AIF, no advice, OTP guard, escalation). Build AiBuddyButton.tsx (yellow Giebelkreuz FAB — the one allowed yellow surface) + AiBuddySheet.tsx (reuse LegalSheet motion, streamed tokens, eyebrow=current step). Wire 'Why do we need it?' links + nudge chips per step. Confirm guardInput()/localReply() offline fallback works on flaky Wi-Fi.",
+    "9. Animations pass: parallax layers, idle micro-motion (gate to active slide), button press scale+haptics (reuse tap() from ui.tsx), field/OTP feedback, liveness ring, success confetti+seal. Respect AccessibilityInfo.isReduceMotionEnabled throughout.",
+    "10. Legal copy: load the corrected texts (Law 124/2024, ASD full name, AIF not GDPML, personal NID not NIPT, FX-at-liquidation) into LegalSheet + consent strings. Surface prototype disclaimer on the consent screen.",
+    "11. QA the full funnel on device: swipe carousel → phone/email OTP → ID/liveness (mock pass) → personal data prefill → declarations → 6 mandatory consents → notifications → success+confetti → lands in (tabs) with mission claimed. Test under-18 redirect, OTP error shake, reduce-motion, offline Riz fallback. Run engine.check tests + the graphify rebuild hook after code changes."
+  ],
+  "risks": [
+    "LEGAL ACCURACY (highest): all consent/notice/tariff/deposit texts are PROTOTYPE drafts. Must be replaced verbatim with Raiffeisen's approved Information Notice, Framework Agreement, Tariff schedule and the ASD depositor sheet before any real use. The FLOW input still references repealed Law 9887 in two places (kyc-phone consent + kyc-consents agreeDataProcessing) — these MUST be changed to Law 124/2024 in code; do not ship the FLOW strings as-is.",
+    "Biometric/liveness legal basis is unsettled: treated here as explicit consent, but the bank may rely on AML legal-obligation/substantial-public-interest under Law 124/2024, and a DPIA is likely required. Confirm with counsel before production; do not present consent as the sole basis.",
+    "Deposit-insurance figure risk: 2,500,000 ALL is confirmed current as of June 2026 but there is active discussion to raise it toward the EU EUR 100,000 standard. Keep the ALL amount as the binding figure, EUR as indicative only, and re-verify against the live ASD depositor sheet at production. Use 'compulsory liquidation' (not 'compensation event') for the FX conversion trigger.",
+    "Data-recipient correctness: the AML recipient was renamed in July 2023 — code must say 'Financial Intelligence Agency (AIF)', not the outdated 'General Directorate for the Prevention of Money Laundering (GDPML)'. Easy to regress if copy is pulled from older drafts.",
+    "Tax-identifier labelling: for an Albania-only youth account the identifier is the personal NID, NOT a business 'NIPT'. The kyc-tax-pep field label must reflect this; mislabelling looks unprofessional to a real bank.",
+    "KYC vendor reality gap: ID OCR + automated liveness need a real vendor (Onfido/Veriff-style) and an encrypted-object-store + signed-URL pipeline. The hackathon demo runs on a MOCK OnboardingClient (auto-pass) — be explicit in the demo that capture is simulated; do not imply real verification.",
+    "Security model must hold: two-token step-up (scope-limited onboarding JWT → OAuth2 token-exchange to banking session ONLY after kycStatus=verified), refresh tokens in expo-secure-store (never AsyncStorage), server-side OTP rate-limiting/lockout, server-side referral attribution + idempotent /account (client simulateReferral is demo-only). An unverified user must never hold a banking token.",
+    "Consent auditability: every consent must be an immutable, versioned ledger entry (doc-version hash, locale, timestamp, device); withdrawal = new entry, never a mutation. Required for Law 124/2024 / GDPR. The client must capture the 'why' rationale BEFORE collecting the corresponding data (purpose limitation).",
+    "Marketing/profiling consent MUST default OFF (no pre-tick) per Law 124/2024 — a pre-ticked box is a compliance failure and a trust killer for a real bank.",
+    "AI buddy safety: Riz must never give financial/tax/legal advice, never invent fees/rates/limits, never accept/repeat OTPs/PINs, never claim the account is open. Anthropic key must live ONLY on the backend proxy, never in the app bundle. guardInput() regex + localReply() offline fallback must be tested on conference Wi-Fi so the buddy never goes dark or leaks secrets.",
+    "Age gate must be enforced server-side from DOB (not a client claim); under-18 redirect (not hard reject) and the 18–25 youth band gate both need backend validation to prevent bypass.",
+    "Reanimated 4 / gesture-handler performance: parallax + idle loops + per-bar progress must run on the UI thread (worklets, no React re-renders during swipe) and idle loops must cancel when a slide loses focus, or battery/jank suffers on mid-range Android demo devices.",
+    "Stale build note: GRAPHICS says react-native-svg is missing and to install it — it is ALREADY present (15.15.4). Following that note blindly could pin a wrong/duplicate version. Skip the install."
+  ]
+}

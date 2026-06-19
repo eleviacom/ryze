@@ -1,0 +1,12 @@
+# regenerable / heavy
+**/node_modules/
+ryze-ios/dd/
+ryze-ios/build/
+DerivedData/
+**/*.xcuserstate
+**/xcuserdata/
+**/.DS_Store
+**/*.log
+.gstack/
+# expo / metro caches
+ryze/.expo/

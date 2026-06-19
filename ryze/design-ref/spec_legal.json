@@ -1,0 +1,245 @@
+{
+  "regulator": "Bank of Albania (Banka e Shqipërisë) — the sole authority responsible for licensing, regulating and supervising banks in the Republic of Albania (Law No. 9662/2006 \"On Banks in the Republic of Albania\"). Raiffeisen Bank Sh.a. is a licensed bank supervised by the Bank of Albania. Separately, deposits are protected by the Albanian Deposit Insurance Agency (ASD), and data protection is overseen by the Information and Data Protection Commissioner (Komisioneri për të Drejtën e Informimit dhe Mbrojtjen e të Dhënave Personale, IDP).",
+  "depositGuarantee": {
+    "agency": "Agjencia e Sigurimit të Depozitave (ASD) — Albanian Deposit Insurance Agency",
+    "coverage": "100% of insured deposits up to a maximum of 2,500,000 ALL per depositor, per bank (approximately 26,000 EUR at the June 2026 reference rate of ~100 ALL = 1.05 EUR; the EUR figure is indicative only). Foreign-currency deposits are covered too and are converted to ALL at the Bank of Albania official rate on the day the bank is put into liquidation.",
+    "disclosureText": "Your money is protected. Deposits held at Raiffeisen Bank Sh.a. are insured by the Albanian Deposit Insurance Agency (Agjencia e Sigurimit të Depozitave – ASD) under Law No. 53/2014 'On Deposit Insurance', as amended. Coverage is 100% of your eligible deposits up to a maximum of 2,500,000 ALL (about 26,000 EUR) per depositor, per bank, regardless of how many accounts you hold or in which currency. The limit applies to the total of all your eligible deposits at this bank combined. If you also hold deposits at another member bank, those are insured separately. Foreign-currency deposits are converted to ALL at the Bank of Albania official exchange rate on the day of any compensation event. Some deposits are excluded by law (for example, amounts above the limit, anonymous accounts, and funds linked to money laundering). This is a prototype summary — see the full ASD depositor information sheet for the complete terms. More at asd.gov.al."
+  },
+  "ageRules": [
+    {
+      "ageRange": "Under 14",
+      "rule": "No capacity to act under the Albanian Civil Code. Cannot open or operate a bank account independently; only a legal guardian (parent) can open a custodial/minor account on the child's behalf. Out of scope for this youth (18–25) product."
+    },
+    {
+      "ageRange": "14–17 (minor with limited capacity)",
+      "rule": "Limited legal capacity under the Albanian Civil Code: may perform legal acts only with the prior approval of a parent/legal guardian. A bank account generally requires parental/guardian consent and the guardian's co-identification. Out of scope for Ryze, which is 18–25 only — block/redirect anyone under 18."
+    },
+    {
+      "ageRange": "18 and over (full capacity)",
+      "rule": "Full juridical capacity (zotësi e plotë për të vepruar) is attained at 18 under the Albanian Civil Code. The applicant may open and operate a personal current account fully independently, sign the framework agreement, and give consents in their own name. No parental consent required. This is exactly Raiffeisen Youth's target segment (built for ages 18–25)."
+    },
+    {
+      "ageRange": "18–25 (Ryze / Raiffeisen Youth segment)",
+      "rule": "Eligible for the Raiffeisen Youth product range (e.g. fee-free Student Package). Same legal requirements as any adult: full KYC, tax self-certification, PEP and source-of-funds declarations, and mandatory consents. The only difference is product pricing/benefits, not the legal data set."
+    }
+  ],
+  "requiredData": [
+    {
+      "field": "Full legal name (first name, last name, any middle/father's name as on ID)",
+      "why": "We need your real name to open the account in your name and to meet Albanian Know-Your-Customer (KYC) law. It must match your ID exactly.",
+      "mandatory": true,
+      "category": "identity"
+    },
+    {
+      "field": "Date and place of birth",
+      "why": "Confirms you are 18+ (required to open independently) and helps us tell you apart from someone with a similar name.",
+      "mandatory": true,
+      "category": "identity"
+    },
+    {
+      "field": "Nationality / citizenship",
+      "why": "Required for identity verification and to check sanctions and tax-reporting rules that depend on your country.",
+      "mandatory": true,
+      "category": "identity"
+    },
+    {
+      "field": "Personal ID number (NID) and identity document number",
+      "why": "Your Albanian ID card (or passport) number is your unique legal identifier. AML law requires us to record and verify the official document you used.",
+      "mandatory": true,
+      "category": "identity"
+    },
+    {
+      "field": "Identity document type, issue date, expiry date and issuing authority",
+      "why": "AML law requires a valid government ID. We log these so we know your document is genuine and still valid.",
+      "mandatory": true,
+      "category": "identity"
+    },
+    {
+      "field": "Photo/scan of your ID card (front and back)",
+      "why": "We read your ID automatically to fill in your details and check the document is real. Just snap a photo — no typing.",
+      "mandatory": true,
+      "category": "identity"
+    },
+    {
+      "field": "Live selfie / video liveness check (biometric)",
+      "why": "A quick selfie proves the person opening the account is really you and not someone using your ID. Fully automated — no human reviews it live, and it is matched against your ID photo.",
+      "mandatory": true,
+      "category": "identity"
+    },
+    {
+      "field": "Gender",
+      "why": "Recorded as part of your standard ID profile; usually pre-filled from your ID card.",
+      "mandatory": false,
+      "category": "identity"
+    },
+    {
+      "field": "Mobile phone number (Albania +355)",
+      "why": "We send a one-time code to confirm it is yours, and use it to secure your account and send alerts. This is your main login/security contact.",
+      "mandatory": true,
+      "category": "contact"
+    },
+    {
+      "field": "Email address",
+      "why": "Confirmed with a one-time code. Used for statements, security notices and legally required communications.",
+      "mandatory": true,
+      "category": "contact"
+    },
+    {
+      "field": "Residential address (street, city, postal code, country)",
+      "why": "AML law requires us to know where you live. It is also used for tax-residency checks and to send any required documents.",
+      "mandatory": true,
+      "category": "address"
+    },
+    {
+      "field": "Country/countries of tax residence",
+      "why": "By law (CRS) banks must know where you pay tax. For most young people in Albania this is simply Albania — one tap.",
+      "mandatory": true,
+      "category": "tax"
+    },
+    {
+      "field": "Tax Identification Number (TIN / NIPT for the relevant jurisdiction)",
+      "why": "Required under the Common Reporting Standard (CRS) for each country where you are tax resident, so financial info can be reported correctly to the tax authority.",
+      "mandatory": true,
+      "category": "tax"
+    },
+    {
+      "field": "US person status / FATCA declaration (and W-9 or W-8BEN if applicable)",
+      "why": "If you are a US citizen or US taxpayer, US law (FATCA) requires extra reporting. Almost all Albanian youth simply answer 'No'.",
+      "mandatory": true,
+      "category": "tax"
+    },
+    {
+      "field": "Employment / occupation status (student, employed, self-employed, unemployed)",
+      "why": "Helps the bank understand the kind of activity to expect on your account, as required by AML risk rules. 'Student' is a normal, valid answer.",
+      "mandatory": true,
+      "category": "financial"
+    },
+    {
+      "field": "Source of funds / expected source of income",
+      "why": "AML law requires us to understand where the money flowing into your account comes from (e.g. salary, family support, scholarship, allowance).",
+      "mandatory": true,
+      "category": "financial"
+    },
+    {
+      "field": "Expected account activity / monthly turnover range",
+      "why": "A rough range helps us spot fraud and unusual activity to protect you, and is part of the bank's AML risk profile. An estimate is fine.",
+      "mandatory": false,
+      "category": "financial"
+    },
+    {
+      "field": "Politically Exposed Person (PEP) declaration — for yourself, close associates and family members",
+      "why": "AML law requires you to declare if you (or a close family member/associate) hold a high public office. For almost all youth applicants the answer is 'No'. False declarations are an offence.",
+      "mandatory": true,
+      "category": "compliance"
+    },
+    {
+      "field": "Beneficial owner declaration (acting on own behalf, not for someone else)",
+      "why": "You must confirm the account is for you and you are not opening it on behalf of another person. Required by AML law.",
+      "mandatory": true,
+      "category": "compliance"
+    },
+    {
+      "field": "Purpose of the account / intended use",
+      "why": "Knowing whether it is for everyday spending, savings, salary, etc. lets us set the account up correctly and meets AML 'purpose and nature of the relationship' requirements.",
+      "mandatory": true,
+      "category": "financial"
+    },
+    {
+      "field": "Account currency selection (e.g. ALL, EUR)",
+      "why": "Choose the currency for your account. The fee-free youth Student Package is for the ALL account.",
+      "mandatory": true,
+      "category": "financial"
+    },
+    {
+      "field": "Electronic signature / acceptance of the framework agreement",
+      "why": "Legally finalises the contract for opening and using the account, fully online.",
+      "mandatory": true,
+      "category": "compliance"
+    }
+  ],
+  "consents": [
+    {
+      "id": "personal_data_processing",
+      "label": "I have read and I agree with the Information Notice regarding the processing of my personal data by Raiffeisen Bank Sh.a., in accordance with Law No. 124/2024 'On the Protection of Personal Data'.",
+      "mandatory": true
+    },
+    {
+      "id": "framework_agreement",
+      "label": "I accept the Framework Agreement, the General Terms & Conditions, the Tariff/Fees schedule and the Privacy Policy governing my account and card.",
+      "mandatory": true
+    },
+    {
+      "id": "deposit_guarantee_ack",
+      "label": "I confirm I have received and read the depositor information about deposit insurance provided by the Albanian Deposit Insurance Agency (ASD) before opening my account.",
+      "mandatory": true
+    },
+    {
+      "id": "kyc_aml_declarations",
+      "label": "I declare that the information provided is true and complete, that I act on my own behalf as beneficial owner, that I am not a Politically Exposed Person (or have declared if I am), and that my funds do not derive from money laundering or any illegal activity.",
+      "mandatory": true
+    },
+    {
+      "id": "crs_fatca_self_certification",
+      "label": "I certify that my tax-residency and Tax Identification Number information (CRS) and my FATCA status are accurate, and I will inform the Bank if they change.",
+      "mandatory": true
+    },
+    {
+      "id": "biometric_processing",
+      "label": "I consent to the automated processing of my facial image (liveness/biometric check) for the sole purpose of verifying my identity during onboarding.",
+      "mandatory": true
+    },
+    {
+      "id": "marketing_communications",
+      "label": "I would like to receive personalised offers, news and rewards from Raiffeisen Bank by email, SMS, push and in-app messages. (Optional — you can turn this off any time.)",
+      "mandatory": false
+    },
+    {
+      "id": "profiling_personalisation",
+      "label": "I agree that my data may be used to personalise offers and content for me. (Optional)",
+      "mandatory": false
+    },
+    {
+      "id": "push_notifications",
+      "label": "Allow notifications so we can alert you about your money and quests. (Optional — 'Maybe later' is fine.)",
+      "mandatory": false
+    }
+  ],
+  "disclosures": [
+    {
+      "id": "data_processing_notice",
+      "title": "Information Notice on the Processing of Personal Data",
+      "text": "Controller: Raiffeisen Bank Sh.a. (Albania), with registered office in Tirana. Contact the Data Protection Officer at the Bank's official channels.\n\nWhat we process: identification data (name, date/place of birth, ID/NID number, nationality), contact data (phone, email, address), your ID document image and a biometric facial scan for liveness verification, tax data (tax residency, TIN, FATCA status), and financial/profile data (occupation, source of funds, account activity).\n\nWhy and on what legal basis: (a) to enter into and perform your account contract; (b) to comply with legal obligations — anti-money-laundering and counter-terrorist-financing law (Law No. 9917/2008, as amended), CRS/FATCA tax reporting, and banking regulation; (c) with your consent for biometric verification and for optional marketing/profiling; and (d) for the Bank's legitimate interests in fraud prevention and security.\n\nRecipients: the Bank's authorised staff and processors, the Bank of Albania, the General Directorate for the Prevention of Money Laundering, tax authorities (including, via CRS/FATCA, foreign tax authorities), the Albanian Deposit Insurance Agency, and other recipients required by law.\n\nRetention: for the life of the relationship and afterwards for the periods required by AML and banking law (generally at least 5 years after the relationship ends).\n\nYour rights (Law No. 124/2024 'On the Protection of Personal Data', GDPR-aligned): access, rectification, erasure, restriction, objection, data portability, and the right to withdraw consent at any time (without affecting prior processing). Note: data we must keep by law cannot be deleted on request. You may lodge a complaint with the Information and Data Protection Commissioner (IDP) of Albania (idp.al). Automated identity checks (liveness/biometrics) are used only to verify you; no fully automated decision with legal effect is taken without safeguards.\n\nThis is a prototype notice and requires final legal review and the Bank's official contact details before production."
+    },
+    {
+      "id": "aml_kyc_notice",
+      "title": "Why we ask for this information (AML / KYC)",
+      "text": "As a licensed bank, Raiffeisen Bank Sh.a. is required by Albanian law (Law No. 9917/2008 'On the Prevention of Money Laundering and Financing of Terrorism', as amended, and Bank of Albania regulations) to verify the identity of every customer, understand the purpose of the account, identify the beneficial owner, screen against sanctions and Politically Exposed Person lists, and understand your source of funds. This is called Know Your Customer (KYC). It protects you and the financial system from fraud and crime. We may ask for additional information or documents at any time to keep meeting these obligations, and we are legally required to report suspicious activity. Providing false information is an offence."
+    },
+    {
+      "id": "deposit_guarantee_statement",
+      "title": "Your deposits are protected",
+      "text": "Deposits at Raiffeisen Bank Sh.a. are insured by the Albanian Deposit Insurance Agency (Agjencia e Sigurimit të Depozitave – ASD) under Law No. 53/2014 'On Deposit Insurance', as amended. Cover is 100% of your eligible deposits up to 2,500,000 ALL (about 26,000 EUR) per depositor, per bank — this is the total across all your eligible accounts at this bank, in any currency (foreign currency is converted to ALL at the Bank of Albania official rate at the compensation date). Certain deposits are excluded by law. By law the bank must give you this information before you open your account. Full terms: asd.gov.al. (Prototype text — verify the current limit and exclusions at final review.)"
+    },
+    {
+      "id": "terms_summary",
+      "title": "Account terms — the short version",
+      "text": "By opening a Raiffeisen Youth current account you agree to the Framework Agreement, the General Terms & Conditions, and the Tariff/Fees schedule. Key points for the youth (18–25) Student Package: 0 commission for the ALL current account and the LEK debit card, no monthly maintenance fee, and free standard transfers (subject to the published tariff; the Youth Pro/Partner package costs 350 ALL / 3 EUR per month and adds EUR account benefits). You can close the account or withdraw optional consents at any time. The full legally binding terms prevail over this summary. Final figures and clauses require confirmation from the Bank's current tariff at production."
+    },
+    {
+      "id": "prototype_disclaimer",
+      "title": "Prototype notice",
+      "text": "Ryze is a hackathon prototype concept for Raiffeisen Bank Albania. It is not a live banking service. All legal texts, consents, fees and figures shown here are drafts that require final legal and compliance review and approval by Raiffeisen Bank Sh.a. before any real use."
+    }
+  ],
+  "uncertainties": [
+    "Data protection law version: Law No. 9887/2008 (named in the project brief) has been REPEALED and replaced by Law No. 124/2024 'On the Protection of Personal Data' (approved 19 Dec 2024, in force from 1 Feb 2025), which is fully GDPR-aligned. The prototype should cite Law 124/2024, not 9887/2008. Confirm transitional provisions with counsel.",
+    "EUR equivalent of the deposit cover is indicative only: 2,500,000 ALL ≈ 26,000 EUR at the ~June 2026 rate (≈100 ALL = 1.05 EUR), and it fluctuates. The legally binding figure is the ALL amount (2,500,000 ALL). Verify the current ASD limit, as the cap has been raised over time and could change again.",
+    "Could not confirm from a primary ASD/Bank of Albania document whether the 2,500,000 ALL cap is still current as of June 2026 versus a higher revised figure; verify against the latest ASD depositor information sheet.",
+    "The exact list of mandatory fields in Raiffeisen ON / Raiffeisen Youth onboarding is not fully published; the data set here is assembled from Albanian KYC/AML/CRS law plus the bank's general descriptions and observed onboarding screens. The bank's actual production forms may ask for fewer/more fields or order them differently.",
+    "Whether a TIN is strictly mandatory at opening for an Albanian-only tax resident (vs. captured automatically as the NID) should be confirmed; under CRS the TIN of the jurisdiction of tax residence is required, but practice for domestic-only residents may vary.",
+    "Source-of-funds vs source-of-wealth granularity, and exact expected-turnover banding, are bank-internal AML risk-model choices and should be confirmed with Raiffeisen compliance.",
+    "Biometric/liveness data is treated here as special-category data requiring explicit consent and possibly a DPIA under Law 124/2024; confirm the precise legal basis the bank relies on (consent vs. legal obligation/substantial public interest).",
+    "Exact wording of Raiffeisen's official Information Notice, Framework Agreement, Tariff schedule, and the ASD depositor sheet must be taken verbatim from the bank's approved documents for production — the sample texts here are drafts only.",
+    "Exact current youth package pricing (Student Package 0 ALL; Youth Pro 350 ALL / 3 EUR per month) should be re-verified against the bank's live tariff at production."
+  ]
+}
