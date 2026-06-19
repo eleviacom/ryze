@@ -15,47 +15,171 @@ struct TopBar: View {
 }
 
 // MARK: - Profile (sheet from avatar)
+enum ProfileDetail: String, Identifiable, Hashable {
+    case personal, account, security, documents, settings, help, inbox
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .personal: return "Personal info"; case .account: return "Account details"
+        case .security: return "Security & privacy"; case .documents: return "Documents"
+        case .settings: return "Settings"; case .help: return "Help"; case .inbox: return "Inbox"
+        }
+    }
+    var icon: String {
+        switch self {
+        case .personal: return "person.text.rectangle.fill"; case .account: return "building.columns.fill"
+        case .security: return "lock.shield.fill"; case .documents: return "doc.text.fill"
+        case .settings: return "gearshape.fill"; case .help: return "questionmark.circle.fill"; case .inbox: return "bell.badge.fill"
+        }
+    }
+}
+
+struct AppCardBG: View {
+    var body: some View {
+        RoundedRectangle(cornerRadius: 24).fill(LinearGradient(colors: [Brand.elev2, Brand.elev1], startPoint: .top, endPoint: .bottom)).specularBorder(24)
+    }
+}
+
 struct ProfileSheet: View {
     @EnvironmentObject var game: GameModel
+    @EnvironmentObject var bank: BankModel
     @Environment(\.dismiss) private var dismiss
     @State private var showPlans = false
-    func row(_ icon: String, _ title: String, _ sub: String? = nil, badge: String? = nil) -> some View {
-        HStack(spacing: 14) { Image(systemName: icon).font(.system(size: 18)).foregroundColor(Brand.yellow).frame(width: 28)
-            VStack(alignment: .leading, spacing: 1) { Text(title).font(.system(size: 16)).foregroundColor(Brand.text); if let s = sub { Text(s).font(.system(size: 12)).foregroundColor(Brand.mute) } }
-            Spacer(); if let b = badge { Text(b).font(.system(size: 12, weight: .bold)).foregroundColor(.black).frame(width: 22, height: 22).background(.white).clipShape(Circle()) } else { Image(systemName: "chevron.right").foregroundColor(Brand.faint).font(.system(size: 13)) } }.padding(.vertical, 13)
-    }
+
     var body: some View {
-        ZStack { Brand.bg.ignoresSafeArea()
+        NavigationStack {
             ScrollView {
-                VStack(spacing: 0) {
-                    HStack { Button { dismiss() } label: { Image(systemName: "xmark").foregroundColor(Brand.text).frame(width: 36, height: 36).background(Brand.surface).clipShape(Circle()) }; Spacer(); Button { showPlans = true } label: { HStack(spacing: 5) { Image(systemName: "sparkles"); Text("Upgrade") }.font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text).padding(.horizontal, 14).frame(height: 36).background(Brand.surface).clipShape(Capsule()) } }.padding(.top, 12)
-                    Avatar(name: game.name, size: 84).padding(.top, 8)
-                    Text(game.name).font(.system(size: 24, weight: .bold)).foregroundColor(Brand.text).padding(.top, 8)
-                    HStack(spacing: 6) { Text("@\(game.name.lowercased())").font(.system(size: 14)).foregroundColor(Brand.mute); Image(systemName: "qrcode").font(.system(size: 13)).foregroundColor(Brand.mute) }
-                    Button { showPlans = true } label: { HStack { VStack(alignment: .leading, spacing: 3) { Text("Ryze Free").font(.system(size: 18, weight: .bold)).foregroundColor(Brand.text); Text("View plan benefits").font(.system(size: 13)).foregroundColor(Brand.mute) }; Spacer(); CardArt(colors: [Brand.yellow, Color(hex: 0xF5B700)], name: "Free").frame(width: 120).rotationEffect(.degrees(8)).offset(x: 16) }.padding(16).frame(height: 96).background(LinearGradient(colors: [Color(hex: 0x7C5CFF).opacity(0.4), Brand.surface], startPoint: .leading, endPoint: .trailing)).clipShape(RoundedRectangle(cornerRadius: 18)).clipped() }.padding(.top, 18)
-                    VStack(spacing: 0) {
-                        row("gift.fill", "Invite friends", "Earn 2,000 points or more")
-                        Divider().background(Brand.hairline)
-                        row("megaphone.fill", "Inbox", badge: "3")
-                        Divider().background(Brand.hairline)
-                        row("person.text.rectangle.fill", "Personal info")
-                        Divider().background(Brand.hairline)
-                        row("building.columns.fill", "Account details")
-                        Divider().background(Brand.hairline)
-                        row("lock.shield.fill", "Security")
-                        Divider().background(Brand.hairline)
-                        row("doc.text.fill", "Documents & statements")
-                        Divider().background(Brand.hairline)
-                        row("questionmark.circle.fill", "Help")
-                        Divider().background(Brand.hairline)
-                        row("gearshape.fill", "Settings")
-                    }.padding(.horizontal, 16).background(Brand.surface).clipShape(RoundedRectangle(cornerRadius: 18)).padding(.top, 18)
-                    Button { game.resetDemo(); dismiss() } label: { HStack(spacing: 14) { Image(systemName: "rectangle.portrait.and.arrow.right").foregroundColor(Brand.danger).frame(width: 28); Text("Log out").font(.system(size: 16)).foregroundColor(Brand.danger); Spacer() }.padding(.vertical, 15).padding(.horizontal, 16).background(Brand.surface).clipShape(RoundedRectangle(cornerRadius: 18)) }.padding(.top, 12)
-                }.padding(.horizontal, 16).padding(.bottom, 30)
+                VStack(spacing: 16) {
+                    AppCard {
+                        VStack(spacing: 16) {
+                            HStack(spacing: 14) {
+                                ZStack { Hexagon().stroke(Brand.gold, lineWidth: 2).frame(width: 60, height: 60); Avatar(name: game.name, size: 48) }
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(game.name).font(.system(size: 20, weight: .bold)).foregroundColor(Brand.text)
+                                    HStack(spacing: 5) { Text("@\(game.name.lowercased())").font(.system(size: 13)).foregroundColor(Brand.mute); Image(systemName: "qrcode").font(.system(size: 12)).foregroundColor(Brand.mute) }
+                                }
+                                Spacer()
+                            }
+                            HStack(spacing: 0) {
+                                miniStat("\(game.li.level)", "Level"); statDivider()
+                                miniStat("\(game.coins)", "Points"); statDivider()
+                                miniStat(game.tier.name, "Tier")
+                            }
+                        }
+                    }
+                    Button { showPlans = true } label: {
+                        FeaturedCard {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text("Ryze Free").font(.system(size: 19, weight: .bold)).foregroundColor(.black)
+                                    Text("See your plan benefits").font(.system(size: 13)).foregroundColor(.black.opacity(0.7))
+                                }
+                                Spacer()
+                                Image(systemName: "hexagon.fill").foregroundColor(.black.opacity(0.25)).font(.system(size: 30))
+                            }
+                        }
+                    }.buttonStyle(PressStyle())
+
+                    sectionLabel("Account")
+                    AppCard { VStack(spacing: 0) { navRow(.personal); rowDivider(); navRow(.account); rowDivider(); navRow(.security) } }
+
+                    sectionLabel("Rewards & sharing")
+                    AppCard { VStack(spacing: 0) {
+                        ShareLink(item: "Join me on Ryze — use code \(game.referralCode) and we both get 200 points.") {
+                            HStack(spacing: 14) { IconTile(system: "gift.fill", color: Brand.pink, size: 38); VStack(alignment: .leading, spacing: 1) { Text("Invite friends").font(.system(size: 16, weight: .semibold)).foregroundColor(Brand.text); Text("Earn 2,000 points or more").font(.system(size: 12)).foregroundColor(Brand.faint) }; Spacer(); Image(systemName: "square.and.arrow.up").foregroundColor(Brand.faint).font(.system(size: 14)) }.padding(.vertical, 12)
+                        }.buttonStyle(.plain)
+                        rowDivider(); navRow(.inbox, badge: "3")
+                    } }
+
+                    sectionLabel("More")
+                    AppCard { VStack(spacing: 0) { navRow(.documents); rowDivider(); navRow(.settings); rowDivider(); navRow(.help) } }
+
+                    Button { game.resetDemo(); dismiss() } label: {
+                        HStack(spacing: 14) { IconTile(system: "rectangle.portrait.and.arrow.right", color: Brand.danger, size: 38); Text("Log out").font(.system(size: 16, weight: .semibold)).foregroundColor(Brand.danger); Spacer() }.padding(18)
+                    }.buttonStyle(PressStyle()).background(AppCardBG()).clipShape(RoundedRectangle(cornerRadius: 24))
+
+                    Text("Ryze · prototype for Raiffeisen Bank Albania").font(.system(size: 11)).foregroundColor(Brand.faint).padding(.top, 2)
+                }
+                .padding(.horizontal, 16).padding(.top, 8).padding(.bottom, 40)
             }
+            .background(Brand.bg.ignoresSafeArea())
+            .navigationDestination(for: ProfileDetail.self) { ProfileDetailView(detail: $0) }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) { Button { dismiss() } label: { Image(systemName: "xmark").foregroundColor(Brand.text) } }
+                ToolbarItem(placement: .topBarTrailing) { Button { showPlans = true } label: { HStack(spacing: 5) { Image(systemName: "sparkles"); Text("Upgrade") }.font(.system(size: 14, weight: .semibold)).foregroundColor(.black).padding(.horizontal, 14).frame(height: 34).background(Brand.gold).clipShape(Capsule()) } }
+            }
+            .toolbarBackground(Brand.bg, for: .navigationBar)
         }
         .sheet(isPresented: $showPlans) { PlansView() }
     }
+
+    func navRow(_ d: ProfileDetail, badge: String? = nil) -> some View {
+        NavigationLink(value: d) {
+            HStack(spacing: 14) {
+                IconTile(system: d.icon, size: 38)
+                Text(d.title).font(.system(size: 16, weight: .semibold)).foregroundColor(Brand.text)
+                Spacer()
+                if let b = badge { Text(b).font(.system(size: 12, weight: .bold)).foregroundColor(.black).frame(width: 22, height: 22).background(Brand.yellow).clipShape(Circle()) }
+                Image(systemName: "chevron.right").foregroundColor(Brand.faint).font(.system(size: 13))
+            }.padding(.vertical, 12)
+        }.buttonStyle(.plain)
+    }
+    func rowDivider() -> some View { Divider().background(Brand.hairline).padding(.leading, 52) }
+    func miniStat(_ v: String, _ l: String) -> some View { VStack(spacing: 2) { Text(v).font(.system(size: 17, weight: .bold)).foregroundColor(Brand.text); Text(l).font(.system(size: 11)).foregroundColor(Brand.mute) }.frame(maxWidth: .infinity) }
+    func statDivider() -> some View { Rectangle().fill(Brand.hairline).frame(width: 1, height: 26) }
+    func sectionLabel(_ t: String) -> some View { Eyebrow(text: t).frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 4) }
+}
+
+struct ProfileDetailView: View {
+    @EnvironmentObject var game: GameModel
+    @EnvironmentObject var bank: BankModel
+    let detail: ProfileDetail
+    @State private var faceID = true
+    @State private var appLock = true
+    @State private var notif = true
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) { content }.padding(.horizontal, 16).padding(.top, 12).padding(.bottom, 40)
+        }
+        .background(Brand.bg.ignoresSafeArea())
+        .navigationTitle(detail.title).navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(Brand.bg, for: .navigationBar)
+    }
+    @ViewBuilder var content: some View {
+        switch detail {
+        case .personal:
+            infoCard([("Full name", game.name), ("Email", "klevi@ryze.al"), ("Phone", "+355 69 123 4567"), ("Date of birth", "14/03/2004"), ("Nationality", "Albania")])
+        case .account:
+            infoCard([("Account", "\(game.name) · Personal"), ("IBAN", "AL47 2026 1100 4827"), ("Currency", "ALL · EUR"), ("Opened", "Today"), ("Status", "Active")])
+        case .security:
+            Eyebrow(text: "Sign in")
+            AppCard { VStack(spacing: 0) { toggleRow("Face ID", "faceid", $faceID); dv(); toggleRow("App lock", "lock.fill", $appLock); dv(); stub("Change passcode", "key.fill") } }
+            Eyebrow(text: "Privacy")
+            AppCard { VStack(spacing: 0) { toggleRow("Hide balance", "eye.slash.fill", $bank.hideBalance); dv(); stub("Trusted devices", "iphone") } }
+        case .documents:
+            Eyebrow(text: "Statements")
+            AppCard { VStack(spacing: 0) { doc("June 2026"); dv(); doc("May 2026"); dv(); doc("April 2026") } }
+        case .settings:
+            AppCard { VStack(spacing: 0) { stub("Appearance · Dark", "paintbrush.fill"); dv(); stub("Language · English", "globe"); dv(); toggleRow("Notifications", "bell.fill", $notif) } }
+            AppCard { VStack(spacing: 0) { stub("About Ryze", "info.circle.fill"); dv(); stub("Terms & privacy", "doc.text.fill") } }
+        case .help:
+            AppCard { VStack(spacing: 0) { stub("FAQs", "questionmark.circle.fill"); dv(); stub("Contact support", "bubble.left.and.bubble.right.fill"); dv(); stub("Ask Riz", "sparkles") } }
+        case .inbox:
+            Eyebrow(text: "Notifications")
+            AppCard { VStack(spacing: 0) { msg("Account opened", "Welcome to Ryze — your account is live.", "now"); dv(); msg("Security", "New sign-in to your account.", "1h"); dv(); msg("Rewards", "You earned 50 points this week.", "2d") } }
+        }
+    }
+    func infoCard(_ rows: [(String, String)]) -> some View {
+        AppCard { VStack(spacing: 0) { ForEach(Array(rows.enumerated()), id: \.offset) { i, r in
+            HStack { Text(r.0).font(.system(size: 14)).foregroundColor(Brand.mute); Spacer(); Text(r.1).font(.system(size: 15, weight: .medium)).foregroundColor(Brand.text) }.padding(.vertical, 13)
+            if i < rows.count - 1 { Divider().background(Brand.hairline) }
+        } } }
+    }
+    func toggleRow(_ t: String, _ icon: String, _ b: Binding<Bool>) -> some View { HStack(spacing: 14) { IconTile(system: icon, size: 38); Text(t).font(.system(size: 16)).foregroundColor(Brand.text); Spacer(); Toggle("", isOn: b).labelsHidden().tint(Brand.yellow) }.padding(.vertical, 8) }
+    func stub(_ t: String, _ icon: String) -> some View { HStack(spacing: 14) { IconTile(system: icon, size: 38); Text(t).font(.system(size: 16)).foregroundColor(Brand.text); Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint).font(.system(size: 13)) }.padding(.vertical, 12) }
+    func doc(_ m: String) -> some View { HStack(spacing: 14) { IconTile(system: "doc.text.fill", size: 38); Text(m).font(.system(size: 16)).foregroundColor(Brand.text); Spacer(); Image(systemName: "arrow.down.circle").foregroundColor(Brand.yellow).font(.system(size: 18)) }.padding(.vertical, 12) }
+    func msg(_ t: String, _ s: String, _ time: String) -> some View { HStack(spacing: 14) { IconTile(system: "bell.fill", size: 38); VStack(alignment: .leading, spacing: 2) { Text(t).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text); Text(s).font(.system(size: 13)).foregroundColor(Brand.mute) }; Spacer(); Text(time).font(.system(size: 11)).foregroundColor(Brand.faint) }.padding(.vertical, 11) }
+    func dv() -> some View { Divider().background(Brand.hairline).padding(.leading, 52) }
 }
 
 // MARK: - Assistant (Riz, full tab)
