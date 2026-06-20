@@ -22,4 +22,12 @@ ryze-video/screens/logoA.png
 ryze-video/screens/logoB.png
 
 ryze-video/remotion/public/shots/
-ryze-video/remotion/out/slides/
+ryze-video/remotion/out/
+
+# local agent / tooling scratch + heavy render exports (not part of the repo)
+.agents/
+.claude/
+.handoff/
+.ruff_cache/
+skills-lock.json
+videos/

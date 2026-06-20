@@ -87,6 +87,22 @@ struct PressStyle: ButtonStyle {
     }
 }
 
+// Smooth press feedback for tappable cards that AREN'T Buttons (e.g. tiles with a
+// nested control like the balance eye toggle). simultaneousGesture so it never
+// steals the card's .onTapGesture or the child button's tap; @GestureState auto-resets.
+struct PressableCard: ViewModifier {
+    var scale: CGFloat = 0.965
+    @GestureState private var pressed = false
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(pressed ? scale : 1)
+            .brightness(pressed ? -0.035 : 0)
+            .animation(.spring(response: 0.34, dampingFraction: 0.62), value: pressed)
+            .simultaneousGesture(DragGesture(minimumDistance: 0).updating($pressed) { _, s, _ in s = true })
+    }
+}
+extension View { func pressable(scale: CGFloat = 0.965) -> some View { modifier(PressableCard(scale: scale)) } }
+
 // Signature celebration: yellow + white confetti (dots and chips) bursting outward, keyed to a trigger.
 struct CelebrationOverlay: View {
     let trigger: Int

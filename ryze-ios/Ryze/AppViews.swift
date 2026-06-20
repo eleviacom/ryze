@@ -130,6 +130,7 @@ struct HomeView: View {
     @EnvironmentObject var bank: BankModel
     @Binding var sel: Int
     @State private var rizNudge = true
+    @State private var sparkUp = false   // sparkline bars rise in on appear
     @AppStorage("ryze_lang") private var lang = "en"
     enum HSheet: Int, Identifiable { case add, profile, grow, history, analytics, exchange, search; var id: Int { rawValue } }
     @State private var homeSheet: HSheet? = nil
@@ -146,7 +147,7 @@ struct HomeView: View {
 
             // 1) Hero bento, balance tile (void) + level/points tile (the one gold fill)
             HStack(alignment: .top, spacing: 12) {
-                balanceTile.frame(height: 178).onTapGesture { homeSheet = .analytics }
+                balanceTile.frame(height: 178).pressable().onTapGesture { homeSheet = .analytics }
                 Button { sel = 4 } label: { levelTile.frame(height: 178) }.buttonStyle(PressStyle())
             }
 
@@ -166,7 +167,7 @@ struct HomeView: View {
                 if let g = nearestGoal {
                     Button { homeSheet = .grow } label: { goalTile(g).frame(height: 128) }.buttonStyle(PressStyle())
                 }
-                spendTile.frame(height: 128).onTapGesture { homeSheet = .analytics }
+                spendTile.frame(height: 128).pressable().onTapGesture { homeSheet = .analytics }
             }
 
             // 4) Riz nudge
@@ -255,10 +256,13 @@ struct HomeView: View {
     private func sparkline(_ vals: [Double], color: Color, height: CGFloat) -> some View {
         let mx = vals.max() ?? 1
         return HStack(alignment: .bottom, spacing: 4) {
-            ForEach(Array(vals.enumerated()), id: \.offset) { _, v in
-                Capsule().fill(color).frame(height: max(4, height * CGFloat(pow(v / mx, 0.55))))
+            ForEach(Array(vals.enumerated()), id: \.offset) { i, v in
+                Capsule().fill(color)
+                    .frame(height: max(4, height * CGFloat(pow(v / mx, 0.55)) * (sparkUp ? 1 : 0.12)))
+                    .animation(.spring(response: 0.55, dampingFraction: 0.72).delay(Double(i) * 0.05), value: sparkUp)
             }
         }.frame(height: height, alignment: .bottom).frame(maxWidth: .infinity, alignment: .leading)
+        .onAppear { sparkUp = true }
     }
 
     private var moveDivider: some View { Rectangle().fill(Brand.hairline).frame(width: 1, height: 36) }
