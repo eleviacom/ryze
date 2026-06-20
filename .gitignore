@@ -15,3 +15,8 @@ ryze-ios/dd/
 .DS_Store
 **/xcuserdata/
 **/*.xcuserstate
+
+# video scratch / montages
+ryze-video/**/_*
+ryze-video/screens/logoA.png
+ryze-video/screens/logoB.png
