@@ -65,7 +65,7 @@ struct AnalyticsView: View {
         }
     }
     func flowStat(_ label: String, _ v: Double, _ color: Color, _ icon: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) { HStack(spacing: 6) { Image(systemName: icon).foregroundColor(color).font(.system(size: 13)); Text(label).font(.system(size: 12)).foregroundColor(Brand.mute) }; Text(money(v)).font(.system(size: 20, weight: .bold, design: .rounded)).foregroundColor(Brand.text).lineLimit(1).minimumScaleFactor(0.6) }.frame(maxWidth: .infinity, alignment: .leading).padding(14).background(Brand.surface).overlay(RoundedRectangle(cornerRadius: 14).stroke(Brand.hairline, lineWidth: 1)).clipShape(RoundedRectangle(cornerRadius: 14))
+        VStack(alignment: .leading, spacing: 8) { HStack(spacing: 6) { Image(systemName: icon).foregroundColor(color).font(.system(size: 13)); Text(label).font(.system(size: 12)).foregroundColor(Brand.mute) }; Text(money(v)).font(.system(size: 20, weight: .bold, design: .rounded)).foregroundColor(Brand.text).lineLimit(1).minimumScaleFactor(0.6) }.frame(maxWidth: .infinity, alignment: .leading).padding(14).liquidSurface(14)
     }
 }
 
@@ -281,7 +281,7 @@ struct SearchSheet: View {
     var body: some View {
         NavigationStack {
             ScreenScroll {
-                HStack(spacing: 8) { Image(systemName: "magnifyingglass").foregroundColor(Brand.mute); TextField("", text: $q, prompt: Text(T("Search transactions, people", "Kërko transaksione, njerëz")).foregroundColor(Brand.faint)).foregroundColor(Brand.text).autocorrectionDisabled() }.padding(.horizontal, 14).frame(height: 48).background(Brand.surface).overlay(Capsule().stroke(Brand.hairline, lineWidth: 1)).clipShape(Capsule())
+                HStack(spacing: 8) { Image(systemName: "magnifyingglass").foregroundColor(Brand.mute); TextField("", text: $q, prompt: Text(T("Search transactions, people", "Kërko transaksione, njerëz")).foregroundColor(Brand.faint)).foregroundColor(Brand.text).autocorrectionDisabled() }.padding(.horizontal, 14).frame(height: 48).liquidCapsule()
                 if !people.isEmpty { Eyebrow(text: T("People", "Njerëz")); AppCard { VStack(spacing: 0) { ForEach(Array(people.enumerated()), id: \.element.id) { i, c in HStack(spacing: 12) { Avatar(name: c.name, size: 38); VStack(alignment: .leading, spacing: 2) { Text(c.name).font(.system(size: 15, weight: .medium)).foregroundColor(Brand.text); Text(c.tag).font(.system(size: 12)).foregroundColor(Brand.faint) }; Spacer() }.padding(.vertical, 9); if i < people.count - 1 { Rectangle().fill(Brand.hairline).frame(height: 1) } } } } }
                 if !txns.isEmpty { Eyebrow(text: T("Transactions", "Transaksione")); AppCard { VStack(spacing: 0) { ForEach(Array(txns.enumerated()), id: \.element.id) { i, t in HStack(spacing: 12) { IconTile(system: t.icon, color: t.amount > 0 ? Brand.good : Brand.text, size: 38); VStack(alignment: .leading, spacing: 2) { Text(t.merchant).font(.system(size: 15, weight: .medium)).foregroundColor(Brand.text); Text("\(t.category) · \(t.day)").font(.system(size: 12)).foregroundColor(Brand.faint) }; Spacer(); Text("\(t.amount > 0 ? "+" : "-")\(money(t.amount, t.currency))").font(.system(size: 14, weight: .semibold)).foregroundColor(t.amount > 0 ? Brand.good : Brand.text) }.padding(.vertical, 9); if i < txns.count - 1 { Rectangle().fill(Brand.hairline).frame(height: 1) } } } } }
                 if !q.isEmpty && txns.isEmpty && people.isEmpty { Text(T("No results", "Asnjë rezultat")).font(.system(size: 14)).foregroundColor(Brand.mute).frame(maxWidth: .infinity).padding(.top, 30) }
@@ -343,7 +343,7 @@ struct ComingSoonSheet: View {
     var body: some View {
         ZStack { Brand.bg.ignoresSafeArea()
             VStack(spacing: 14) {
-                HStack { Spacer(); Button { dismiss() } label: { Image(systemName: "xmark").foregroundColor(Brand.text).frame(width: 36, height: 36).background(Brand.surface).clipShape(Circle()) } }
+                HStack { Spacer(); Button { dismiss() } label: { Image(systemName: "xmark").foregroundColor(Brand.text).frame(width: 36, height: 36).liquidCircle() } }
                 Spacer()
                 IconTile(system: icon, size: 64)
                 Text(title).font(.system(size: 22, weight: .bold)).foregroundColor(Brand.text).multilineTextAlignment(.center)

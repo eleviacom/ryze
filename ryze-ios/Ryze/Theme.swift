@@ -79,6 +79,52 @@ extension View {
     func specularBorder(_ radius: CGFloat) -> some View {
         overlay(RoundedRectangle(cornerRadius: radius).strokeBorder(LinearGradient(colors: [Brand.specularTop, Brand.specularBot], startPoint: .top, endPoint: .bottom), lineWidth: 1))
     }
+
+    // Real iOS 26 Liquid Glass on a surface, with a graceful fallback to today's exact
+    // warm-surface + hairline look on iOS 17–25 — so nothing changes on older devices.
+    // ponytail: additive enhancement, no deployment-target bump, drop-in for the
+    // `.background(Brand.surface).overlay(stroke).clipShape(...)` pattern.
+    @ViewBuilder
+    func liquidSurface(_ radius: CGFloat = 12) -> some View {
+        if #available(iOS 26.0, *) {
+            glassEffect(.regular, in: .rect(cornerRadius: radius))
+                // Stronger glassmorphism: a frosted top sheen + a bright top-lit specular rim.
+                .overlay(RoundedRectangle(cornerRadius: radius).fill(
+                    LinearGradient(colors: [Color.white.opacity(0.09), .clear], startPoint: .top, endPoint: .center)).allowsHitTesting(false))
+                .overlay(RoundedRectangle(cornerRadius: radius).strokeBorder(
+                    LinearGradient(colors: [Color.white.opacity(0.45), Color.white.opacity(0.12)], startPoint: .top, endPoint: .bottom),
+                    lineWidth: 1))
+        } else {
+            background(Brand.surface)
+                .clipShape(RoundedRectangle(cornerRadius: radius))
+                .overlay(RoundedRectangle(cornerRadius: radius).stroke(Brand.hairline, lineWidth: 1))
+        }
+    }
+
+    // Capsule + circle variants of liquidSurface for chips, search fields and round buttons.
+    @ViewBuilder
+    func liquidCapsule() -> some View {
+        if #available(iOS 26.0, *) {
+            glassEffect(.regular, in: .capsule)
+                .overlay(Capsule().strokeBorder(
+                    LinearGradient(colors: [Color.white.opacity(0.40), Color.white.opacity(0.12)], startPoint: .top, endPoint: .bottom), lineWidth: 1))
+        } else {
+            background(Brand.surface).clipShape(Capsule())
+                .overlay(Capsule().stroke(Brand.hairline, lineWidth: 1))
+        }
+    }
+
+    @ViewBuilder
+    func liquidCircle() -> some View {
+        if #available(iOS 26.0, *) {
+            glassEffect(.regular, in: .circle)
+                .overlay(Circle().strokeBorder(
+                    LinearGradient(colors: [Color.white.opacity(0.40), Color.white.opacity(0.12)], startPoint: .top, endPoint: .bottom), lineWidth: 1))
+        } else {
+            background(Brand.surface).clipShape(Circle())
+                .overlay(Circle().stroke(Brand.hairline, lineWidth: 1))
+        }
+    }
 }
 
 struct PressStyle: ButtonStyle {

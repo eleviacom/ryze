@@ -2,15 +2,31 @@ import SwiftUI
 
 // MARK: - Shared components
 struct AppCard<C: View>: View { @ViewBuilder var content: C
-    var body: some View { content.padding(18).frame(maxWidth: .infinity, alignment: .leading)
-        .background(ZStack {
-            RoundedRectangle(cornerRadius: 24).fill(LinearGradient(colors: [Brand.elev2, Brand.elev1], startPoint: .top, endPoint: .bottom))
-            RoundedRectangle(cornerRadius: 24).fill(LinearGradient(colors: [Color.white.opacity(0.06), .clear], startPoint: .top, endPoint: .center))
-        })
-        .specularBorder(24)
-        .clipShape(RoundedRectangle(cornerRadius: 24))
-        .shadow(color: Brand.shadow1, radius: 2, y: 1)
-        .shadow(color: Brand.shadow2, radius: 22, y: 14) } }
+    var body: some View {
+        let padded = content.padding(18).frame(maxWidth: .infinity, alignment: .leading)
+        if #available(iOS 26.0, *) {
+            // Real Liquid Glass card on iOS 26; faint specular edge + ambient shadow keep the depth.
+            padded
+                .glassEffect(.regular, in: .rect(cornerRadius: 24))
+                .overlay(RoundedRectangle(cornerRadius: 24).fill(
+                    LinearGradient(colors: [Color.white.opacity(0.09), .clear], startPoint: .top, endPoint: .center)).allowsHitTesting(false))
+                .overlay(RoundedRectangle(cornerRadius: 24).strokeBorder(
+                    LinearGradient(colors: [Color.white.opacity(0.45), Color.white.opacity(0.12)], startPoint: .top, endPoint: .bottom), lineWidth: 1))
+                .shadow(color: Brand.shadow2, radius: 22, y: 14)
+        } else {
+            // Unchanged on iOS 17–25: warm gradient + sheen + specular + 2-layer shadow.
+            padded
+                .background(ZStack {
+                    RoundedRectangle(cornerRadius: 24).fill(LinearGradient(colors: [Brand.elev2, Brand.elev1], startPoint: .top, endPoint: .bottom))
+                    RoundedRectangle(cornerRadius: 24).fill(LinearGradient(colors: [Color.white.opacity(0.06), .clear], startPoint: .top, endPoint: .center))
+                })
+                .specularBorder(24)
+                .clipShape(RoundedRectangle(cornerRadius: 24))
+                .shadow(color: Brand.shadow1, radius: 2, y: 1)
+                .shadow(color: Brand.shadow2, radius: 22, y: 14)
+        }
+    }
+}
 struct FeaturedCard<C: View>: View { @ViewBuilder var content: C
     var body: some View { content.padding(18).frame(maxWidth: .infinity, alignment: .leading)
         .background(Brand.gold)
@@ -20,8 +36,30 @@ struct FeaturedCard<C: View>: View { @ViewBuilder var content: C
         .shadow(color: Brand.yellow.opacity(0.26), radius: 22, y: 12) } }
 struct PillButton: View { let title: String; var system: String? = nil; var style: Style = .primary; var enabled = true; let action: () -> Void
     enum Style { case primary, soft, dark }
-    var body: some View { Button { if enabled { action() } } label: { HStack(spacing: 6) { if let s = system { Image(systemName: s).font(.system(size: 13, weight: .semibold)) }; Text(title).font(.system(size: 14, weight: .semibold)) }.foregroundColor(fg).padding(.horizontal, 16).frame(height: 40).background(bg).overlay(Capsule().stroke(style == .soft ? Brand.hairline : .clear, lineWidth: 1)).clipShape(Capsule()) }.buttonStyle(PressStyle()).opacity(enabled ? 1 : 0.4) }
-    var bg: Color { style == .primary ? Brand.text : style == .dark ? .black : Brand.surface }; var fg: Color { style == .primary ? Brand.onText : style == .dark ? .white : Brand.text } }
+    var body: some View { Button { if enabled { action() } } label: {
+        HStack(spacing: 6) { if let s = system { Image(systemName: s).font(.system(size: 13, weight: .semibold)) }; Text(title).font(.system(size: 14, weight: .semibold)) }
+            .foregroundColor(fg).padding(.horizontal, 16).frame(height: 40)
+            .modifier(PillFill(style: style))
+    }.buttonStyle(PressStyle()).opacity(enabled ? 1 : 0.4) }
+    var fg: Color { style == .primary ? Brand.onText : style == .dark ? .white : Brand.text } }
+
+// Pill surface: primary stays a solid text-color capsule (loudest action); soft/dark
+// become real Liquid Glass on iOS 26, with their exact prior look on iOS 17–25.
+private struct PillFill: ViewModifier {
+    let style: PillButton.Style
+    @ViewBuilder func body(content: Content) -> some View {
+        if style == .primary {
+            content.background(Brand.text).clipShape(Capsule())
+        } else if #available(iOS 26.0, *) {
+            content.glassEffect(.regular, in: .capsule)
+        } else {
+            content
+                .background(style == .dark ? Color.black : Brand.surface)
+                .overlay(Capsule().stroke(style == .soft ? Brand.hairline : .clear, lineWidth: 1))
+                .clipShape(Capsule())
+        }
+    }
+}
 struct IconTile: View { let system: String; var color: Color = Brand.yellowInk; var size: CGFloat = 44
     var body: some View { Image(systemName: system).font(.system(size: size * 0.42, weight: .semibold)).symbolRenderingMode(.hierarchical).foregroundColor(color).frame(width: size, height: size).background(color.opacity(0.15)).clipShape(RoundedRectangle(cornerRadius: 13)) } }
 struct Avatar: View { let name: String; var size: CGFloat = 40; var you = false; var imageData: Data? = nil
@@ -48,11 +86,11 @@ struct ScreenScroll<C: View>: View {
     }
 }
 struct StatCard: View { let value: String; let label: String
-    var body: some View { VStack(alignment: .leading, spacing: 2) { Text(value).font(.system(size: 20, weight: .bold)).foregroundColor(Brand.text); Text(label).font(.system(size: 12)).foregroundColor(Brand.mute) }.padding(14).frame(maxWidth: .infinity, alignment: .leading).background(Brand.surface).overlay(RoundedRectangle(cornerRadius: 12).stroke(Brand.hairline, lineWidth: 1)).clipShape(RoundedRectangle(cornerRadius: 12)) } }
+    var body: some View { VStack(alignment: .leading, spacing: 2) { Text(value).font(.system(size: 20, weight: .bold)).foregroundColor(Brand.text); Text(label).font(.system(size: 12)).foregroundColor(Brand.mute) }.padding(14).frame(maxWidth: .infinity, alignment: .leading).liquidSurface(12) } }
 struct DarkButton: View { let title: String; var system: String? = nil; let action: () -> Void
     var body: some View { Button(action: action) { HStack(spacing: 7) { if let s = system { Image(systemName: s) }; Text(title).font(.system(size: 16, weight: .semibold)) }.foregroundColor(.white).frame(maxWidth: .infinity).frame(height: 50).background(Color.black).clipShape(Capsule()) }.buttonStyle(PressStyle()) } }
 struct ToastBanner: View { let toast: Toast
-    var body: some View { HStack(spacing: 12) { Text(toast.label).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text).lineLimit(1); if toast.xp > 0 { Text("+\(toast.xp) XP").font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.good) }; if toast.coins != 0 { Text("\(toast.coins > 0 ? "+" : "")\(toast.coins)").font(.system(size: 14, weight: .semibold)).foregroundColor(toast.coins < 0 ? Brand.mute : Brand.yellow) } }.padding(.vertical, 12).padding(.horizontal, 18).background(Brand.surface).overlay(Capsule().stroke(Brand.hairline, lineWidth: 1)).clipShape(Capsule()) } }
+    var body: some View { HStack(spacing: 12) { Text(toast.label).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text).lineLimit(1); if toast.xp > 0 { Text("+\(toast.xp) XP").font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.good) }; if toast.coins != 0 { Text("\(toast.coins > 0 ? "+" : "")\(toast.coins)").font(.system(size: 14, weight: .semibold)).foregroundColor(toast.coins < 0 ? Brand.mute : Brand.yellow) } }.padding(.vertical, 12).padding(.horizontal, 18).liquidCapsule() } }
 struct QuickAction: View { let icon: String; let label: String; var prominent: Bool = false; let action: () -> Void
     var body: some View { Button(action: action) { VStack(spacing: 7) {
         Image(systemName: icon).font(.system(size: 18, weight: .semibold)).foregroundColor(prominent ? .black : Brand.text)
@@ -93,7 +131,7 @@ struct AmountSheet: View {
                 Text("L").font(.system(size: 26, weight: .semibold)).foregroundColor(Brand.mute)
             }
             if mode == .send || mode == .request {
-                TextField("", text: $note, prompt: Text(T("Add a note 💬", "Shto një shënim 💬")).foregroundColor(Brand.faint)).foregroundColor(Brand.text).multilineTextAlignment(.center).padding().frame(height: 50).frame(maxWidth: .infinity).background(Brand.surface).clipShape(RoundedRectangle(cornerRadius: 12))
+                TextField("", text: $note, prompt: Text(T("Add a note 💬", "Shto një shënim 💬")).foregroundColor(Brand.faint)).foregroundColor(Brand.text).multilineTextAlignment(.center).padding().frame(height: 50).frame(maxWidth: .infinity).liquidSurface(12)
             }
             Spacer()
             PrimaryButton(title: cta, enabled: (Double(amount) ?? 0) > 0) { onConfirm(Double(amount) ?? 0, note); dismiss() }
@@ -314,7 +352,7 @@ struct PayView: View {
                 HStack(alignment: .firstTextBaseline) {
                     Text(T("Pay", "Paguaj")).font(.system(size: 34, weight: .bold)).foregroundColor(Brand.text)
                     Spacer()
-                    HStack(spacing: 6) { Image(systemName: "wallet.pass.fill").font(.system(size: 12)).foregroundColor(Brand.yellow); Text(bank.hideBalance ? "•••" : money(bank.totalALL)).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text) }.padding(.horizontal, 12).frame(height: 34).background(Brand.surface).overlay(Capsule().stroke(Brand.hairline, lineWidth: 1)).clipShape(Capsule())
+                    HStack(spacing: 6) { Image(systemName: "wallet.pass.fill").font(.system(size: 12)).foregroundColor(Brand.yellow); Text(bank.hideBalance ? "•••" : money(bank.totalALL)).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text) }.padding(.horizontal, 12).frame(height: 34).liquidCapsule()
                 }
                 AppCard { HStack(spacing: 0) {
                     payTile("plus", T("Add", "Shto")) { flow = .add }
@@ -330,7 +368,7 @@ struct PayView: View {
                     ForEach(pending, id: \.0.id) { c, m in AppCard { HStack(spacing: 12) { Avatar(name: c.name, size: 42); VStack(alignment: .leading, spacing: 2) { Text(c.name).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text); Text(T("asks", "kërkon") + " \(money(m.amount)) · \(m.note)").font(.system(size: 12)).foregroundColor(Brand.mute).lineLimit(1) }; Spacer(); PillButton(title: T("Pay", "Paguaj")) { bank.payRequest(c.id, m.id) } } } }
                 }
                 eyebrow(T("Pay a friend", "Paguaj një mik"))
-                HStack(spacing: 8) { Image(systemName: "magnifyingglass").foregroundColor(Brand.mute); TextField("", text: $search, prompt: Text(T("Search name or @tag", "Kërko emër ose @tag")).foregroundColor(Brand.faint)).foregroundColor(Brand.text).autocorrectionDisabled() }.padding(.horizontal, 14).frame(height: 46).background(Brand.surface).overlay(Capsule().stroke(Brand.hairline, lineWidth: 1)).clipShape(Capsule())
+                HStack(spacing: 8) { Image(systemName: "magnifyingglass").foregroundColor(Brand.mute); TextField("", text: $search, prompt: Text(T("Search name or @tag", "Kërko emër ose @tag")).foregroundColor(Brand.faint)).foregroundColor(Brand.text).autocorrectionDisabled() }.padding(.horizontal, 14).frame(height: 46).liquidCapsule()
                 if search.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 16) { ForEach(bank.contacts) { c in NavigationLink(value: c.id) { VStack(spacing: 6) { Avatar(name: c.name, size: 56); Text(c.name.split(separator: " ").first.map(String.init) ?? c.name).font(.system(size: 12)).foregroundColor(Brand.mute) } } } }.padding(.vertical, 2) }
                 }
@@ -387,7 +425,7 @@ struct ChatThreadView: View {
                 }
                 HStack(spacing: 8) {
                     Menu { Button(T("Send money", "Dërgo para")) { sheet = .send }; Button(T("Request money", "Kërko para")) { sheet = .request } } label: { Image(systemName: "plus").font(.system(size: 18, weight: .bold)).foregroundColor(.black).frame(width: 42, height: 42).background(Brand.yellow).clipShape(Circle()) }
-                    TextField("", text: $text, prompt: Text(T("Message", "Mesazh")).foregroundColor(Brand.faint)).foregroundColor(Brand.text).padding(.horizontal, 16).frame(height: 44).background(Brand.surface).overlay(Capsule().stroke(Brand.hairline, lineWidth: 1)).clipShape(Capsule())
+                    TextField("", text: $text, prompt: Text(T("Message", "Mesazh")).foregroundColor(Brand.faint)).foregroundColor(Brand.text).padding(.horizontal, 16).frame(height: 44).liquidCapsule()
                     Button { let t = text.trimmingCharacters(in: .whitespaces); if !t.isEmpty { bank.sendText(contact.id, t); text = "" } } label: { Image(systemName: "arrow.up").font(.system(size: 16, weight: .bold)).foregroundColor(Brand.onText).frame(width: 42, height: 42).background(Brand.text).clipShape(Circle()) }.opacity(text.trimmingCharacters(in: .whitespaces).isEmpty ? 0.4 : 1)
                 }.padding(12)
             }

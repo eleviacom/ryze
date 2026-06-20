@@ -20,11 +20,17 @@ struct GhostButton: View {
     let title: String
     let action: () -> Void
     var body: some View {
-        Button(action: action) {
-            Text(title).font(.system(size: 17, weight: .semibold)).foregroundColor(Brand.text)
-                .frame(maxWidth: .infinity).frame(height: 54)
-                .overlay(Capsule().stroke(Brand.text, lineWidth: 1))
-        }.buttonStyle(PressStyle())
+        Button(action: action) { label }.buttonStyle(PressStyle())
+    }
+    @ViewBuilder private var label: some View {
+        let base = Text(title).font(.system(size: 17, weight: .semibold)).foregroundColor(Brand.text)
+            .frame(maxWidth: .infinity).frame(height: 54)
+        if #available(iOS 26.0, *) {
+            base.glassEffect(.regular, in: .capsule)
+                .overlay(Capsule().strokeBorder(Color.white.opacity(0.16), lineWidth: 1))
+        } else {
+            base.overlay(Capsule().stroke(Brand.text, lineWidth: 1))
+        }
     }
 }
 
@@ -45,9 +51,8 @@ struct RyzeField: View {
                     .autocorrectionDisabled()
             }
             .padding(.horizontal, 16).frame(height: 56)
-            .background(Brand.surface)
-            .overlay(RoundedRectangle(cornerRadius: 12).stroke(focused ? Brand.text : Brand.hairline, lineWidth: 1))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .liquidSurface(12)
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(focused ? Brand.text : .clear, lineWidth: 1.5))
         }
     }
 }
@@ -69,9 +74,9 @@ struct OtpField: View {
         let chars = Array(code)
         let ch = i < chars.count ? String(chars[i]) : ""
         return Text(ch).font(.system(size: 22, weight: .semibold)).foregroundColor(Brand.text)
-            .frame(width: 46, height: 56).background(Brand.surface)
-            .overlay(RoundedRectangle(cornerRadius: 12).stroke(i == code.count ? Brand.text : Brand.hairline, lineWidth: 1.5))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .frame(width: 46, height: 56)
+            .liquidSurface(12)
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(i == code.count ? Brand.text : .clear, lineWidth: 1.5))
     }
 }
 

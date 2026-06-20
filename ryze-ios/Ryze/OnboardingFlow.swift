@@ -1,6 +1,34 @@
 import SwiftUI
+import UIKit
+import AVFoundation
 
 struct WhyInfo: Identifiable { let id = UUID(); let title: String; let body: String }
+
+// Muted, gapless looping video for full-bleed onboarding heroes.
+// ponytail: all visible pages decode at once (only 3 short loops); pause offscreen if it ever stutters.
+struct LoopingVideo: UIViewRepresentable {
+    let name: String
+    func makeUIView(context: Context) -> LoopingVideoView { LoopingVideoView(name: name) }
+    func updateUIView(_ uiView: LoopingVideoView, context: Context) {}
+}
+
+final class LoopingVideoView: UIView {
+    override class var layerClass: AnyClass { AVPlayerLayer.self }
+    private var playerLayer: AVPlayerLayer { layer as! AVPlayerLayer }
+    private let queue = AVQueuePlayer()
+    private var looper: AVPlayerLooper?
+    init(name: String) {
+        super.init(frame: .zero)
+        guard let url = Bundle.main.url(forResource: name, withExtension: "mp4") else { return }
+        queue.isMuted = true
+        queue.automaticallyWaitsToMinimizeStalling = false   // no stall/pause at the loop boundary
+        looper = AVPlayerLooper(player: queue, templateItem: AVPlayerItem(url: url))
+        playerLayer.player = queue
+        playerLayer.videoGravity = .resizeAspectFill
+        queue.play()
+    }
+    required init?(coder: NSCoder) { fatalError() }
+}
 
 struct OnboardingFlow: View {
     @StateObject private var model = OnboardingModel()
@@ -20,7 +48,7 @@ struct OnboardingFlow: View {
             if model.phase == .value {
                 Button { game.completeAccount(name: model.draft["firstName"] ?? "Klevi") } label: {
                     Text(T("Skip", "Kapërce")).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.mute)
-                        .padding(.horizontal, 14).frame(height: 32).background(Brand.surface).clipShape(Capsule())
+                        .padding(.horizontal, 14).frame(height: 32).liquidCapsule()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 .padding(.trailing, 16).padding(.top, 4)
@@ -40,51 +68,56 @@ struct OnboardingFlow: View {
     }
 }
 
-// MARK: - Value carousel
+// MARK: - Value carousel — full-bleed looping video heroes (Revolut-style)
 struct WelcomeCarousel: View {
     @ObservedObject var model: OnboardingModel
-    struct Slide { let image, title, body, cta: String }
+    struct Slide { let video, title, body, cta: String }
     let slides = [
-        Slide(image: "welcomelogo", title: T("Money that finally gets you", "Paratë që më në fund të kuptojnë"),
-              body: T("Ryze is the Raiffeisen account built for your twenties. Spend, save, and level up, in one place that feels like yours.", "Ryze është llogaria e Raiffeisen, ndërtuar për të rinjtë. Shpenzo, kurse dhe ngjitu në nivel, të gjitha në një vend që ndihet i yti."), cta: T("Continue", "Vazhdo")),
-        Slide(image: "openacct", title: T("Open it in minutes, 100% online", "Hape në pak minuta, 100% online"),
-              body: T("No branch, no paperwork, no fees to open. Just your ID and a quick video check, from your couch.", "Pa degë, pa dokumente, pa tarifa hapjeje. Vetëm letërnjoftimi dhe një verifikim i shpejtë me video, nga divani yt."), cta: T("Continue", "Vazhdo")),
-        Slide(image: "domore", title: T("Do more, together", "Bëj më shumë, bashkë"),
-              body: T("Instant payments, real-time exchange, save while you spend, and rewards for inviting your crew.", "Pagesa të menjëhershme, këmbim në kohë reale, kurse teksa shpenzon dhe shpërblime kur fton shokët."), cta: T("Get started", "Fillo")),
+        // onboard1 — spinning gold Raiffeisen coin: brand / the account itself
+        Slide(video: "onboard1", title: T("Money that finally gets you", "Paratë që më në fund të kuptojnë"),
+              body: T("Ryze is the Raiffeisen account built for your twenties. Spend, save and level up in one place that feels like yours.", "Ryze është llogaria e Raiffeisen, ndërtuar për të rinjtë. Shpenzo, kurse dhe ngjitu në nivel, në një vend që ndihet i yti."), cta: T("Continue", "Vazhdo")),
+        // onboard2 — floating currency coins: the real feature is in-app ALL <-> EUR exchange
+        Slide(video: "onboard2", title: T("Euro and lek, side by side", "Euro dhe lek, krah për krah"),
+              body: T("Hold both currencies and exchange between them in seconds, with the rate shown before you confirm.", "Mbaji të dyja monedhat dhe këmbe mes tyre në sekonda, me kursin që shfaqet para se ta konfirmosh."), cta: T("Continue", "Vazhdo")),
+        // onboard3 — stack of gold/midnight/coral/mint cards: your card, your style
+        Slide(video: "onboard3", title: T("A card that's all you", "Një kartë krejt e jotja"),
+              body: T("Banana gold, midnight, coral or mint. Pick your style and tap to pay the moment you're approved.", "Ar banane, mesnatë, koral apo mentë. Zgjidh stilin tënd dhe paguaj me një prekje sapo të aprovohesh."), cta: T("Get started", "Fillo")),
     ]
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 10) {
-                LogoTile(size: 30)
-                VStack(alignment: .leading, spacing: 1) {
-                    Eyebrow(text: "Raiffeisen")
-                    Text("Ryze").font(.system(size: 18, weight: .semibold)).foregroundColor(Brand.text)
-                }
-                Spacer()
-            }
-            .padding(.horizontal, 24).padding(.top, 8)
-
-            HStack(spacing: 6) {
-                ForEach(0..<slides.count, id: \.self) { i in
-                    Capsule().fill(i <= model.slideIndex ? Brand.yellow : Brand.hairline).frame(height: 3)
-                }
-            }
-            .padding(.horizontal, 24).padding(.top, 14)
-
+        ZStack {
             TabView(selection: $model.slideIndex) {
                 ForEach(0..<slides.count, id: \.self) { i in
                     SlideView(slide: slides[i]).tag(i)
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
+            .ignoresSafeArea()
             .animation(.easeInOut, value: model.slideIndex)
 
-            PrimaryButton(title: slides[model.slideIndex].cta) {
-                if model.slideIndex < slides.count - 1 { withAnimation { model.slideIndex += 1 } }
-                else { model.startKyc() }
+            VStack(spacing: 0) {
+                HStack(spacing: 10) {
+                    LogoTile(size: 30)
+                    Text(T("Welcome to Ryze", "Mirë se erdhe te Ryze")).font(.system(size: 17, weight: .semibold)).foregroundColor(.white)
+                    Spacer()
+                }
+                .padding(.horizontal, 24).padding(.top, 8)
+
+                HStack(spacing: 6) {
+                    ForEach(0..<slides.count, id: \.self) { i in
+                        Capsule().fill(i <= model.slideIndex ? Brand.yellow : Color.white.opacity(0.25)).frame(height: 3)
+                    }
+                }
+                .padding(.horizontal, 24).padding(.top, 14)
+
+                Spacer()
+
+                PrimaryButton(title: slides[model.slideIndex].cta) {
+                    if model.slideIndex < slides.count - 1 { withAnimation { model.slideIndex += 1 } }
+                    else { model.startKyc() }
+                }
+                .padding(.horizontal, 24).padding(.bottom, 8)
             }
-            .padding(.horizontal, 24).padding(.bottom, 8)
         }
     }
 }
@@ -92,19 +125,28 @@ struct WelcomeCarousel: View {
 struct SlideView: View {
     let slide: WelcomeCarousel.Slide
     var body: some View {
-        VStack(spacing: 28) {
-            Spacer(minLength: 0)
-            if slide.image == "welcomelogo" {
-                LogoHero()
-            } else {
-                Image(slide.image).resizable().scaledToFit().frame(height: UIScreen.main.bounds.height * 0.40)
-            }
+        ZStack {
+            LoopingVideo(name: slide.video).ignoresSafeArea()
+            // Heavier scrim up top (behind the header + title) and at the bottom (behind the
+            // button), leaving the middle clear so the hero art reads. Also rescues slide 3's cream.
+            LinearGradient(stops: [
+                .init(color: .black.opacity(0.78), location: 0.0),
+                .init(color: .black.opacity(0.45), location: 0.28),
+                .init(color: .clear, location: 0.46),
+                .init(color: .clear, location: 0.72),
+                .init(color: .black.opacity(0.85), location: 0.92),
+                .init(color: .black, location: 1.0),
+            ], startPoint: .top, endPoint: .bottom)
+            .ignoresSafeArea()
+
+            // Title + body pinned to the top, under the logo/progress header (Revolut layout).
             VStack(alignment: .leading, spacing: 12) {
-                Text(slide.title).display(33).foregroundColor(Brand.text).fixedSize(horizontal: false, vertical: true)
-                Text(slide.body).font(.system(size: 17)).foregroundColor(Brand.mute).lineSpacing(3)
+                Text(slide.title).display(33).foregroundColor(.white).fixedSize(horizontal: false, vertical: true)
+                Text(slide.body).font(.system(size: 17)).foregroundColor(.white.opacity(0.78)).lineSpacing(3)
+                Spacer()
             }
-            .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 24)
-            Spacer(minLength: 0)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 24).padding(.top, 96)
         }
     }
 }
@@ -200,7 +242,7 @@ struct StepBody: View {
                         Image(systemName: "info.circle.fill").foregroundColor(Brand.yellow)
                         Text(e).font(.system(size: 13)).foregroundColor(Brand.mute)
                     }
-                    .padding(12).background(Brand.surface).clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(12).liquidSurface(12)
                 }
             }
         case "consents":
@@ -230,9 +272,7 @@ struct StepBody: View {
                 if !done { Image(systemName: "chevron.right").foregroundColor(Brand.faint) }
             }
             .padding(.horizontal, 16).frame(height: 56)
-            .background(Brand.surface)
-            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Brand.hairline, lineWidth: 1))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .liquidSurface(12)
         }
         .buttonStyle(.plain)
     }
@@ -241,19 +281,32 @@ struct StepBody: View {
 // MARK: - Success + stub home
 struct SuccessView: View {
     let onStart: () -> Void
+    @State private var burst = 0
     var body: some View {
-        VStack(spacing: 0) {
-            Spacer()
-            SuccessSeal()
-            VStack(spacing: 12) {
-                Text(T("Welcome to Ryze", "Mirë se erdhe te Ryze")).display(38).foregroundColor(Brand.text).fixedSize(horizontal: false, vertical: true).multilineTextAlignment(.center)
+        ZStack {
+            LoopingVideo(name: "onboard_success").ignoresSafeArea()
+            // Same top+bottom scrim as the carousel so the title, body and button stay legible.
+            LinearGradient(stops: [
+                .init(color: .black.opacity(0.55), location: 0.0),
+                .init(color: .clear, location: 0.30),
+                .init(color: .clear, location: 0.48),
+                .init(color: .black.opacity(0.9), location: 0.8),
+                .init(color: .black, location: 1.0),
+            ], startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+            CelebrationOverlay(trigger: burst).ignoresSafeArea()
+
+            VStack(alignment: .leading, spacing: 12) {
+                Spacer()
+                Text(T("Welcome to Ryze", "Mirë se erdhe te Ryze")).display(36).foregroundColor(.white).fixedSize(horizontal: false, vertical: true)
                 Text(T("Your Raiffeisen account is open and ready. Your card is on its way, and your first quests are waiting.", "Llogaria jote Raiffeisen është e hapur dhe gati. Karta po vjen dhe sfidat e para të presin."))
-                    .font(.system(size: 17)).foregroundColor(Brand.mute).multilineTextAlignment(.center).lineSpacing(3)
+                    .font(.system(size: 17)).foregroundColor(.white.opacity(0.8)).lineSpacing(3)
+                PrimaryButton(title: T("Start playing", "Fillo të luash"), action: onStart).padding(.top, 8)
             }
-            .padding(.horizontal, 24).padding(.top, 8)
-            Spacer()
-            PrimaryButton(title: T("Start playing", "Fillo të luash"), action: onStart).padding(.horizontal, 24).padding(.bottom, 12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 24).padding(.bottom, 24)
         }
+        .onAppear { burst += 1 }
+        .sensoryFeedback(.success, trigger: burst)
     }
 }
 

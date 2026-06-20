@@ -64,7 +64,10 @@ private func rizTable(_ rows: [String]) -> [[String]] {
         if cells.first == "" { cells.removeFirst() }
         if cells.last == "" { cells.removeLast() }
         if cells.isEmpty { continue }
-        if cells.allSatisfy({ c in !c.isEmpty && c.allSatisfy { $0 == "-" || $0 == ":" } }) { continue }
+        // Drop markdown separator rows robustly: spaces stripped, dash/colon/en/em-dash only, at least one dash.
+        let allSep = cells.allSatisfy { c in c.replacingOccurrences(of: " ", with: "").allSatisfy { "-:—–".contains($0) } }
+        let hasDash = cells.contains { $0.contains(where: { "-—–".contains($0) }) }
+        if allSep && hasDash { continue }
         out.append(cells)
     }
     return out

@@ -80,7 +80,7 @@ struct PlansView: View {
         ZStack { Brand.bg.ignoresSafeArea()
             VStack(spacing: 0) {
                 HStack {
-                    Button { dismiss() } label: { Image(systemName: "xmark").foregroundColor(Brand.text).frame(width: 36, height: 36).background(Brand.surface).clipShape(Circle()) }
+                    Button { dismiss() } label: { Image(systemName: "xmark").foregroundColor(Brand.text).frame(width: 36, height: 36).liquidCircle() }
                     Spacer(); Text(T("Upgrade plan", "Përmirëso planin")).font(.system(size: 17, weight: .semibold)).foregroundColor(Brand.text); Spacer()
                     Color.clear.frame(width: 36, height: 36)
                 }.padding(.horizontal, 16).padding(.top, 12)
@@ -121,7 +121,7 @@ struct PlansView: View {
                         }
                         Button { withAnimation(.snappy) { expanded.toggle() } } label: {
                             Text(expanded ? T("Show less", "Më pak") : "\(T("See all", "Shiko të")) \(tier.allCount) \(T("benefits", "përfitimet"))").font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text)
-                                .frame(maxWidth: .infinity).padding(.vertical, 14).background(Brand.surface).clipShape(Capsule())
+                                .frame(maxWidth: .infinity).padding(.vertical, 14).liquidCapsule()
                         }.buttonStyle(PressStyle())
                     }.padding(.horizontal, 20).padding(.bottom, 20)
                 }

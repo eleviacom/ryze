@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		02A0283F995CF6A64B680A79 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 288CA01C0AF85A7DFED9CDA0 /* Assets.xcassets */; };
+		0B0A1D0100000000000000B1 /* onboard1.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0B0A1D0100000000000000A1 /* onboard1.mp4 */; };
+		0B0A1D0100000000000000B2 /* onboard2.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0B0A1D0100000000000000A2 /* onboard2.mp4 */; };
+		0B0A1D0100000000000000B3 /* onboard3.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0B0A1D0100000000000000A3 /* onboard3.mp4 */; };
+		0B0A1D0100000000000000B4 /* onboard_success.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0B0A1D0100000000000000A4 /* onboard_success.mp4 */; };
 		120E371B7838DDE40BD7A898 /* RizRichText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51885919029AB3D6FEDEF7B3 /* RizRichText.swift */; };
 		12B1F46B57D159576A5D14BE /* RizService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D56308A3B45E515BBDA6C17 /* RizService.swift */; };
 		1C4ADA802BC02F15E8306784 /* Bank.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9588FAAABD5073276B1F5FE /* Bank.swift */; };
@@ -33,6 +37,10 @@
 		1FFFE5F83C04802B2317EDD8 /* Flows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flows.swift; sourceTree = "<group>"; };
 		272FB7F58EB95A417ED0E158 /* Plans.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plans.swift; sourceTree = "<group>"; };
 		288CA01C0AF85A7DFED9CDA0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0B0A1D0100000000000000A1 /* onboard1.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = onboard1.mp4; sourceTree = "<group>"; };
+		0B0A1D0100000000000000A2 /* onboard2.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = onboard2.mp4; sourceTree = "<group>"; };
+		0B0A1D0100000000000000A3 /* onboard3.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = onboard3.mp4; sourceTree = "<group>"; };
+		0B0A1D0100000000000000A4 /* onboard_success.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = onboard_success.mp4; sourceTree = "<group>"; };
 		29DFDAD4403748500CD237FC /* RyzeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RyzeApp.swift; sourceTree = "<group>"; };
 		437CF8667BB1E0134BAEA85B /* OnboardingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModel.swift; sourceTree = "<group>"; };
 		51885919029AB3D6FEDEF7B3 /* RizRichText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RizRichText.swift; sourceTree = "<group>"; };
@@ -42,7 +50,7 @@
 		A9588FAAABD5073276B1F5FE /* Bank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bank.swift; sourceTree = "<group>"; };
 		AB947E4945696C5B0618497C /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		B763334074912918593B92B8 /* Riz.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Riz.swift; sourceTree = "<group>"; };
-		BA29FC46072B78C226766C13 /* Ryze.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Ryze.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BA29FC46072B78C226766C13 /* Ryze.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ryze.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C189DACFA4B4FD65C8E9AECE /* Legal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Legal.swift; sourceTree = "<group>"; };
 		C9EC5D72C01847AB4D9F7B87 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		D86C457C70F70AC2187CA030 /* Sections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sections.swift; sourceTree = "<group>"; };
@@ -58,6 +66,10 @@
 				F3D374963CF0767AD1981C6B /* AppSecurity.swift */,
 				149ED19E871E9434405C2650 /* AppViews.swift */,
 				288CA01C0AF85A7DFED9CDA0 /* Assets.xcassets */,
+				0B0A1D0100000000000000A1 /* onboard1.mp4 */,
+				0B0A1D0100000000000000A2 /* onboard2.mp4 */,
+				0B0A1D0100000000000000A3 /* onboard3.mp4 */,
+				0B0A1D0100000000000000A4 /* onboard_success.mp4 */,
 				A9588FAAABD5073276B1F5FE /* Bank.swift */,
 				C9EC5D72C01847AB4D9F7B87 /* Components.swift */,
 				1FFFE5F83C04802B2317EDD8 /* Flows.swift */,
@@ -123,8 +135,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
-				TargetAttributes = {
-				};
 			};
 			buildConfigurationList = A127884E59CF5A69E6C593DD /* Build configuration list for PBXProject "Ryze" */;
 			developmentRegion = en;
@@ -151,6 +161,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				02A0283F995CF6A64B680A79 /* Assets.xcassets in Resources */,
+				0B0A1D0100000000000000B1 /* onboard1.mp4 in Resources */,
+				0B0A1D0100000000000000B2 /* onboard2.mp4 in Resources */,
+				0B0A1D0100000000000000B3 /* onboard3.mp4 in Resources */,
+				0B0A1D0100000000000000B4 /* onboard_success.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,6 +206,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P3V9P927CD;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Ryze uses Face ID to unlock the app and reveal your card details.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -335,6 +350,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P3V9P927CD;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Ryze uses Face ID to unlock the app and reveal your card details.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

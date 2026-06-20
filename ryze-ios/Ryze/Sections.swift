@@ -12,8 +12,8 @@ struct TopBar: View {
     var body: some View {
         HStack(spacing: 12) {
             Button(action: onProfile) { Avatar(name: name, size: 40, imageData: imageData) }
-            Button(action: onSearch) { HStack { Image(systemName: "magnifyingglass").foregroundColor(Brand.mute); Text(T("Search", "Kërko")).foregroundColor(Brand.mute).font(.system(size: 15)); Spacer() }.padding(.horizontal, 14).frame(height: 40).background(Brand.surface).overlay(Capsule().stroke(Brand.hairline, lineWidth: 1)).clipShape(Capsule()) }.buttonStyle(.plain)
-            Button(action: onAnalytics) { Image(systemName: "chart.bar.fill").foregroundColor(Brand.text).frame(width: 40, height: 40).background(Brand.surface).clipShape(Circle()) }
+            Button(action: onSearch) { HStack { Image(systemName: "magnifyingglass").foregroundColor(Brand.mute); Text(T("Search", "Kërko")).foregroundColor(Brand.mute).font(.system(size: 15)); Spacer() }.padding(.horizontal, 14).frame(height: 40).liquidCapsule() }.buttonStyle(.plain)
+            Button(action: onAnalytics) { Image(systemName: "chart.bar.fill").foregroundColor(Brand.text).frame(width: 40, height: 40).liquidCircle() }
         }
     }
 }
@@ -343,7 +343,7 @@ struct AssistantView: View {
                 }
 
                 HStack(spacing: 8) {
-                    TextField("", text: $input, prompt: Text(T("Ask Riz anything...", "Pyet Riz çdo gjë...")).foregroundColor(Brand.faint)).foregroundColor(Brand.text).padding(.horizontal, 16).frame(height: 48).background(Brand.surface).overlay(Capsule().stroke(Brand.hairline, lineWidth: 1)).clipShape(Capsule())
+                    TextField("", text: $input, prompt: Text(T("Ask Riz anything...", "Pyet Riz çdo gjë...")).foregroundColor(Brand.faint)).foregroundColor(Brand.text).padding(.horizontal, 16).frame(height: 48).liquidCapsule()
                     Button { send(input) } label: { Image(systemName: "arrow.up").font(.system(size: 18, weight: .bold)).foregroundColor(.black).frame(width: 48, height: 48).background(Brand.gold).clipShape(Circle()).shadow(color: Brand.yellow.opacity(0.3), radius: 8, y: 4) }.opacity(input.trimmingCharacters(in: .whitespaces).isEmpty ? 0.5 : 1)
                 }.padding(16)
             }
@@ -398,14 +398,14 @@ struct CouponRedeemedSheet: View {
     var body: some View {
         ZStack { Brand.bg.ignoresSafeArea()
             VStack(spacing: 16) {
-                HStack { Spacer(); Button { dismiss() } label: { Image(systemName: "xmark").foregroundColor(Brand.text).frame(width: 36, height: 36).background(Brand.surface).clipShape(Circle()) } }
+                HStack { Spacer(); Button { dismiss() } label: { Image(systemName: "xmark").foregroundColor(Brand.text).frame(width: 36, height: 36).liquidCircle() } }
                 Image(systemName: reward.icon).font(.system(size: 30, weight: .semibold)).foregroundColor(.white).frame(width: 74, height: 74).background(LinearGradient(colors: [rewardColor(reward.id), rewardColor(reward.id).opacity(0.7)], startPoint: .top, endPoint: .bottom)).clipShape(RoundedRectangle(cornerRadius: 20))
                 VStack(spacing: 3) { Text(reward.title).font(.system(size: 22, weight: .bold)).foregroundColor(Brand.text).multilineTextAlignment(.center); Text(reward.brand).font(.system(size: 14)).foregroundColor(Brand.mute) }
                 if let img = qrImage("ryze://redeem/\(reward.id)/\(code)") {
                     Image(uiImage: img).interpolation(.none).resizable().frame(width: 196, height: 196).padding(18).background(Color.white).clipShape(RoundedRectangle(cornerRadius: 24)).overlay(RoundedRectangle(cornerRadius: 24).stroke(Brand.gold, lineWidth: 2))
                 }
                 Button { Clip.copySensitive(code); withAnimation { copied = true } } label: {
-                    HStack(spacing: 8) { Text(code).font(.system(size: 18, weight: .bold, design: .monospaced)).tracking(2).foregroundColor(Brand.text); Image(systemName: copied ? "checkmark" : "doc.on.doc").font(.system(size: 13)).foregroundColor(copied ? Brand.good : Brand.mute) }.padding(.horizontal, 16).frame(height: 44).background(Brand.surface).overlay(Capsule().stroke(Brand.hairline, lineWidth: 1)).clipShape(Capsule())
+                    HStack(spacing: 8) { Text(code).font(.system(size: 18, weight: .bold, design: .monospaced)).tracking(2).foregroundColor(Brand.text); Image(systemName: copied ? "checkmark" : "doc.on.doc").font(.system(size: 13)).foregroundColor(copied ? Brand.good : Brand.mute) }.padding(.horizontal, 16).frame(height: 44).liquidCapsule()
                 }.buttonStyle(PressStyle())
                 Text(inStore ? T("Show this QR at the counter to claim your reward.", "Trego këtë QR në arkë për të marrë shpërblimin.") : T("Enter this code at checkout to redeem.", "Vendose këtë kod në arkë për ta përdorur.")).font(.system(size: 13)).foregroundColor(Brand.mute).multilineTextAlignment(.center).padding(.horizontal, 30)
                 Spacer()
@@ -546,7 +546,7 @@ let on = selCat == c.0
                 ProgressBar(value: Double(game.squad.progress) / Double(max(1, game.squad.goal)))
                 HStack(spacing: -8) {
                     ForEach(game.squad.members) { m in Avatar(name: m.name, size: 34).overlay(Circle().stroke(Brand.elev2, lineWidth: 2)) }
-                    Button { game.simulateReferral() } label: { Image(systemName: "plus").font(.system(size: 14, weight: .bold)).foregroundColor(Brand.text).frame(width: 34, height: 34).background(Brand.elev3).clipShape(Circle()).overlay(Circle().stroke(Brand.hairline, lineWidth: 1)) }.padding(.leading, 12)
+                    Button { game.simulateReferral() } label: { Image(systemName: "plus").font(.system(size: 14, weight: .bold)).foregroundColor(Brand.text).frame(width: 34, height: 34).liquidCircle() }.padding(.leading, 12)
                     Spacer()
                 }
             } }
@@ -642,7 +642,7 @@ struct QRSheet: View {
     var body: some View {
         ZStack { Brand.bg.ignoresSafeArea()
             VStack(spacing: 18) {
-                HStack { Spacer(); Button { dismiss() } label: { Image(systemName: "xmark").foregroundColor(Brand.text).frame(width: 36, height: 36).background(Brand.surface).clipShape(Circle()) } }
+                HStack { Spacer(); Button { dismiss() } label: { Image(systemName: "xmark").foregroundColor(Brand.text).frame(width: 36, height: 36).liquidCircle() } }
                 Spacer()
                 Text(T("Your Ryze code", "Kodi yt Ryze")).font(.system(size: 24, weight: .bold)).foregroundColor(Brand.text)
                 Text(T("Scan to pay me or add me on Ryze", "Skano për të paguar ose më shto në Ryze")).font(.system(size: 15)).foregroundColor(Brand.mute).multilineTextAlignment(.center)
