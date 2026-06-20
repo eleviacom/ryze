@@ -20,3 +20,6 @@ ryze-ios/dd/
 ryze-video/**/_*
 ryze-video/screens/logoA.png
 ryze-video/screens/logoB.png
+
+ryze-video/remotion/public/shots/
+ryze-video/remotion/out/slides/
