@@ -147,7 +147,7 @@ struct HomeView: View {
 
             // 1) Hero bento, balance tile (void) + level/points tile (the one gold fill)
             HStack(alignment: .top, spacing: 12) {
-                balanceTile.frame(height: 178).pressable().onTapGesture { homeSheet = .analytics }
+                balanceTile.frame(height: 178).redactWhileCapturing().pressable().onTapGesture { homeSheet = .analytics }
                 Button { sel = 4 } label: { levelTile.frame(height: 178) }.buttonStyle(PressStyle())
             }
 
@@ -427,6 +427,15 @@ struct CardsView: View {
     @EnvironmentObject var bank: BankModel
     @EnvironmentObject var game: GameModel
     @AppStorage("ryze_lang") private var lang = "en"
+    // Step-up auth: revealing full PAN/expiry/CVV requires Face ID/passcode; hiding never does.
+    private func toggleReveal() {
+        if bank.revealed { withAnimation(.smooth(duration: 0.3)) { bank.revealed = false }; return }
+        Task { if await AppLockModel.confirm(T("Reveal your card details", "Shfaq detajet e kartës")) { withAnimation(.smooth(duration: 0.3)) { bank.revealed = true } } }
+    }
+    private func toggleVirtualReveal() {
+        if bank.virtualRevealed { withAnimation(.smooth(duration: 0.3)) { bank.virtualRevealed = false }; return }
+        Task { if await AppLockModel.confirm(T("Reveal your card details", "Shfaq detajet e kartës")) { withAnimation(.smooth(duration: 0.3)) { bank.virtualRevealed = true } } }
+    }
     enum CardFlow: Int, Identifiable { case order, applePay, limit, studio; var id: Int { rawValue } }
     @State private var cardFlow: CardFlow? = nil
     var cardBars: [Double] {
@@ -439,12 +448,13 @@ struct CardsView: View {
             HStack { Text(T("Cards", "Kartat")).font(.system(size: 34, weight: .bold)).foregroundColor(Brand.text); Spacer() }
 
             CardFace(last4: bank.card.last4, frozen: bank.card.frozen, revealed: bank.revealed, name: game.name, style: bank.cardStyle, customText: bank.cardText)
-                .onTapGesture { withAnimation(.smooth(duration: 0.3)) { bank.revealed.toggle() } }
+                .redactWhileCapturing()
+                .onTapGesture { toggleReveal() }
 
             AppCard { HStack(spacing: 0) {
                 ctrlTile("snowflake", bank.card.frozen ? T("Unfreeze", "Shkrije") : T("Freeze", "Ngrije"), active: bank.card.frozen) { bank.toggleFreeze() }
                 ctrlDivider
-                ctrlTile(bank.revealed ? "eye.slash" : "eye", bank.revealed ? T("Hide", "Fshih") : T("Details", "Detajet"), active: bank.revealed) { bank.revealed.toggle() }
+                ctrlTile(bank.revealed ? "eye.slash" : "eye", bank.revealed ? T("Hide", "Fshih") : T("Details", "Detajet"), active: bank.revealed) { toggleReveal() }
                 ctrlDivider
                 ctrlTile("creditcard.fill", T("Apple Pay", "Apple Pay")) { cardFlow = .applePay }
                 ctrlDivider
@@ -479,7 +489,8 @@ struct CardsView: View {
             eyebrow(T("Virtual card", "Kartë virtuale"))
             if let v = bank.virtualCard {
                 CardFace(last4: v.last4, frozen: v.frozen, revealed: bank.virtualRevealed, name: game.name, style: .midnight, label: T("Virtual", "Virtuale"))
-                    .onTapGesture { withAnimation(.smooth(duration: 0.3)) { bank.virtualRevealed.toggle() } }
+                    .redactWhileCapturing()
+                    .onTapGesture { toggleVirtualReveal() }
                 HStack(spacing: 10) {
                     PillButton(title: v.frozen ? T("Unfreeze", "Shkrije") : T("Freeze", "Ngrije"), system: "snowflake", style: .soft) { bank.toggleVirtualFreeze() }
                     PillButton(title: T("Delete", "Fshi"), system: "trash", style: .soft) { withAnimation { bank.deleteVirtualCard() } }

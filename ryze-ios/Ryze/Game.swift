@@ -82,10 +82,14 @@ final class GameModel: ObservableObject {
     }
     func saveState() {
         let s = Snapshot(onboarded: onboarded, kycVerified: kycVerified, name: name, xp: xp, coins: coins, streak: streak, invites: invites, savedTotal: savedTotal, lastCheckIn: lastCheckIn, redeemed: redeemed, plan: plan, avatarData: avatarData, missions: missions, badges: badges, squad: squad)
-        if let d = try? JSONEncoder().encode(s) { UserDefaults.standard.set(d, forKey: "ryze_game_v1") }
+        if let d = try? JSONEncoder().encode(s) { SecureStore.save(d, "game") }
     }
     func loadState() {
-        guard let d = UserDefaults.standard.data(forKey: "ryze_game_v1"), let s = try? JSONDecoder().decode(Snapshot.self, from: d) else { return }
+        var data = SecureStore.load("game")
+        if data == nil, let legacy = UserDefaults.standard.data(forKey: "ryze_game_v1") {   // one-time migration off cleartext UserDefaults
+            data = legacy; SecureStore.save(legacy, "game"); UserDefaults.standard.removeObject(forKey: "ryze_game_v1")
+        }
+        guard let d = data, let s = try? JSONDecoder().decode(Snapshot.self, from: d) else { return }
         onboarded = s.onboarded; kycVerified = s.kycVerified; name = s.name; xp = s.xp; coins = s.coins; streak = s.streak; invites = s.invites; savedTotal = s.savedTotal; lastCheckIn = s.lastCheckIn; redeemed = s.redeemed; plan = s.plan; avatarData = s.avatarData
         if !s.missions.isEmpty { missions = s.missions }
         if !s.badges.isEmpty { badges = s.badges }
@@ -187,7 +191,11 @@ final class GameModel: ObservableObject {
         redeemed = []; missions = GameModel.seedMissions; badges = GameModel.seedBadges
         squad = GameModel.seedSquad; aiMission = nil; onboarded = false; kycVerified = false; name = "Friend"
         UserDefaults.standard.removeObject(forKey: "ryze_game_v1"); UserDefaults.standard.removeObject(forKey: "ryze_bank_v1")
+        SecureStore.remove("game"); SecureStore.remove("bank")
     }
+
+    // Lightweight toast (no XP/coins) — used for security notices like screenshot detection.
+    func notify(_ label: String) { fire(label, 0, 0) }
 
     private func evalBadges() {
         let level = li.level

@@ -160,8 +160,8 @@ struct ProfileDetailView: View {
     @EnvironmentObject var game: GameModel
     @EnvironmentObject var bank: BankModel
     let detail: ProfileDetail
-    @State private var faceID = true
-    @State private var appLock = true
+    @AppStorage("ryze_app_lock") private var appLock = false
+    @State private var ibanShown = false
     @State private var notif = true
     @AppStorage("ryze_appearance") private var appearance = "dark"
     @AppStorage("ryze_lang") private var lang = "en"
@@ -187,10 +187,21 @@ struct ProfileDetailView: View {
         case .personal:
             infoCard([("Full name", game.name), ("Email", "klevi@ryze.al"), ("Phone", "+355 69 123 4567"), ("Date of birth", "14/03/2004"), ("Nationality", "Albania")])
         case .account:
-            infoCard([("Account", "\(game.name) · Personal"), ("IBAN", "AL47 2026 1100 4827"), ("Currency", "ALL · EUR"), ("Opened", "Today"), ("Status", "Active")])
+            let iban = "AL47 2026 1100 4827"
+            AppCard { VStack(spacing: 0) {
+                infoRow("Account", "\(game.name) · Personal"); Divider().background(Brand.hairline)
+                HStack { Text("IBAN").font(.system(size: 14)).foregroundColor(Brand.mute); Spacer()
+                    Text(ibanShown ? iban : maskIBAN(iban)).font(.system(size: 15, weight: .medium, design: .monospaced)).foregroundColor(Brand.text)
+                    Button { withAnimation { ibanShown.toggle() } } label: { Image(systemName: ibanShown ? "eye.slash" : "eye").font(.system(size: 13)).foregroundColor(Brand.mute) }
+                    Button { Clip.copySensitive(iban) } label: { Image(systemName: "doc.on.doc").font(.system(size: 13)).foregroundColor(Brand.mute) }
+                }.padding(.vertical, 13); Divider().background(Brand.hairline)
+                infoRow("Currency", "ALL · EUR"); Divider().background(Brand.hairline)
+                infoRow("Opened", "Today"); Divider().background(Brand.hairline)
+                infoRow("Status", "Active")
+            } }
         case .security:
             Eyebrow(text: "Sign in")
-            AppCard { VStack(spacing: 0) { toggleRow("Face ID", "faceid", $faceID); dv(); toggleRow("App lock", "lock.fill", $appLock); dv(); stub("Change passcode", "key.fill") } }
+            AppCard { VStack(spacing: 0) { toggleRow(T("App lock (Face ID / passcode)", "Kyçje (Face ID / kod)"), "faceid", $appLock); dv(); stub("Change passcode", "key.fill") } }
             Eyebrow(text: "Privacy")
             AppCard { VStack(spacing: 0) { toggleRow("Hide balance", "eye.slash.fill", $bank.hideBalance); dv(); stub("Trusted devices", "iphone") } }
         case .documents:
@@ -215,6 +226,8 @@ struct ProfileDetailView: View {
             if i < rows.count - 1 { Divider().background(Brand.hairline) }
         } } }
     }
+    func infoRow(_ l: String, _ v: String) -> some View { HStack { Text(l).font(.system(size: 14)).foregroundColor(Brand.mute); Spacer(); Text(v).font(.system(size: 15, weight: .medium)).foregroundColor(Brand.text) }.padding(.vertical, 13) }
+    private func maskIBAN(_ s: String) -> String { let t = s.replacingOccurrences(of: " ", with: ""); guard t.count > 8 else { return s }; return "\(t.prefix(4)) •••• •••• \(t.suffix(4))" }
     func toggleRow(_ t: String, _ icon: String, _ b: Binding<Bool>) -> some View { HStack(spacing: 14) { IconTile(system: icon, size: 38); Text(t).font(.system(size: 16)).foregroundColor(Brand.text); Spacer(); Toggle("", isOn: b).labelsHidden().tint(Brand.yellow) }.padding(.vertical, 8) }
     func stub(_ t: String, _ icon: String) -> some View { Button { dsheet = .coming(t) } label: { HStack(spacing: 14) { IconTile(system: icon, size: 38); Text(t).font(.system(size: 16)).foregroundColor(Brand.text); Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint).font(.system(size: 13)) }.padding(.vertical, 12) }.buttonStyle(.plain) }
     func actionStub(_ t: String, _ icon: String, _ action: @escaping () -> Void) -> some View { Button(action: action) { HStack(spacing: 14) { IconTile(system: icon, size: 38); Text(t).font(.system(size: 16)).foregroundColor(Brand.text); Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint).font(.system(size: 13)) }.padding(.vertical, 12) }.buttonStyle(.plain) }
@@ -313,7 +326,7 @@ struct AssistantView: View {
                             Text(T("Your money copilot. Ask about spending, points or plans.", "Kopiloti yt i parave. Pyet për shpenzime, pikë ose plane.")).font(.system(size: 14)).foregroundColor(Brand.mute).multilineTextAlignment(.center)
                         }.padding(.horizontal, 28).padding(.top, 14)
                         VStack(spacing: 9) { ForEach(Array(caps.enumerated()), id: \.offset) { _, c in capCard(c.0, c.1, c.2) } }.padding(.top, 22)
-                        HStack(spacing: 6) { Image(systemName: "lock.fill").font(.system(size: 11)); Text(T("Private, your data never leaves your account", "Privat, të dhënat s'dalin nga llogaria")).font(.system(size: 12)) }.foregroundColor(Brand.faint).padding(.top, 16)
+                        HStack(spacing: 6) { Image(systemName: "lock.fill").font(.system(size: 11)); Text(T("Private · encrypted in transit, only minimal data is shared", "Privat · e enkriptuar gjatë transferimit, ndahen vetëm të dhëna minimale")).font(.system(size: 12)) }.foregroundColor(Brand.faint).padding(.top, 16)
                         Spacer(minLength: 8)
                     }.frame(maxWidth: .infinity, maxHeight: .infinity).padding(.horizontal, 20)
                 } else {
@@ -391,7 +404,7 @@ struct CouponRedeemedSheet: View {
                 if let img = qrImage("ryze://redeem/\(reward.id)/\(code)") {
                     Image(uiImage: img).interpolation(.none).resizable().frame(width: 196, height: 196).padding(18).background(Color.white).clipShape(RoundedRectangle(cornerRadius: 24)).overlay(RoundedRectangle(cornerRadius: 24).stroke(Brand.gold, lineWidth: 2))
                 }
-                Button { UIPasteboard.general.string = code; withAnimation { copied = true } } label: {
+                Button { Clip.copySensitive(code); withAnimation { copied = true } } label: {
                     HStack(spacing: 8) { Text(code).font(.system(size: 18, weight: .bold, design: .monospaced)).tracking(2).foregroundColor(Brand.text); Image(systemName: copied ? "checkmark" : "doc.on.doc").font(.system(size: 13)).foregroundColor(copied ? Brand.good : Brand.mute) }.padding(.horizontal, 16).frame(height: 44).background(Brand.surface).overlay(Capsule().stroke(Brand.hairline, lineWidth: 1)).clipShape(Capsule())
                 }.buttonStyle(PressStyle())
                 Text(inStore ? T("Show this QR at the counter to claim your reward.", "Trego këtë QR në arkë për të marrë shpërblimin.") : T("Enter this code at checkout to redeem.", "Vendose këtë kod në arkë për ta përdorur.")).font(.system(size: 13)).foregroundColor(Brand.mute).multilineTextAlignment(.center).padding(.horizontal, 30)

@@ -19,6 +19,7 @@ targets:
         SWIFT_VERSION: "5.0"
         TARGETED_DEVICE_FAMILY: "1"
         GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_NSFaceIDUsageDescription: "Ryze uses Face ID to unlock the app and reveal your card details."
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UIStatusBarStyle: UIStatusBarStyleLightContent
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon

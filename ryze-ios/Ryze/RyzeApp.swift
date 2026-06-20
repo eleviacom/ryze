@@ -4,12 +4,34 @@ import SwiftUI
 struct RyzeApp: App {
     @StateObject private var game = GameModel()
     @StateObject private var bank = BankModel()
+    @StateObject private var capture = CaptureGuard()
+    @StateObject private var lock = AppLockModel()
     @Environment(\.scenePhase) private var scenePhase
     var body: some Scene {
         WindowGroup {
-            RootView().environmentObject(game).environmentObject(bank)
-                .onAppear { bank.game = game }
-                .onChange(of: scenePhase) { _, p in if p != .active { game.saveState(); bank.saveState() } }
+            ZStack {
+                RootView()
+                    .environmentObject(game).environmentObject(bank)
+                    .environmentObject(capture).environmentObject(lock)
+                    .onAppear { bank.game = game; lock.armOnLaunch() }
+                    .onChange(of: scenePhase) { _, p in
+                        if p != .active {
+                            game.saveState(); bank.saveState()
+                            bank.revealed = false; bank.virtualRevealed = false   // never freeze a revealed PAN into the app-switcher snapshot
+                            lock.willResign()
+                        } else { lock.didActivate() }
+                    }
+                    .onChange(of: capture.screenshotTick) { _, _ in
+                        bank.revealed = false; bank.virtualRevealed = false
+                        game.notify(T("Screenshot detected — card hidden", "U kap pamja — karta u fsheh"))
+                    }
+                // Hide every sensitive surface in the multitasking snapshot.
+                if scenePhase != .active { PrivacyCover().transition(.opacity).zIndex(1) }
+                // Biometric gate (opt-in via Settings ▸ Security).
+                if lock.locked { LockScreen(lock: lock).transition(.opacity).zIndex(2) }
+            }
+            .animation(.easeInOut(duration: 0.2), value: scenePhase)
+            .animation(.easeInOut(duration: 0.2), value: lock.locked)
         }
     }
 }

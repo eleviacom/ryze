@@ -18,7 +18,11 @@ func money(_ v: Double, _ ccy: String = "ALL") -> String {
 
 final class BankModel: ObservableObject {
     weak var game: GameModel?
-    init() { if !(ProcessInfo.processInfo.environment.keys.contains { $0.hasPrefix("RYZE_") }) { loadState() } }
+    init() {
+        let env = ProcessInfo.processInfo.environment
+        if !(env.keys.contains { $0.hasPrefix("RYZE_") }) { loadState() }
+        if env["RYZE_REVEAL"] != nil { revealed = true; virtualRevealed = true }   // demo/screenshot hook
+    }
     @Published var hideBalance = false
     @Published var accounts: [Account] = [
         .init(id: "all", name: "Main", currency: "ALL", balance: 42580, icon: "banknote.fill"),
@@ -146,10 +150,14 @@ final class BankModel: ObservableObject {
     }
     func saveState() {
         let s = Snapshot(hideBalance: hideBalance, accounts: accounts, transactions: transactions, goals: goals, card: card, virtualCard: virtualCard, cardStyle: cardStyle, cardText: cardText, cardLimit: cardLimit, threads: threads)
-        if let d = try? JSONEncoder().encode(s) { UserDefaults.standard.set(d, forKey: "ryze_bank_v1") }
+        if let d = try? JSONEncoder().encode(s) { SecureStore.save(d, "bank") }
     }
     func loadState() {
-        guard let d = UserDefaults.standard.data(forKey: "ryze_bank_v1"), let s = try? JSONDecoder().decode(Snapshot.self, from: d) else { return }
+        var data = SecureStore.load("bank")
+        if data == nil, let legacy = UserDefaults.standard.data(forKey: "ryze_bank_v1") {   // one-time migration off cleartext UserDefaults
+            data = legacy; SecureStore.save(legacy, "bank"); UserDefaults.standard.removeObject(forKey: "ryze_bank_v1")
+        }
+        guard let d = data, let s = try? JSONDecoder().decode(Snapshot.self, from: d) else { return }
         hideBalance = s.hideBalance
         if !s.accounts.isEmpty { accounts = s.accounts }
         if !s.transactions.isEmpty { transactions = s.transactions }
