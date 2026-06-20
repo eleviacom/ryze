@@ -9,7 +9,7 @@ struct OnboardingFlow: View {
 
     var body: some View {
         ZStack {
-            Brand.void.ignoresSafeArea()
+            ZStack { Color.black; RadialGradient(colors: [Brand.yellow.opacity(0.08), .clear], center: .top, startRadius: 6, endRadius: 440) }.ignoresSafeArea()
 
             switch model.phase {
             case .value: WelcomeCarousel(model: model)
@@ -19,19 +19,20 @@ struct OnboardingFlow: View {
 
             if model.phase == .value {
                 Button { game.completeAccount(name: model.draft["firstName"] ?? "Klevi") } label: {
-                    Text("Skip \u{203A}").font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.mute)
+                    Text(T("Skip", "Kapërce")).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.mute)
                         .padding(.horizontal, 14).frame(height: 32).background(Brand.surface).clipShape(Capsule())
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 .padding(.trailing, 16).padding(.top, 4)
             }
         }
+        .environment(\.colorScheme, .dark)
         .sheet(item: $why) { w in
             VStack(alignment: .leading, spacing: 16) {
                 Text(w.title).font(.system(size: 24, weight: .bold)).foregroundColor(Brand.text)
                 Text(w.body).font(.system(size: 16)).foregroundColor(Brand.mute).lineSpacing(3)
                 Spacer()
-                PrimaryButton(title: "Got it") { why = nil }
+                PrimaryButton(title: T("Got it", "E kuptova")) { why = nil }
             }
             .padding(24).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .background(Brand.bg).presentationDetents([.medium])
@@ -44,12 +45,12 @@ struct WelcomeCarousel: View {
     @ObservedObject var model: OnboardingModel
     struct Slide { let image, title, body, cta: String }
     let slides = [
-        Slide(image: "welcomelogo", title: "Money that finally gets you",
-              body: "Ryze is the Raiffeisen account built for your twenties. Spend, save, and level up — in one place that feels like yours.", cta: "Continue"),
-        Slide(image: "openacct", title: "Open it in minutes, 100% online",
-              body: "No branch, no paperwork, no fees to open. Just your ID and a quick video check — from your couch.", cta: "Continue"),
-        Slide(image: "domore", title: "Do more, together",
-              body: "Instant payments, real-time exchange, save while you spend, and rewards for inviting your crew.", cta: "Get started"),
+        Slide(image: "welcomelogo", title: T("Money that finally gets you", "Paratë që më në fund të kuptojnë"),
+              body: T("Ryze is the Raiffeisen account built for your twenties. Spend, save, and level up, in one place that feels like yours.", "Ryze është llogaria e Raiffeisen, ndërtuar për të rinjtë. Shpenzo, kurse dhe ngjitu në nivel, të gjitha në një vend që ndihet i yti."), cta: T("Continue", "Vazhdo")),
+        Slide(image: "openacct", title: T("Open it in minutes, 100% online", "Hape në pak minuta, 100% online"),
+              body: T("No branch, no paperwork, no fees to open. Just your ID and a quick video check, from your couch.", "Pa degë, pa dokumente, pa tarifa hapjeje. Vetëm letërnjoftimi dhe një verifikim i shpejtë me video, nga divani yt."), cta: T("Continue", "Vazhdo")),
+        Slide(image: "domore", title: T("Do more, together", "Bëj më shumë, bashkë"),
+              body: T("Instant payments, real-time exchange, save while you spend, and rewards for inviting your crew.", "Pagesa të menjëhershme, këmbim në kohë reale, kurse teksa shpenzon dhe shpërblime kur fton shokët."), cta: T("Get started", "Fillo")),
     ]
 
     var body: some View {
@@ -115,12 +116,12 @@ struct KycContainer: View {
 
     func cta(_ id: String) -> String {
         switch id {
-        case "phone": return "Send code"
-        case "otp": return "Verify"
-        case "identity": return "Continue"
-        case "details": return "Confirm"
-        case "consents": return "Agree & open my account"
-        default: return "Continue"
+        case "phone": return T("Send code", "Dërgo kodin")
+        case "otp": return T("Verify", "Verifiko")
+        case "identity": return T("Continue", "Vazhdo")
+        case "details": return T("Confirm", "Konfirmo")
+        case "consents": return T("Agree & open my account", "Prano dhe hap llogarinë")
+        default: return T("Continue", "Vazhdo")
         }
     }
 
@@ -139,7 +140,7 @@ struct KycContainer: View {
                     Text(step.title).display(32).foregroundColor(Brand.text).fixedSize(horizontal: false, vertical: true).padding(.bottom, 10)
                     Text(step.body).font(.system(size: 17)).foregroundColor(Brand.mute).lineSpacing(3)
                     Button { onWhyTap(step) } label: {
-                        Text("Why do we need it?").font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.yellow)
+                        Text(T("Why do we need it?", "Pse na duhet?")).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.yellow)
                     }.padding(.top, 8)
 
                     StepBody(model: model).padding(.top, 24)
@@ -152,8 +153,8 @@ struct KycContainer: View {
 
             VStack(spacing: 10) {
                 if step.id == "notifications" {
-                    PrimaryButton(title: "I want to be notified") { model.next() }
-                    GhostButton(title: "Maybe later") { model.next() }
+                    PrimaryButton(title: T("I want to be notified", "Dua të njoftohem")) { model.next() }
+                    GhostButton(title: T("Maybe later", "Ndoshta më vonë")) { model.next() }
                 } else {
                     PrimaryButton(title: cta(step.id), enabled: model.canContinue) { model.next() }
                 }
@@ -165,30 +166,34 @@ struct KycContainer: View {
 
 struct StepBody: View {
     @ObservedObject var model: OnboardingModel
+    @State private var showScan = false
+    @State private var showFace = false
     func bind(_ key: String) -> Binding<String> {
         Binding(get: { model.draft[key] ?? "" }, set: { model.draft[key] = $0 })
     }
     var body: some View {
         switch model.current.id {
         case "phone":
-            RyzeField(label: "Phone number", text: bind("phone"), placeholder: "69 123 4567", prefix: "🇦🇱 +355", keyboard: .phonePad)
+            RyzeField(label: T("Phone number", "Numri i telefonit"), text: bind("phone"), placeholder: "69 123 4567", prefix: "🇦🇱 +355", keyboard: .phonePad)
         case "otp":
             VStack(alignment: .leading, spacing: 16) {
                 OtpField(code: $model.otp)
-                Text("Didn’t get it? Resend in 30s · demo: any 6 digits").font(.system(size: 13)).foregroundColor(Brand.faint)
+                Text(T("Didn't get it? Resend in 30s · demo: any 6 digits", "Nuk e more? Ridërgo për 30s · demo: çdo 6 shifra")).font(.system(size: 13)).foregroundColor(Brand.faint)
             }
         case "identity":
             VStack(spacing: 18) {
                 Image("identity").resizable().scaledToFit().frame(height: 240)
-                actionRow(done: model.idScanned, icon: "camera.viewfinder", label: "Scan ID card", doneLabel: "ID scanned") { model.simulateScan() }
-                actionRow(done: model.faceChecked, icon: "faceid", label: "Face check", doneLabel: "Verified") { model.simulateFace() }
-                Text("Capture is simulated in this prototype. No human reviews your video.").font(.system(size: 12)).foregroundColor(Brand.faint).multilineTextAlignment(.center)
+                actionRow(done: model.idScanned, icon: "camera.viewfinder", label: T("Scan ID card", "Skano letërnjoftimin"), doneLabel: T("ID scanned", "U skanua")) { showScan = true }
+                actionRow(done: model.faceChecked, icon: "faceid", label: T("Face check", "Verifikim fytyre"), doneLabel: T("Verified", "U verifikua")) { showFace = true }
+                Text(T("Capture is simulated in this prototype. No human reviews your video.", "Kapja është e simuluar në këtë prototip. Asnjë person nuk e shqyrton videon.")).font(.system(size: 12)).foregroundColor(Brand.faint).multilineTextAlignment(.center)
             }
+            .sheet(isPresented: $showScan) { IDScanSheet { model.simulateScan() } }
+            .sheet(isPresented: $showFace) { FaceCheckSheet { model.simulateFace() } }
         case "details":
             VStack(alignment: .leading, spacing: 14) {
-                RyzeField(label: "First name", text: bind("firstName"), placeholder: "First name")
-                RyzeField(label: "Last name", text: bind("lastName"), placeholder: "Last name")
-                RyzeField(label: "Date of birth", text: bind("dob"), placeholder: "DD/MM/YYYY", keyboard: .numbersAndPunctuation)
+                RyzeField(label: T("First name", "Emri"), text: bind("firstName"), placeholder: T("First name", "Emri"))
+                RyzeField(label: T("Last name", "Mbiemri"), text: bind("lastName"), placeholder: T("Last name", "Mbiemri"))
+                RyzeField(label: T("Date of birth", "Data e lindjes"), text: bind("dob"), placeholder: "DD/MM/YYYY", keyboard: .numbersAndPunctuation)
                 RyzeField(label: "Email", text: bind("email"), placeholder: "you@email.com", keyboard: .emailAddress)
                 if let e = model.ageError {
                     HStack(alignment: .top, spacing: 8) {
@@ -241,43 +246,17 @@ struct SuccessView: View {
             Spacer()
             SuccessSeal()
             VStack(spacing: 12) {
-                Text("Welcome to Ryze").display(38).foregroundColor(Brand.text).fixedSize(horizontal: false, vertical: true).multilineTextAlignment(.center)
-                Text("Your Raiffeisen account is open and ready. Your card is on its way, and your first quests are waiting.")
+                Text(T("Welcome to Ryze", "Mirë se erdhe te Ryze")).display(38).foregroundColor(Brand.text).fixedSize(horizontal: false, vertical: true).multilineTextAlignment(.center)
+                Text(T("Your Raiffeisen account is open and ready. Your card is on its way, and your first quests are waiting.", "Llogaria jote Raiffeisen është e hapur dhe gati. Karta po vjen dhe sfidat e para të presin."))
                     .font(.system(size: 17)).foregroundColor(Brand.mute).multilineTextAlignment(.center).lineSpacing(3)
             }
             .padding(.horizontal, 24).padding(.top, 8)
             Spacer()
-            PrimaryButton(title: "Start playing", action: onStart).padding(.horizontal, 24).padding(.bottom, 12)
+            PrimaryButton(title: T("Start playing", "Fillo të luash"), action: onStart).padding(.horizontal, 24).padding(.bottom, 12)
         }
     }
 }
 
-
-// MARK: - Riz buddy
-struct RizFab: View {
-    let action: () -> Void
-    @State private var pulse = false
-    var body: some View {
-        VStack {
-            Spacer()
-            HStack {
-                Spacer()
-                Button(action: action) {
-                    ZStack(alignment: .topTrailing) {
-                        LogoTile(size: 52)
-                        Circle().fill(Brand.yellow).frame(width: 20, height: 20)
-                            .overlay(Text("?").font(.system(size: 12, weight: .bold)).foregroundColor(.black))
-                            .overlay(Circle().stroke(Brand.bg, lineWidth: 2))
-                            .offset(x: 5, y: -5)
-                    }
-                    .scaleEffect(pulse ? 1.06 : 1)
-                }
-                .padding(.trailing, 18).padding(.bottom, 90)
-            }
-        }
-        .onAppear { withAnimation(.easeInOut(duration: 1).repeatForever(autoreverses: true)) { pulse = true } }
-    }
-}
 
 struct RizSheet: View {
     let stepWhy: String?
@@ -285,7 +264,7 @@ struct RizSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var messages: [RizMessage] = []
     @State private var input = ""
-    private let greeting = "Hey, I’m Riz. I’ll walk you through opening your account — nothing’s submitted until you say so. Ask me to explain any step."
+    private let greeting = T("Hey, I'm Riz. I'll walk you through opening your account, nothing's submitted until you say so. Ask me to explain any step.", "Përshëndetje, unë jam Riz. Do të të shoqëroj në hapjen e llogarisë, asgjë nuk dërgohet derisa ta lejosh ti. Më kërko të të shpjegoj çdo hap.")
 
     var body: some View {
         VStack(spacing: 0) {
@@ -302,7 +281,7 @@ struct RizSheet: View {
                         HStack {
                             if m.fromUser { Spacer(minLength: 40) }
                             Text(m.text).font(.system(size: 16))
-                                .foregroundColor(m.fromUser ? .black : Brand.text)
+                                .foregroundColor(m.fromUser ? Brand.onText : Brand.text)
                                 .padding(.vertical, 10).padding(.horizontal, 14)
                                 .background(m.fromUser ? Brand.text : Brand.bg)
                                 .overlay(RoundedRectangle(cornerRadius: 18).stroke(m.fromUser ? .clear : Brand.hairline, lineWidth: 1))
@@ -314,7 +293,7 @@ struct RizSheet: View {
                 .padding(.horizontal, 20)
             }
             HStack(spacing: 8) {
-                TextField("", text: $input, prompt: Text("Ask Riz…").foregroundColor(Brand.faint))
+                TextField("", text: $input, prompt: Text(T("Ask Riz...", "Pyet Riz...")).foregroundColor(Brand.faint))
                     .foregroundColor(Brand.text).padding(.horizontal, 16).frame(height: 48)
                     .background(Brand.bg).overlay(RoundedRectangle(cornerRadius: 12).stroke(Brand.hairline, lineWidth: 1))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -353,7 +332,7 @@ struct LogoHero: View {
     }
 }
 
-// Final-card branded seal: real Raiffeisen logo + hexagon signature ring + celebration burst.
+// Final-card branded seal: real Raiffeisen logo + circular signature ring + celebration burst.
 struct SuccessSeal: View {
     @State private var pop = false
     @State private var burst = 0
@@ -361,7 +340,7 @@ struct SuccessSeal: View {
         ZStack {
             Circle().fill(RadialGradient(colors: [Brand.yellow.opacity(0.28), .clear], center: .center, startRadius: 6, endRadius: 165)).frame(width: 300, height: 300)
             CelebrationOverlay(trigger: burst).frame(width: 300, height: 300)
-            Hexagon().stroke(Brand.yellow.opacity(0.35), lineWidth: 2).frame(width: 188, height: 188).rotationEffect(.degrees(pop ? 0 : 40))
+            Circle().stroke(Brand.yellow.opacity(0.35), lineWidth: 2).frame(width: 188, height: 188).rotationEffect(.degrees(pop ? 0 : 40))
             Circle().stroke(Brand.gold, lineWidth: 4).frame(width: 150, height: 150).opacity(0.55)
             ZStack(alignment: .bottomTrailing) {
                 LogoTile(size: 110).shadow(color: Brand.yellow.opacity(0.4), radius: 22, y: 8)
@@ -371,5 +350,68 @@ struct SuccessSeal: View {
         .frame(height: 300)
         .scaleEffect(pop ? 1 : 0.72).opacity(pop ? 1 : 0)
         .onAppear { withAnimation(.spring(response: 0.55, dampingFraction: 0.6)) { pop = true }; burst += 1 }
+    }
+}
+
+
+// MARK: - Simulated KYC capture (camera-style scan experiences)
+struct IDScanSheet: View {
+    let onDone: () -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var scanning = false
+    @State private var done = false
+    @State private var line = false
+    var body: some View {
+        ZStack { Color.black.ignoresSafeArea()
+            VStack(spacing: 22) {
+                HStack { Button { dismiss() } label: { Image(systemName: "xmark").font(.system(size: 17, weight: .semibold)).foregroundColor(.white) }; Spacer(); Text(T("Scan your ID", "Skano letërnjoftimin")).font(.system(size: 17, weight: .semibold)).foregroundColor(.white); Spacer(); Color.clear.frame(width: 20) }.padding(.top, 8)
+                Spacer()
+                ZStack {
+                    RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.05)).frame(width: 300, height: 190)
+                    RoundedRectangle(cornerRadius: 16).stroke(done ? Brand.good : Brand.yellow, style: StrokeStyle(lineWidth: 3, dash: (scanning || done) ? [] : [9, 7])).frame(width: 300, height: 190)
+                    if done { Image(systemName: "checkmark.circle.fill").font(.system(size: 64)).foregroundStyle(.white, Brand.good) }
+                    else { VStack(spacing: 10) { Image(systemName: "person.text.rectangle").font(.system(size: 44)).foregroundColor(.white.opacity(0.5)); if !scanning { Text(T("Front of your ID card", "Pjesa e përparme e letërnjoftimit")).font(.system(size: 13)).foregroundColor(.white.opacity(0.6)) } } }
+                    if scanning && !done { Rectangle().fill(LinearGradient(colors: [.clear, Brand.yellow, .clear], startPoint: .leading, endPoint: .trailing)).frame(width: 292, height: 3).offset(y: line ? 88 : -88) }
+                }
+                Spacer()
+                Text(done ? T("ID captured", "Letërnjoftimi u kap") : (scanning ? T("Hold steady, scanning...", "Qëndro i palëvizur, po skanohet...") : T("Align the front of your ID inside the frame", "Vendos pjesën e përparme brenda kornizës"))).font(.system(size: 14)).foregroundColor(.white.opacity(0.75)).multilineTextAlignment(.center).frame(height: 40)
+                if !done { Button { startScan() } label: { Text(scanning ? T("Scanning...", "Po skanohet...") : T("Capture", "Kap")).font(.system(size: 17, weight: .semibold)).foregroundColor(.black).frame(maxWidth: .infinity).frame(height: 54).background(Brand.yellow).clipShape(Capsule()) }.buttonStyle(PressStyle()).opacity(scanning ? 0.5 : 1).disabled(scanning).padding(.horizontal, 24) }
+            }.padding(20)
+        }
+    }
+    func startScan() {
+        scanning = true
+        withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) { line = true }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.7) { withAnimation(.spring) { done = true }; DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { onDone(); dismiss() } }
+    }
+}
+
+struct FaceCheckSheet: View {
+    let onDone: () -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var scanning = false
+    @State private var done = false
+    @State private var progress: CGFloat = 0
+    var body: some View {
+        ZStack { Color.black.ignoresSafeArea()
+            VStack(spacing: 22) {
+                HStack { Button { dismiss() } label: { Image(systemName: "xmark").font(.system(size: 17, weight: .semibold)).foregroundColor(.white) }; Spacer(); Text(T("Face check", "Verifikim fytyre")).font(.system(size: 17, weight: .semibold)).foregroundColor(.white); Spacer(); Color.clear.frame(width: 20) }.padding(.top, 8)
+                Spacer()
+                ZStack {
+                    Circle().stroke(Color.white.opacity(0.12), lineWidth: 5).frame(width: 230, height: 230)
+                    Circle().trim(from: 0, to: done ? 1 : progress).stroke(done ? Brand.good : Brand.yellow, style: StrokeStyle(lineWidth: 5, lineCap: .round)).rotationEffect(.degrees(-90)).frame(width: 230, height: 230)
+                    if done { Image(systemName: "checkmark.circle.fill").font(.system(size: 64)).foregroundStyle(.white, Brand.good) }
+                    else { Image(systemName: "face.smiling").font(.system(size: 76)).foregroundColor(.white.opacity(0.4)) }
+                }
+                Spacer()
+                Text(done ? T("Verified", "U verifikua") : (scanning ? T("Hold still, looking...", "Rri i qetë, po shikohet...") : T("Center your face in the circle", "Vendos fytyrën në rreth"))).font(.system(size: 14)).foregroundColor(.white.opacity(0.75)).frame(height: 40)
+                if !done { Button { startFace() } label: { Text(scanning ? T("Checking...", "Po kontrollohet...") : T("Start face check", "Fillo verifikimin")).font(.system(size: 17, weight: .semibold)).foregroundColor(.black).frame(maxWidth: .infinity).frame(height: 54).background(Brand.yellow).clipShape(Capsule()) }.buttonStyle(PressStyle()).opacity(scanning ? 0.5 : 1).disabled(scanning).padding(.horizontal, 24) }
+            }.padding(20)
+        }
+    }
+    func startFace() {
+        scanning = true
+        withAnimation(.easeInOut(duration: 1.6)) { progress = 1 }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.7) { withAnimation(.spring) { done = true }; DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { onDone(); dismiss() } }
     }
 }

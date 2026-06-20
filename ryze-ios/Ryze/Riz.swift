@@ -1,6 +1,6 @@
 import Foundation
 
-// Riz — the AI buddy. Hard safety guard + offline local replies (no API key needed
+// Riz, the AI buddy. Hard safety guard + offline local replies (no API key needed
 // for the demo). A real backend proxy can replace localReply later.
 struct RizMessage: Identifiable, Equatable {
     let id = UUID()
@@ -13,13 +13,13 @@ enum Riz {
         let s = t.lowercased()
         if s.range(of: #"\b\d{4,8}\b"#, options: .regularExpression) != nil
             || s.contains("otp") || s.contains("pin") || s.contains("password") || s.contains("cvv") || s.contains("code") {
-            return "Don’t share codes, PINs or passwords with anyone — including me. Just enter the code on the screen above. (Hard rule, for your safety.)"
+            return "Don't share codes, PINs or passwords with anyone, including me. Just enter the code on the screen above. (Hard rule, for your safety.)"
         }
         if s.contains("fraud") || s.contains("stolen") || s.contains("blocked") || s.contains("complain") {
-            return "That’s one for a real person on the Raiffeisen team. Want me to point you to in-app support?"
+            return "That's one for a real person on the Raiffeisen team. Want me to point you to in-app support?"
         }
         if s.contains("should i") || s.contains("which account") || s.contains("recommend") || s.contains("invest") {
-            return "I can explain how the options work, but what’s right for your money is your call — I can’t advise on that. Want me to connect you with a Raiffeisen specialist?"
+            return "I can explain how the options work, but what's right for your money is your call, I can't advise on that. Want me to connect you with a Raiffeisen specialist?"
         }
         return nil
     }
@@ -34,6 +34,6 @@ enum Riz {
             return "It takes a few minutes. Nothing is submitted until the final step, so take your time."
         }
         if let w = stepWhy { return w }
-        return "I’m here to explain any step — ask me what something means or why it’s needed."
+        return "I'm here to explain any step, ask me what something means or why it's needed."
     }
 }

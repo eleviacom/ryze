@@ -14,38 +14,70 @@ extension Color {
     }
 }
 
-func T(_ en: String, _ sq: String) -> String { (UserDefaults.standard.string(forKey: "ryze_lang") ?? "en") == "sq" ? sq : en }
+func T(_ en: String, _ sq: String) -> String { ((ProcessInfo.processInfo.environment["RYZE_LANG"] ?? UserDefaults.standard.string(forKey: "ryze_lang")) ?? "en") == "sq" ? sq : en }
 
 // Revolut system + Raiffeisen yellow as the single scarce stamp.
 enum Brand {
-    static let void = Color(hex: 0x000000)            // reserved for the balance hero only
-    static let bg = Color(lightHex: 0xF2F2F6, darkHex: 0x0B0B0D)
-    static let elev1 = Color(lightHex: 0xF5F5F8, darkHex: 0x141417)
-    static let elev2 = Color(lightHex: 0xFFFFFF, darkHex: 0x1B1B1F)
-    static let elev3 = Color(lightHex: 0xE9E9EE, darkHex: 0x232328)
-    static let surface = elev2                         // keep name for existing refs
-    static let surfaceDeep = Color(hex: 0x0A0A0A)
+    static let void = Color(hex: 0x000000)            // balance hero + onboarding (art is flat-black; keep pure)
+    static let bg = Color(lightHex: 0xF4F3EF, darkHex: 0x151412)        // warm charcoal, lifted off pure black
+    static let elev1 = Color(lightHex: 0xFAFAF6, darkHex: 0x1E1C19)
+    static let elev2 = Color(lightHex: 0xFFFFFF, darkHex: 0x272421)     // cards, visibly warm, not dead
+    static let elev3 = Color(lightHex: 0xECEAE4, darkHex: 0x332F2B)
+    static let surface = elev2
+    static let surfaceDeep = Color(hex: 0x100F0D)
     static let surfacePressed = elev3
-    static let yellow = Color(hex: 0xFFE600)           // scarce: rings, ticks, glyphs, progress
-    static let goldTop = Color(hex: 0xFFE45C)
-    static let goldBot = Color(hex: 0xCF9A00)
-    static let goldEdge = Color(hex: 0xFFF0A8)
-    static var gold: LinearGradient { LinearGradient(stops: [.init(color: Color(hex: 0xFFE45C), location: 0), .init(color: Color(hex: 0xF2C200), location: 0.45), .init(color: Color(hex: 0xCF9A00), location: 1)], startPoint: .top, endPoint: .bottom) }
+    static let yellow = Color(hex: 0xF8D01F)           // Banana Yellow, the brand stamp
+    static let goldTop = Color(hex: 0xFFE470)
+    static let goldBot = Color(hex: 0xD4A200)
+    static let goldEdge = Color(hex: 0xFFEFA8)
+    static var gold: LinearGradient { LinearGradient(stops: [.init(color: Color(hex: 0xFFE470), location: 0), .init(color: Color(hex: 0xF8D01F), location: 0.5), .init(color: Color(hex: 0xD4A200), location: 1)], startPoint: .top, endPoint: .bottom) }
     static let onAccent = Color.black
-    static let text = Color(lightHex: 0x0E0F12, darkHex: 0xFFFFFF)
-    static let mute = Color(lightHex: 0x5C6066, darkHex: 0x9EA3AB)
-    static let faint = Color(lightHex: 0x9AA0A6, darkHex: 0x6B7178)
-    static let hairline = Color(uiColor: UIColor { t in t.userInterfaceStyle == .dark ? UIColor.white.withAlphaComponent(0.08) : UIColor.black.withAlphaComponent(0.10) })
-    static let good = Color(hex: 0x3CE0A0)
-    static let danger = Color(hex: 0xE23B4A)
-    static let violet = Color(hex: 0x7C5CFF)
-    static let mint = Color(hex: 0x34E2B0)
+    static let yellowInk = Color(lightHex: 0xB8860B, darkHex: 0xF8D01F)   // yellow as foreground on adaptive (light/white) surfaces
+    static let shadow1 = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor.black.withAlphaComponent(0.6) : UIColor.black.withAlphaComponent(0.05) })
+    static let shadow2 = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor.black.withAlphaComponent(0.4) : UIColor.black.withAlphaComponent(0.08) })
+    static let onText = Color(lightHex: 0xFFFFFF, darkHex: 0x000000)   // inverse of text: ink for high-contrast (Brand.text-bg) buttons/bubbles
+    static let specularTop = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor.white.withAlphaComponent(0.14) : UIColor.black.withAlphaComponent(0.07) })
+    static let specularBot = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor.white.withAlphaComponent(0.03) : UIColor.black.withAlphaComponent(0.02) })
+    static let text = Color(lightHex: 0x131210, darkHex: 0xFFFFFF)
+    static let mute = Color(lightHex: 0x6A6A66, darkHex: 0xB0B0B0)      // palette Gray
+    static let faint = Color(lightHex: 0x83837C, darkHex: 0x76736D)
+    static let hairline = Color(uiColor: UIColor { t in t.userInterfaceStyle == .dark ? UIColor.white.withAlphaComponent(0.09) : UIColor.black.withAlphaComponent(0.10) })
+    static let good = Color(lightHex: 0x12A86A, darkHex: 0x2FD98A)
+    static let danger = Color(hex: 0xFF4D52)
+    static let violet = Color(hex: 0x8B5CFF)
+    static let mint = Color(hex: 0x2FE3B6)
     static let pink = Color(hex: 0xFF5C8A)
+    static let coral = Color(hex: 0xFF6F47)
+    static let sky = Color(hex: 0x46A8FF)
+}
+
+// Card personalisation styles (colour + ink), physical card + virtual + custom.
+enum CardStyle: String, CaseIterable, Identifiable, Codable {
+    case gold, midnight, coral, mint
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .gold: return T("Banana Gold", "Ari Banane")
+        case .midnight: return T("Midnight", "Mesnatë")
+        case .coral: return T("Coral", "Koral")
+        case .mint: return T("Mint", "Mentë")
+        }
+    }
+    var colors: [Color] {
+        switch self {
+        case .gold: return [Color(hex: 0xFFE470), Color(hex: 0xF8D01F), Color(hex: 0xD4A200)]
+        case .midnight: return [Color(hex: 0x3A2E6E), Color(hex: 0x18161F)]
+        case .coral: return [Color(hex: 0xFF8A5C), Color(hex: 0xD93D2E)]
+        case .mint: return [Color(hex: 0x4DE9B6), Color(hex: 0x0F9E76)]
+        }
+    }
+    var ink: Color { (self == .gold || self == .mint) ? .black : .white }
+    var swatch: Color { colors.first ?? Brand.yellow }
 }
 
 extension View {
     func specularBorder(_ radius: CGFloat) -> some View {
-        overlay(RoundedRectangle(cornerRadius: radius).strokeBorder(LinearGradient(colors: [Color.white.opacity(0.14), Color.white.opacity(0.03)], startPoint: .top, endPoint: .bottom), lineWidth: 1))
+        overlay(RoundedRectangle(cornerRadius: radius).strokeBorder(LinearGradient(colors: [Brand.specularTop, Brand.specularBot], startPoint: .top, endPoint: .bottom), lineWidth: 1))
     }
 }
 
@@ -55,34 +87,26 @@ struct PressStyle: ButtonStyle {
     }
 }
 
-// The Ryze signature shape — a flat-top hexagon used for the points glyph + celebration particles.
-struct Hexagon: Shape {
-    func path(in rect: CGRect) -> Path {
-        var p = Path()
-        let pts = (0..<6).map { i -> CGPoint in
-            let a = Double(i) * .pi / 3 - .pi / 2
-            return CGPoint(x: rect.midX + rect.width / 2 * CGFloat(cos(a)), y: rect.midY + rect.height / 2 * CGFloat(sin(a)))
-        }
-        p.move(to: pts[0]); pts.dropFirst().forEach { p.addLine(to: $0) }; p.closeSubpath()
-        return p
-    }
-}
-
-// Signature celebration: yellow hexagon particles bursting outward, keyed to a trigger.
+// Signature celebration: yellow + white confetti (dots and chips) bursting outward, keyed to a trigger.
 struct CelebrationOverlay: View {
     let trigger: Int
     @State private var t: CGFloat = 1
-    private let count = 16
+    private let count = 18
     var body: some View {
         GeometryReader { g in
             ZStack {
                 ForEach(0..<count, id: \.self) { i in
                     let a = Double(i) / Double(count) * 2 * .pi
-                    Hexagon().fill(i % 3 == 0 ? Color.white : Brand.yellow)
-                        .frame(width: 13, height: 13)
-                        .opacity(Double(1 - t))
-                        .offset(x: CGFloat(cos(a)) * 170 * t, y: CGFloat(sin(a)) * 170 * t - 30)
-                        .rotationEffect(.degrees(Double(t) * 200))
+                    Group {
+                        if i % 2 == 0 {
+                            Circle().fill(i % 3 == 0 ? Color.white : Brand.yellow).frame(width: 10, height: 10)
+                        } else {
+                            RoundedRectangle(cornerRadius: 3).fill(i % 3 == 0 ? Color.white : Brand.yellow).frame(width: 12, height: 7)
+                        }
+                    }
+                    .opacity(Double(1 - t))
+                    .offset(x: CGFloat(cos(a)) * 175 * t, y: CGFloat(sin(a)) * 175 * t - 30)
+                    .rotationEffect(.degrees(Double(t) * 220))
                 }
             }
             .frame(width: g.size.width, height: g.size.height)

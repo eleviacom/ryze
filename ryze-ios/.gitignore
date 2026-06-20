@@ -1,0 +1,7 @@
+
+# live LLM key — never commit
+Ryze/RizSecret.swift
+dd/
+.DS_Store
+*.xcuserstate
+**/xcuserdata/

@@ -1,15 +1,15 @@
 import SwiftUI
 
 // MARK: - Domain
-struct Mission: Identifiable {
+struct Mission: Identifiable, Codable {
     let id: String; let title: String; let desc: String; let icon: String
     let xp: Int; let coins: Int; let category: String
     var progress: Int; let target: Int; var claimed: Bool; var aiGenerated: Bool = false
 }
 struct Reward: Identifiable { let id: String; let title: String; let brand: String; let icon: String; let cost: Int; var tierMin: Int = 0 }
-struct Badge: Identifiable { let id: String; let title: String; let icon: String; let desc: String; var earned: Bool }
+struct Badge: Identifiable, Codable { let id: String; let title: String; let icon: String; let desc: String; var earned: Bool }
 struct LeaderRow: Identifiable { let id: String; let name: String; let xp: Int; var you: Bool = false }
-struct SquadMember: Identifiable { let id: String; let name: String; var contributed: Int }
+struct SquadMember: Identifiable, Codable { let id: String; let name: String; var contributed: Int }
 struct Toast: Equatable { let label: String; let xp: Int; let coins: Int }
 
 struct Tier { let name: String; let minLevel: Int; let color: Color; let perk: String }
@@ -53,20 +53,47 @@ final class GameModel: ObservableObject {
     @Published var aiMission: Mission? = nil
     @Published var toast: Toast? = nil
     @Published var avatarData: Data? = nil
-    @Published var plan: String = "free"
+    @Published var plan: String = "spark"
     @Published var celebrate = 0
     let referralCode = "RYZE-\(Int.random(in: 1000...9999))"
 
     init() {
-        if ProcessInfo.processInfo.environment["RYZE_HOME"] != nil {
+        let env = ProcessInfo.processInfo.environment
+        if !(env.keys.contains { $0.hasPrefix("RYZE_") }) { loadState() }
+        if env["RYZE_HOME"] != nil {
             name = "Klevi"; xp = 320; coins = 480; streak = 4; kycVerified = true; onboarded = true
             if let i = missions.firstIndex(where: { $0.id == "ob-verify" }) { missions[i].progress = 1; missions[i].claimed = true }
         }
-        if let pl = ProcessInfo.processInfo.environment["RYZE_PLAN"] { plan = pl }
+        if let pl = env["RYZE_PLAN"] { plan = pl }
+    }
+
+    // MARK: - Persistence
+    private struct Snapshot: Codable {
+        var onboarded = false, kycVerified = false
+        var name = "Friend"
+        var xp = 0, coins = 120, streak = 0, invites = 0, savedTotal = 0
+        var lastCheckIn: String? = nil
+        var redeemed: Set<String> = []
+        var plan = "spark"
+        var avatarData: Data? = nil
+        var missions: [Mission] = []
+        var badges: [Badge] = []
+        var squad: Squad? = nil
+    }
+    func saveState() {
+        let s = Snapshot(onboarded: onboarded, kycVerified: kycVerified, name: name, xp: xp, coins: coins, streak: streak, invites: invites, savedTotal: savedTotal, lastCheckIn: lastCheckIn, redeemed: redeemed, plan: plan, avatarData: avatarData, missions: missions, badges: badges, squad: squad)
+        if let d = try? JSONEncoder().encode(s) { UserDefaults.standard.set(d, forKey: "ryze_game_v1") }
+    }
+    func loadState() {
+        guard let d = UserDefaults.standard.data(forKey: "ryze_game_v1"), let s = try? JSONDecoder().decode(Snapshot.self, from: d) else { return }
+        onboarded = s.onboarded; kycVerified = s.kycVerified; name = s.name; xp = s.xp; coins = s.coins; streak = s.streak; invites = s.invites; savedTotal = s.savedTotal; lastCheckIn = s.lastCheckIn; redeemed = s.redeemed; plan = s.plan; avatarData = s.avatarData
+        if !s.missions.isEmpty { missions = s.missions }
+        if !s.badges.isEmpty { badges = s.badges }
+        if let sq = s.squad { squad = sq }
     }
 
     var li: LevelInfo { levelInfo(xp) }
-    var planLabel: String { ["free": "Ryze Free", "plus": "Ryze Plus", "pro": "Ryze Pro", "metal": "Ryze Metal"][plan] ?? "Ryze Free" }
+    var planLabel: String { ["spark": "Ryze Spark", "lift": "Ryze Lift", "surge": "Ryze Surge", "apex": "Ryze Apex"][plan] ?? "Ryze Spark" }
     func setPlan(_ id: String) { plan = id; fire("Welcome to \(planLabel)", 0, 0) }
     var tier: Tier { tierForLevel(li.level).0 }
     var tierIndex: Int { tierForLevel(li.level).1 }
@@ -159,6 +186,7 @@ final class GameModel: ObservableObject {
         xp = 0; coins = 120; streak = 0; lastCheckIn = nil; savedTotal = 0; invites = 0
         redeemed = []; missions = GameModel.seedMissions; badges = GameModel.seedBadges
         squad = GameModel.seedSquad; aiMission = nil; onboarded = false; kycVerified = false; name = "Friend"
+        UserDefaults.standard.removeObject(forKey: "ryze_game_v1"); UserDefaults.standard.removeObject(forKey: "ryze_bank_v1")
     }
 
     private func evalBadges() {
@@ -191,6 +219,10 @@ extension GameModel {
         .init(id: "r-cashback", title: "+1% cashback boost", brand: "Ryze", icon: "bolt.fill", cost: 400, tierMin: 1),
         .init(id: "r-data", title: "5GB mobile data", brand: "ONE", icon: "antenna.radiowaves.left.and.right", cost: 200),
         .init(id: "r-merch", title: "Ryze hoodie", brand: "Ryze", icon: "tshirt", cost: 800, tierMin: 2),
+        .init(id: "r-glovo", title: "20% off Glovo", brand: "Glovo", icon: "bag.fill", cost: 200),
+        .init(id: "r-kfc", title: "Free KFC box", brand: "KFC", icon: "takeoutbag.and.cup.and.straw.fill", cost: 350),
+        .init(id: "r-game", title: "1 month Game Pass", brand: "Xbox", icon: "gamecontroller.fill", cost: 500, tierMin: 1),
+        .init(id: "r-fashion", title: "15% off Pull&Bear", brand: "Pull&Bear", icon: "tshirt.fill", cost: 250),
     ]
     static let seedBadges: [Badge] = [
         .init(id: "b-first-invite", title: "Connector", icon: "person.2.fill", desc: "Invited your first friend", earned: false),
@@ -204,4 +236,4 @@ extension GameModel {
         members: [.init(id: "m0", name: "You", contributed: 1), .init(id: "m1", name: "Elsa", contributed: 2), .init(id: "m2", name: "Drin", contributed: 1)])
 }
 
-struct Squad { let name: String; let goalTitle: String; let goal: Int; var progress: Int; let rewardCoins: Int; var members: [SquadMember] }
+struct Squad: Codable { let name: String; let goalTitle: String; let goal: Int; var progress: Int; let rewardCoins: Int; var members: [SquadMember] }

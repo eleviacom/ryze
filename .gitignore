@@ -10,3 +10,8 @@ DerivedData/
 .gstack/
 # expo / metro caches
 ryze/.expo/
+graphify-out/
+ryze-ios/dd/
+.DS_Store
+**/xcuserdata/
+**/*.xcuserstate

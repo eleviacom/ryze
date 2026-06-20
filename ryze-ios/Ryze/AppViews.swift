@@ -9,8 +9,8 @@ struct AppCard<C: View>: View { @ViewBuilder var content: C
         })
         .specularBorder(24)
         .clipShape(RoundedRectangle(cornerRadius: 24))
-        .shadow(color: .black.opacity(0.6), radius: 2, y: 1)
-        .shadow(color: .black.opacity(0.4), radius: 22, y: 14) } }
+        .shadow(color: Brand.shadow1, radius: 2, y: 1)
+        .shadow(color: Brand.shadow2, radius: 22, y: 14) } }
 struct FeaturedCard<C: View>: View { @ViewBuilder var content: C
     var body: some View { content.padding(18).frame(maxWidth: .infinity, alignment: .leading)
         .background(Brand.gold)
@@ -21,8 +21,8 @@ struct FeaturedCard<C: View>: View { @ViewBuilder var content: C
 struct PillButton: View { let title: String; var system: String? = nil; var style: Style = .primary; var enabled = true; let action: () -> Void
     enum Style { case primary, soft, dark }
     var body: some View { Button { if enabled { action() } } label: { HStack(spacing: 6) { if let s = system { Image(systemName: s).font(.system(size: 13, weight: .semibold)) }; Text(title).font(.system(size: 14, weight: .semibold)) }.foregroundColor(fg).padding(.horizontal, 16).frame(height: 40).background(bg).overlay(Capsule().stroke(style == .soft ? Brand.hairline : .clear, lineWidth: 1)).clipShape(Capsule()) }.buttonStyle(PressStyle()).opacity(enabled ? 1 : 0.4) }
-    var bg: Color { style == .primary ? Brand.text : style == .dark ? .black : Brand.surface }; var fg: Color { style == .primary ? .black : style == .dark ? .white : Brand.text } }
-struct IconTile: View { let system: String; var color: Color = Brand.yellow; var size: CGFloat = 44
+    var bg: Color { style == .primary ? Brand.text : style == .dark ? .black : Brand.surface }; var fg: Color { style == .primary ? Brand.onText : style == .dark ? .white : Brand.text } }
+struct IconTile: View { let system: String; var color: Color = Brand.yellowInk; var size: CGFloat = 44
     var body: some View { Image(systemName: system).font(.system(size: size * 0.42, weight: .semibold)).symbolRenderingMode(.hierarchical).foregroundColor(color).frame(width: size, height: size).background(color.opacity(0.15)).clipShape(RoundedRectangle(cornerRadius: 13)) } }
 struct Avatar: View { let name: String; var size: CGFloat = 40; var you = false; var imageData: Data? = nil
     var body: some View {
@@ -34,7 +34,7 @@ struct Avatar: View { let name: String; var size: CGFloat = 40; var you = false;
 struct Bar: View { var v: Double; var body: some View { ProgressBar(value: v) } }
 struct Ring: View { var v: Double; var size: CGFloat = 52
     var body: some View { ZStack { Circle().stroke(Brand.hairline, lineWidth: 5); Circle().trim(from: 0, to: max(0.02, min(1, v))).stroke(Brand.yellow, style: StrokeStyle(lineWidth: 5, lineCap: .round)).rotationEffect(.degrees(-90)) }.frame(width: size, height: size) } }
-private func eyebrow(_ s: String) -> some View { HStack(spacing: 7) { Capsule().fill(Brand.yellow).frame(width: 14, height: 2); Text(s.uppercased()).font(.system(size: 11, weight: .semibold)).tracking(1.4).foregroundColor(Brand.faint) } }
+private func eyebrow(_ s: String) -> some View { HStack(spacing: 7) { Capsule().fill(Brand.yellowInk).frame(width: 14, height: 2); Text(s.uppercased()).font(.system(size: 11, weight: .semibold)).tracking(1.4).foregroundColor(Brand.faint) } }
 struct ScreenScroll<C: View>: View {
     @ViewBuilder var content: C
     var body: some View {
@@ -44,7 +44,7 @@ struct ScreenScroll<C: View>: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Brand.bg.ignoresSafeArea())
+        .background(ZStack { Brand.bg; RadialGradient(colors: [Brand.yellow.opacity(0.05), .clear], center: .top, startRadius: 4, endRadius: 380) }.ignoresSafeArea())
     }
 }
 struct StatCard: View { let value: String; let label: String
@@ -65,11 +65,11 @@ struct MissionRowView: View { @EnvironmentObject var game: GameModel; let m: Mis
     var body: some View { AppCard { VStack(spacing: 10) {
         HStack(spacing: 14) { IconTile(system: m.aiGenerated ? "sparkles" : m.icon)
             VStack(alignment: .leading, spacing: 3) { Text(m.title).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text)
-                HStack(spacing: 12) { Text("+\(m.xp) XP").font(.system(size: 12, weight: .medium)).foregroundColor(Brand.good); Text("+\(m.coins) coins").font(.system(size: 12, weight: .medium)).foregroundColor(Brand.yellow) } }
+                HStack(spacing: 12) { Text("+\(m.xp) XP").font(.system(size: 12, weight: .medium)).foregroundColor(Brand.good); Text("+\(m.coins) " + T("coins", "monedha")).font(.system(size: 12, weight: .medium)).foregroundColor(Brand.yellow) } }
             Spacer()
-            if m.claimed { HStack(spacing: 4) { Image(systemName: "checkmark.seal.fill").foregroundColor(Brand.good); Text("Done").font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.mute) } }
-            else if m.progress >= m.target { PillButton(title: "Claim") { game.claim(m.id) } }
-            else { PillButton(title: m.target > 1 ? "+1" : "Start", style: .soft) { game.progress(m.id, by: m.target > 1 ? 1 : m.target) } } }
+            if m.claimed { HStack(spacing: 4) { Image(systemName: "checkmark.seal.fill").foregroundColor(Brand.good); Text(T("Done", "U krye")).font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.mute) } }
+            else if m.progress >= m.target { PillButton(title: T("Claim", "Merr")) { game.claim(m.id) } }
+            else { PillButton(title: m.target > 1 ? "+1" : T("Start", "Fillo"), style: .soft) { game.progress(m.id, by: m.target > 1 ? 1 : m.target) } } }
         if m.target > 1 && !m.claimed { VStack(alignment: .leading, spacing: 5) { Bar(v: Double(m.progress) / Double(m.target)); Text("\(m.progress)/\(m.target)").font(.system(size: 11)).foregroundColor(Brand.faint) } } } } }
 }
 
@@ -78,9 +78,10 @@ struct AmountSheet: View {
     enum Mode { case send, request, add, fund }
     let mode: Mode; var contact: Contact? = nil; var goalName: String? = nil; let onConfirm: (Double, String) -> Void
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("ryze_lang") private var lang = "en"
     @State private var amount = ""; @State private var note = ""
-    var title: String { switch mode { case .send: "Send money"; case .request: "Request money"; case .add: "Add money"; case .fund: "Add to goal" } }
-    var cta: String { switch mode { case .send: "Send"; case .request: "Request"; case .add: "Add money"; case .fund: "Save" } }
+    var title: String { switch mode { case .send: T("Send money", "Dërgo para"); case .request: T("Request money", "Kërko para"); case .add: T("Add money", "Shto para"); case .fund: T("Add to goal", "Shto te synimi") } }
+    var cta: String { switch mode { case .send: T("Send", "Dërgo"); case .request: T("Request", "Kërko"); case .add: T("Add money", "Shto"); case .fund: T("Save", "Ruaj") } }
     var body: some View {
         VStack(spacing: 18) {
             HStack { Text(title).font(.system(size: 20, weight: .bold)).foregroundColor(Brand.text); Spacer(); Button { dismiss() } label: { Image(systemName: "xmark").foregroundColor(Brand.mute) } }
@@ -92,7 +93,7 @@ struct AmountSheet: View {
                 Text("L").font(.system(size: 26, weight: .semibold)).foregroundColor(Brand.mute)
             }
             if mode == .send || mode == .request {
-                TextField("", text: $note, prompt: Text("Add a note 💬").foregroundColor(Brand.faint)).foregroundColor(Brand.text).multilineTextAlignment(.center).padding().frame(height: 50).frame(maxWidth: .infinity).background(Brand.surface).clipShape(RoundedRectangle(cornerRadius: 12))
+                TextField("", text: $note, prompt: Text(T("Add a note 💬", "Shto një shënim 💬")).foregroundColor(Brand.faint)).foregroundColor(Brand.text).multilineTextAlignment(.center).padding().frame(height: 50).frame(maxWidth: .infinity).background(Brand.surface).clipShape(RoundedRectangle(cornerRadius: 12))
             }
             Spacer()
             PrimaryButton(title: cta, enabled: (Double(amount) ?? 0) > 0) { onConfirm(Double(amount) ?? 0, note); dismiss() }
@@ -123,73 +124,171 @@ struct MainTabView: View {
     }
 }
 
-// MARK: - Home (balance-first)
+// MARK: - Home (Bento dashboard, modular tiles, no big-number / circle-row template)
 struct HomeView: View {
     @EnvironmentObject var game: GameModel
     @EnvironmentObject var bank: BankModel
     @Binding var sel: Int
     @State private var rizNudge = true
     @AppStorage("ryze_lang") private var lang = "en"
-    enum HSheet: Int, Identifiable { case add, profile, grow; var id: Int { rawValue } }
+    enum HSheet: Int, Identifiable { case add, profile, grow, history, analytics, exchange, search; var id: Int { rawValue } }
     @State private var homeSheet: HSheet? = nil
     var nearestGoal: Goal? { bank.goals.min { ($0.saved / $0.target) > ($1.saved / $1.target) } }
+    var weekNet: Double { bank.transactions.filter { $0.amount < 0 }.prefix(8).reduce(0) { $0 + $1.amount } }
+    var weekBars: [Double] {
+        var v = bank.transactions.filter { $0.amount < 0 }.prefix(7).map { abs($0.amount) }
+        while v.count < 7 { v.append(Double((v.count * 137 % 380) + 140)) } // ponytail: pad to 7 for the sparkline
+        return Array(v.prefix(7))
+    }
     var body: some View {
         ScreenScroll {
-            TopBar(name: game.name, imageData: game.avatarData, onProfile: { homeSheet = .profile }, onAnalytics: { homeSheet = .grow })
-            // Total balance hero — signature void surface + gold glow + odometer digits
-            VStack(alignment: .leading, spacing: 8) {
-                HStack { eyebrow(T("Total balance", "Bilanci total")); Spacer(); Button { withAnimation(.smooth(duration: 0.35)) { bank.hideBalance.toggle() } } label: { Image(systemName: bank.hideBalance ? "eye.slash" : "eye").foregroundColor(Brand.mute).font(.system(size: 15)).symbolEffect(.bounce, value: bank.hideBalance) } }
-                ZStack(alignment: .leading) {
-                    Text(money(bank.totalALL)).font(.system(size: 46, weight: .bold, design: .rounded)).foregroundStyle(LinearGradient(colors: [.white, Color.white.opacity(0.78)], startPoint: .top, endPoint: .bottom)).contentTransition(.numericText()).blur(radius: bank.hideBalance ? 16 : 0).opacity(bank.hideBalance ? 0 : 1)
-                    if bank.hideBalance { Text("•• ••• L").font(.system(size: 46, weight: .bold, design: .rounded)).foregroundColor(Brand.text) }
+            TopBar(name: game.name, imageData: game.avatarData, onProfile: { homeSheet = .profile }, onAnalytics: { homeSheet = .analytics }, onSearch: { homeSheet = .search })
+
+            // 1) Hero bento, balance tile (void) + level/points tile (the one gold fill)
+            HStack(alignment: .top, spacing: 12) {
+                balanceTile.frame(height: 178).onTapGesture { homeSheet = .analytics }
+                Button { sel = 4 } label: { levelTile.frame(height: 178) }.buttonStyle(PressStyle())
+            }
+
+            // 2) Move-money console, contained square actions in one card (no floating circles)
+            AppCard { HStack(spacing: 0) {
+                moveTile("plus", T("Add", "Shto")) { homeSheet = .add }
+                moveDivider
+                moveTile("paperplane.fill", T("Send", "Dërgo")) { sel = 2 }
+                moveDivider
+                moveTile("arrow.down.left", T("Request", "Kërko")) { sel = 2 }
+                moveDivider
+                moveTile("arrow.left.arrow.right", T("Exchange", "Këmbe")) { homeSheet = .exchange }
+            } }
+
+            // 3) Mixed bento row, savings goal + this-week spend
+            HStack(alignment: .top, spacing: 12) {
+                if let g = nearestGoal {
+                    Button { homeSheet = .grow } label: { goalTile(g).frame(height: 128) }.buttonStyle(PressStyle())
                 }
-                Text(bank.hideBalance ? " " : "\(money(bank.accounts[1].balance, "EUR")) · \(money(bank.savedTotal)) saved").font(.system(size: 14)).foregroundColor(Brand.mute)
+                spendTile.frame(height: 128).onTapGesture { homeSheet = .analytics }
             }
-            .padding(20).frame(maxWidth: .infinity, alignment: .leading)
-            .background(ZStack {
-                RoundedRectangle(cornerRadius: 24).fill(Brand.void)
-                RoundedRectangle(cornerRadius: 24).fill(RadialGradient(colors: [Color(hex: 0xF2C200).opacity(0.13), .clear], center: .topLeading, startRadius: 8, endRadius: 280))
-            })
-            .specularBorder(24).clipShape(RoundedRectangle(cornerRadius: 24))
-            .shadow(color: .black.opacity(0.5), radius: 20, y: 12)
-            .animation(.snappy(duration: 0.5), value: bank.totalALL)
-            // Account chips
-            ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 10) {
-                ForEach(bank.accounts) { a in HStack(spacing: 8) { Image(systemName: a.icon).foregroundColor(Brand.yellow); VStack(alignment: .leading, spacing: 1) { Text(a.name).font(.system(size: 12)).foregroundColor(Brand.mute); Text(bank.hideBalance ? "•••" : money(a.balance, a.currency)).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text) } }.padding(.horizontal, 14).frame(height: 56).background(Brand.surface).overlay(RoundedRectangle(cornerRadius: 14).stroke(Brand.hairline, lineWidth: 1)).clipShape(RoundedRectangle(cornerRadius: 14)) }
-                Button { homeSheet = .grow } label: { HStack(spacing: 6) { Image(systemName: "plus"); Text(T("Savings", "Kursime")) }.font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.mute).padding(.horizontal, 16).frame(height: 56).overlay(RoundedRectangle(cornerRadius: 14).stroke(Brand.hairline, lineWidth: 1)) }
-            } }
-            // Quick actions
-            HStack(spacing: 4) {
-                QuickAction(icon: "plus", label: T("Add", "Shto"), prominent: true) { homeSheet = .add }
-                QuickAction(icon: "paperplane.fill", label: T("Send", "Dërgo")) { sel = 2 }
-                QuickAction(icon: "arrow.down.left", label: T("Request", "Kërko")) { sel = 2 }
-                QuickAction(icon: "arrow.left.arrow.right", label: T("Exchange", "Këmbe")) { homeSheet = .grow }
-                QuickAction(icon: "ellipsis", label: T("More", "Më shumë")) { sel = 4 }
-            }
-            // Gamification strip (slim)
-            Button { sel = 4 } label: { AppCard { HStack(spacing: 14) {
-                ZStack { Ring(v: game.li.progress, size: 44); Text("\(game.li.level)").font(.system(size: 15, weight: .bold)).foregroundColor(Brand.text) }
-                VStack(alignment: .leading, spacing: 2) { Text("\(game.tier.name) · Level \(game.li.level)").font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text); Text("\(game.coins) coins · \(game.li.needed - game.li.intoLevel) XP to level up").font(.system(size: 12)).foregroundColor(Brand.mute) }
-                Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint).font(.system(size: 13))
-            } } }.buttonStyle(.plain)
-            // Grow snapshot
-            if let g = nearestGoal { Button { homeSheet = .grow } label: { AppCard { HStack(spacing: 14) { Ring(v: g.saved / g.target, size: 46).overlay(Image(systemName: g.icon).font(.system(size: 16)).foregroundColor(Brand.yellow)); VStack(alignment: .leading, spacing: 2) { Text("Saving for \(g.name)").font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text); Text("\(money(g.saved)) of \(money(g.target))").font(.system(size: 12)).foregroundColor(Brand.mute) }; Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint).font(.system(size: 13)) } } }.buttonStyle(.plain) }
-            // Riz nudge
-            if rizNudge { AppCard { HStack(spacing: 12) { IconTile(system: "sparkles", size: 40); VStack(alignment: .leading, spacing: 2) { Text("Riz").font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.yellow); Text("You spent 20% more on eating out this week. Want to set a budget?").font(.system(size: 13)).foregroundColor(Brand.mute) }; Spacer(); Button { rizNudge = false } label: { Image(systemName: "xmark").foregroundColor(Brand.faint).font(.system(size: 12)) } } } }
-            // Transactions
-            HStack { eyebrow(T("Transactions", "Transaksionet")); Spacer(); Image(systemName: "magnifyingglass").foregroundColor(Brand.mute).font(.system(size: 13)) }
-            VStack(spacing: 0) { ForEach(Array(bank.transactions.prefix(7))) { t in
-                HStack(spacing: 12) { IconTile(system: t.icon, color: t.amount > 0 ? Brand.good : Brand.text, size: 40)
-                    VStack(alignment: .leading, spacing: 2) { Text(t.merchant).font(.system(size: 15, weight: .medium)).foregroundColor(Brand.text); Text("\(t.category) · \(t.day)").font(.system(size: 12)).foregroundColor(Brand.faint) }
-                    Spacer(); Text("\(t.amount > 0 ? "+" : "-")\(money(t.amount, t.currency))").font(.system(size: 15, weight: .semibold)).foregroundColor(t.amount > 0 ? Brand.good : Brand.text) }.padding(.vertical, 11)
-            } }
+
+            // 4) Riz nudge
+            if rizNudge { AppCard { HStack(spacing: 12) { IconTile(system: "sparkles", size: 40); VStack(alignment: .leading, spacing: 2) { Text("Riz").font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.yellowInk); Text(T("You spent 20% more on eating out this week. Want to set a budget?", "Shpenzove 20% më shumë për ushqim këtë javë. Të vendosim një buxhet?")).font(.system(size: 13)).foregroundColor(Brand.mute) }; Spacer(); Button { withAnimation { rizNudge = false } } label: { Image(systemName: "xmark").foregroundColor(Brand.faint).font(.system(size: 12)) } } } }
+
+            // 5) Activity, bounded + capped card with See all
+            HStack { eyebrow(T("Recent", "Së fundmi")); Spacer(); Button { homeSheet = .history } label: { HStack(spacing: 3) { Text(T("See all", "Shiko të gjitha")).font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.text); Image(systemName: "chevron.right").font(.system(size: 11)).foregroundColor(Brand.faint) } } }
+            AppCard { VStack(spacing: 0) { ForEach(Array(bank.transactions.prefix(5).enumerated()), id: \.element.id) { i, t in
+                txnRow(t)
+                if i < 4 { Rectangle().fill(Brand.hairline).frame(height: 1) }
+            } } }
         }
         .sheet(item: $homeSheet) { s in
             switch s {
             case .add: AmountSheet(mode: .add) { amt, _ in bank.addMoney(amt) }.presentationDetents([.medium])
             case .profile: ProfileSheet()
             case .grow: GrowView()
+            case .history: TxnHistorySheet()
+            case .analytics: AnalyticsView()
+            case .exchange: ExchangeView()
+            case .search: SearchSheet()
             }
+        }
+    }
+
+    // Balance tile, signature void surface + warm glow + odometer + week sparkline
+    private var balanceTile: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack { Text(T("Balance", "Gjendja")).font(.system(size: 11, weight: .bold)).tracking(1.2).foregroundColor(Brand.faint); Spacer(); Button { withAnimation(.smooth(duration: 0.35)) { bank.hideBalance.toggle() } } label: { Image(systemName: bank.hideBalance ? "eye.slash" : "eye").font(.system(size: 13)).foregroundColor(Brand.mute).symbolEffect(.bounce, value: bank.hideBalance) } }
+            Spacer(minLength: 6)
+            ZStack(alignment: .leading) {
+                Text(money(bank.totalALL)).font(.system(size: 27, weight: .bold, design: .rounded)).foregroundStyle(LinearGradient(colors: [.white, Color.white.opacity(0.78)], startPoint: .top, endPoint: .bottom)).contentTransition(.numericText()).blur(radius: bank.hideBalance ? 14 : 0).opacity(bank.hideBalance ? 0 : 1)
+                if bank.hideBalance { Text("•• ••• L").font(.system(size: 27, weight: .bold, design: .rounded)).foregroundColor(.white) }
+            }.lineLimit(1).minimumScaleFactor(0.6)
+            Text(bank.hideBalance ? " " : money(bank.accounts[1].balance, "EUR")).font(.system(size: 12)).foregroundColor(Brand.mute)
+            Spacer(minLength: 8)
+            sparkline(weekBars, color: Color.white.opacity(0.28), height: 22)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .padding(16)
+        .background(ZStack {
+            RoundedRectangle(cornerRadius: 24).fill(Brand.void)
+            RoundedRectangle(cornerRadius: 24).fill(RadialGradient(colors: [Color(hex: 0xF8D01F).opacity(0.13), .clear], center: .topLeading, startRadius: 8, endRadius: 220))
+        })
+        .specularBorder(24).clipShape(RoundedRectangle(cornerRadius: 24))
+        .shadow(color: .black.opacity(0.5), radius: 18, y: 10)
+        .animation(.snappy(duration: 0.5), value: bank.totalALL)
+        .environment(\.colorScheme, .dark)
+    }
+
+    // Level / points tile, the single gold fill on Home
+    private var levelTile: some View {
+        FeaturedCard { VStack(alignment: .leading, spacing: 0) {
+            HStack { Text("LEVEL \(game.li.level)").font(.system(size: 11, weight: .bold)).tracking(1.2).foregroundColor(.black.opacity(0.6)); Spacer(); Image(systemName: "star.circle.fill").font(.system(size: 15)).foregroundColor(.black.opacity(0.7)) }
+            Spacer(minLength: 6)
+            Text("\(game.coins)").font(.system(size: 26, weight: .bold, design: .rounded)).foregroundColor(.black).contentTransition(.numericText()).animation(.snappy, value: game.coins).lineLimit(1).minimumScaleFactor(0.6)
+            Text(T("RyzePoints", "RyzePikë")).font(.system(size: 12)).foregroundColor(.black.opacity(0.65))
+            Spacer(minLength: 8)
+            GeometryReader { gx in ZStack(alignment: .leading) { Capsule().fill(.black.opacity(0.16)); Capsule().fill(.black.opacity(0.8)).frame(width: gx.size.width * max(0.04, min(1, game.li.progress))) } }.frame(height: 5)
+            Text("\(game.li.needed - game.li.intoLevel) " + T("XP to level up", "XP për nivel")).font(.system(size: 10)).foregroundColor(.black.opacity(0.6)).padding(.top, 4)
+        }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading) }
+    }
+
+    // Savings goal tile
+    private func goalTile(_ g: Goal) -> some View {
+        AppCard { VStack(alignment: .leading, spacing: 10) {
+            Ring(v: g.saved / g.target, size: 38).overlay(Image(systemName: g.icon).font(.system(size: 14)).foregroundColor(Brand.yellow))
+            Spacer(minLength: 0)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(g.name).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text).lineLimit(1)
+                Text("\(Int(g.saved / g.target * 100))% · \(money(g.saved))").font(.system(size: 12)).foregroundColor(Brand.mute).lineLimit(1)
+            }
+        }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading) }
+    }
+
+    // This-week spend tile
+    private var spendTile: some View {
+        AppCard { VStack(alignment: .leading, spacing: 8) {
+            HStack { Text(T("This week", "Këtë javë")).font(.system(size: 12, weight: .semibold)).foregroundColor(Brand.mute); Spacer(); Image(systemName: "chart.bar.fill").font(.system(size: 11)).foregroundColor(Brand.faint) }
+            Spacer(minLength: 0)
+            sparkline(weekBars, color: Brand.yellow.opacity(0.8), height: 32)
+            Text("−\(money(weekNet))").font(.system(size: 17, weight: .bold)).foregroundColor(Brand.text)
+        }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading) }
+    }
+
+    private func sparkline(_ vals: [Double], color: Color, height: CGFloat) -> some View {
+        let mx = vals.max() ?? 1
+        return HStack(alignment: .bottom, spacing: 4) {
+            ForEach(Array(vals.enumerated()), id: \.offset) { _, v in
+                Capsule().fill(color).frame(height: max(4, height * CGFloat(pow(v / mx, 0.55))))
+            }
+        }.frame(height: height, alignment: .bottom).frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var moveDivider: some View { Rectangle().fill(Brand.hairline).frame(width: 1, height: 36) }
+    private func moveTile(_ icon: String, _ label: String, _ action: @escaping () -> Void) -> some View {
+        Button(action: action) { VStack(spacing: 7) { IconTile(system: icon, color: Brand.text, size: 44); Text(label).font(.system(size: 12, weight: .medium)).foregroundColor(Brand.mute) } }.buttonStyle(PressStyle()).frame(maxWidth: .infinity)
+    }
+    private func txnRow(_ t: Txn) -> some View {
+        HStack(spacing: 12) { IconTile(system: t.icon, color: t.amount > 0 ? Brand.good : Brand.text, size: 40)
+            VStack(alignment: .leading, spacing: 2) { Text(t.merchant).font(.system(size: 15, weight: .medium)).foregroundColor(Brand.text); Text("\(t.category) · \(t.day)").font(.system(size: 12)).foregroundColor(Brand.faint) }
+            Spacer(); Text("\(t.amount > 0 ? "+" : "-")\(money(t.amount, t.currency))").font(.system(size: 15, weight: .semibold)).foregroundColor(t.amount > 0 ? Brand.good : Brand.text) }.padding(.vertical, 11)
+    }
+}
+
+// Full transaction history (opened from Home → See all)
+struct TxnHistorySheet: View {
+    @EnvironmentObject var bank: BankModel
+    @Environment(\.dismiss) private var dismiss
+    @AppStorage("ryze_lang") private var lang = "en"
+    var body: some View {
+        NavigationStack {
+            ScreenScroll {
+                AppCard { VStack(spacing: 0) { ForEach(Array(bank.transactions.enumerated()), id: \.element.id) { i, t in
+                    HStack(spacing: 12) { IconTile(system: t.icon, color: t.amount > 0 ? Brand.good : Brand.text, size: 40)
+                        VStack(alignment: .leading, spacing: 2) { Text(t.merchant).font(.system(size: 15, weight: .medium)).foregroundColor(Brand.text); Text("\(t.category) · \(t.day)").font(.system(size: 12)).foregroundColor(Brand.faint) }
+                        Spacer(); Text("\(t.amount > 0 ? "+" : "-")\(money(t.amount, t.currency))").font(.system(size: 15, weight: .semibold)).foregroundColor(t.amount > 0 ? Brand.good : Brand.text) }.padding(.vertical, 11)
+                    if i < bank.transactions.count - 1 { Rectangle().fill(Brand.hairline).frame(height: 1) }
+                } } }
+            }
+            .navigationTitle(T("All activity", "Aktiviteti")).navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button(T("Done", "U krye")) { dismiss() } } }
         }
     }
 }
@@ -197,36 +296,72 @@ struct HomeView: View {
 // MARK: - Pay hub + chat threads
 struct PayView: View {
     @EnvironmentObject var bank: BankModel
-    @State private var showAdd = false
+    @AppStorage("ryze_lang") private var lang = "en"
+    enum PayFlow: Int, Identifiable { case add, scan, bank, split; var id: Int { rawValue } }
+    @State private var flow: PayFlow? = nil
+    @State private var search = ""
     @State private var path: [String] = (ProcessInfo.processInfo.environment["RYZE_THREAD"].map { [$0] }) ?? []
     var pending: [(Contact, PayMsg)] { bank.contacts.compactMap { c in if let m = bank.threads[c.id]?.last, m.kind == .request, !m.fromMe, m.status == "pending" { return (c, m) }; return nil } }
+    var filtered: [Contact] { search.isEmpty ? bank.contacts : bank.contacts.filter { $0.name.localizedCaseInsensitiveContains(search) || $0.tag.localizedCaseInsensitiveContains(search) } }
+    var recent: [Txn] { bank.transactions.filter { ["Sent", "Added", "Transfer", "Exchange"].contains($0.category) }.prefix(4).map { $0 } }
     var body: some View {
         NavigationStack(path: $path) {
             ScreenScroll {
-                Text("Pay").font(.system(size: 34, weight: .bold)).foregroundColor(Brand.text)
-                HStack(spacing: 4) {
-                    QuickAction(icon: "plus", label: "Add", prominent: true) { showAdd = true }
-                    QuickAction(icon: "qrcode", label: "Scan") {}
-                    QuickAction(icon: "building.columns.fill", label: "Bank") {}
-                    QuickAction(icon: "person.2.fill", label: "Split") {}
+                HStack(alignment: .firstTextBaseline) {
+                    Text(T("Pay", "Paguaj")).font(.system(size: 34, weight: .bold)).foregroundColor(Brand.text)
+                    Spacer()
+                    HStack(spacing: 6) { Image(systemName: "wallet.pass.fill").font(.system(size: 12)).foregroundColor(Brand.yellow); Text(bank.hideBalance ? "•••" : money(bank.totalALL)).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text) }.padding(.horizontal, 12).frame(height: 34).background(Brand.surface).overlay(Capsule().stroke(Brand.hairline, lineWidth: 1)).clipShape(Capsule())
                 }
+                AppCard { HStack(spacing: 0) {
+                    payTile("plus", T("Add", "Shto")) { flow = .add }
+                    payDivider
+                    payTile("qrcode", T("Scan", "Skano")) { flow = .scan }
+                    payDivider
+                    payTile("building.columns.fill", T("Bank", "Banka")) { flow = .bank }
+                    payDivider
+                    payTile("person.2.fill", T("Split", "Ndaj")) { flow = .split }
+                } }
                 if !pending.isEmpty {
-                    eyebrow("Requests")
-                    ForEach(pending, id: \.0.id) { c, m in AppCard { HStack(spacing: 12) { Avatar(name: c.name, size: 40); VStack(alignment: .leading, spacing: 2) { Text(c.name).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text); Text("asks \(money(m.amount)) · \(m.note)").font(.system(size: 12)).foregroundColor(Brand.mute) }; Spacer(); PillButton(title: "Pay") { bank.payRequest(c.id, m.id) } } } }
+                    eyebrow(T("Requests", "Kërkesa"))
+                    ForEach(pending, id: \.0.id) { c, m in AppCard { HStack(spacing: 12) { Avatar(name: c.name, size: 42); VStack(alignment: .leading, spacing: 2) { Text(c.name).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text); Text(T("asks", "kërkon") + " \(money(m.amount)) · \(m.note)").font(.system(size: 12)).foregroundColor(Brand.mute).lineLimit(1) }; Spacer(); PillButton(title: T("Pay", "Paguaj")) { bank.payRequest(c.id, m.id) } } } }
                 }
-                eyebrow("Frequent")
-                ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 16) { ForEach(bank.contacts) { c in NavigationLink(value: c.id) { VStack(spacing: 6) { Avatar(name: c.name, size: 54); Text(c.name.split(separator: " ").first.map(String.init) ?? c.name).font(.system(size: 12)).foregroundColor(Brand.mute) } } } } }
-                eyebrow("All contacts")
-                VStack(spacing: 0) { ForEach(bank.contacts) { c in NavigationLink(value: c.id) { HStack(spacing: 12) { Avatar(name: c.name, size: 44); VStack(alignment: .leading, spacing: 2) { Text(c.name).font(.system(size: 15, weight: .medium)).foregroundColor(Brand.text); Text(c.tag + " · on Ryze").font(.system(size: 12)).foregroundColor(Brand.faint) }; Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint).font(.system(size: 13)) }.padding(.vertical, 10) } } }
+                eyebrow(T("Pay a friend", "Paguaj një mik"))
+                HStack(spacing: 8) { Image(systemName: "magnifyingglass").foregroundColor(Brand.mute); TextField("", text: $search, prompt: Text(T("Search name or @tag", "Kërko emër ose @tag")).foregroundColor(Brand.faint)).foregroundColor(Brand.text).autocorrectionDisabled() }.padding(.horizontal, 14).frame(height: 46).background(Brand.surface).overlay(Capsule().stroke(Brand.hairline, lineWidth: 1)).clipShape(Capsule())
+                if search.isEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 16) { ForEach(bank.contacts) { c in NavigationLink(value: c.id) { VStack(spacing: 6) { Avatar(name: c.name, size: 56); Text(c.name.split(separator: " ").first.map(String.init) ?? c.name).font(.system(size: 12)).foregroundColor(Brand.mute) } } } }.padding(.vertical, 2) }
+                }
+                AppCard { VStack(spacing: 0) { ForEach(Array(filtered.enumerated()), id: \.element.id) { idx, c in
+                    NavigationLink(value: c.id) { HStack(spacing: 12) { Avatar(name: c.name, size: 44); VStack(alignment: .leading, spacing: 2) { Text(c.name).font(.system(size: 15, weight: .medium)).foregroundColor(Brand.text); Text(c.tag + " · " + T("on Ryze", "në Ryze")).font(.system(size: 12)).foregroundColor(Brand.faint) }; Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint).font(.system(size: 13)) }.padding(.vertical, 11) }.buttonStyle(.plain)
+                    if idx < filtered.count - 1 { Rectangle().fill(Brand.hairline).frame(height: 1) }
+                } } }
+                if !recent.isEmpty && search.isEmpty {
+                    eyebrow(T("Recent", "Së fundmi"))
+                    AppCard { VStack(spacing: 0) { ForEach(Array(recent.enumerated()), id: \.element.id) { idx, t in
+                        HStack(spacing: 12) { IconTile(system: t.icon, color: t.amount > 0 ? Brand.good : Brand.text, size: 40); VStack(alignment: .leading, spacing: 2) { Text(t.merchant).font(.system(size: 15, weight: .medium)).foregroundColor(Brand.text); Text("\(t.category) · \(t.day)").font(.system(size: 12)).foregroundColor(Brand.faint) }; Spacer(); Text("\(t.amount > 0 ? "+" : "-")\(money(t.amount, t.currency))").font(.system(size: 15, weight: .semibold)).foregroundColor(t.amount > 0 ? Brand.good : Brand.text) }.padding(.vertical, 11)
+                        if idx < recent.count - 1 { Rectangle().fill(Brand.hairline).frame(height: 1) }
+                    } } }
+                }
             }
             .navigationDestination(for: String.self) { id in if let c = bank.contacts.first(where: { $0.id == id }) { ChatThreadView(contact: c) } }
-            .sheet(isPresented: $showAdd) { AmountSheet(mode: .add) { amt, _ in bank.addMoney(amt) }.presentationDetents([.medium]) }
+            .sheet(item: $flow) { f in
+                switch f {
+                case .add: AmountSheet(mode: .add) { amt, _ in bank.addMoney(amt) }.presentationDetents([.medium])
+                case .scan: ScanPayView()
+                case .bank: BankTransferView()
+                case .split: SplitBillView()
+                }
+            }
         }
+    }
+    var payDivider: some View { Rectangle().fill(Brand.hairline).frame(width: 1, height: 36) }
+    func payTile(_ icon: String, _ label: String, _ action: @escaping () -> Void) -> some View {
+        Button(action: action) { VStack(spacing: 7) { IconTile(system: icon, color: Brand.text, size: 44); Text(label).font(.system(size: 12, weight: .medium)).foregroundColor(Brand.mute) } }.buttonStyle(PressStyle()).frame(maxWidth: .infinity)
     }
 }
 
 struct ChatThreadView: View {
     @EnvironmentObject var bank: BankModel
+    @AppStorage("ryze_lang") private var lang = "en"
     let contact: Contact
     @State private var text = ""
     @State private var sheet: AmountSheet.Mode? = nil
@@ -234,134 +369,194 @@ struct ChatThreadView: View {
     var body: some View {
         ZStack { Brand.bg.ignoresSafeArea()
             VStack(spacing: 0) {
-                ScrollView { VStack(spacing: 10) { ForEach(msgs) { m in bubble(m) } }.padding(16) }
+                HStack(spacing: 12) {
+                    Avatar(name: contact.name, size: 44)
+                    VStack(alignment: .leading, spacing: 2) { Text(contact.name).font(.system(size: 16, weight: .semibold)).foregroundColor(Brand.text); Text(contact.tag + " · " + T("on Ryze", "në Ryze")).font(.system(size: 12)).foregroundColor(Brand.faint) }
+                    Spacer()
+                    Button { sheet = .request } label: { Text(T("Request", "Kërko")).font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.text).padding(.horizontal, 14).frame(height: 34).overlay(Capsule().stroke(Brand.hairline, lineWidth: 1)) }
+                    Button { sheet = .send } label: { Text(T("Send", "Dërgo")).font(.system(size: 13, weight: .semibold)).foregroundColor(.black).padding(.horizontal, 14).frame(height: 34).background(Brand.yellow).clipShape(Capsule()) }
+                }.padding(.horizontal, 16).padding(.vertical, 10).background(Brand.elev1)
+                Rectangle().fill(Brand.hairline).frame(height: 1)
+                ScrollViewReader { proxy in
+                    ScrollView { VStack(spacing: 10) { ForEach(msgs) { m in bubble(m).id(m.id) } }.padding(16) }
+                        .onChange(of: msgs.count) { _, _ in if let last = msgs.last { withAnimation(.easeOut) { proxy.scrollTo(last.id, anchor: .bottom) } } }
+                }
                 HStack(spacing: 8) {
-                    Menu { Button("Send money") { sheet = .send }; Button("Request money") { sheet = .request } } label: { Image(systemName: "plus").font(.system(size: 18, weight: .bold)).foregroundColor(.black).frame(width: 40, height: 40).background(Brand.yellow).clipShape(Circle()) }
-                    TextField("", text: $text, prompt: Text("Message").foregroundColor(Brand.faint)).foregroundColor(Brand.text).padding(.horizontal, 14).frame(height: 40).background(Brand.surface).overlay(Capsule().stroke(Brand.hairline, lineWidth: 1)).clipShape(Capsule())
-                    Button { let t = text.trimmingCharacters(in: .whitespaces); if !t.isEmpty { bank.sendText(contact.id, t); text = "" } } label: { Image(systemName: "arrow.up").font(.system(size: 16, weight: .bold)).foregroundColor(.black).frame(width: 40, height: 40).background(Brand.text).clipShape(Circle()) }
+                    Menu { Button(T("Send money", "Dërgo para")) { sheet = .send }; Button(T("Request money", "Kërko para")) { sheet = .request } } label: { Image(systemName: "plus").font(.system(size: 18, weight: .bold)).foregroundColor(.black).frame(width: 42, height: 42).background(Brand.yellow).clipShape(Circle()) }
+                    TextField("", text: $text, prompt: Text(T("Message", "Mesazh")).foregroundColor(Brand.faint)).foregroundColor(Brand.text).padding(.horizontal, 16).frame(height: 44).background(Brand.surface).overlay(Capsule().stroke(Brand.hairline, lineWidth: 1)).clipShape(Capsule())
+                    Button { let t = text.trimmingCharacters(in: .whitespaces); if !t.isEmpty { bank.sendText(contact.id, t); text = "" } } label: { Image(systemName: "arrow.up").font(.system(size: 16, weight: .bold)).foregroundColor(Brand.onText).frame(width: 42, height: 42).background(Brand.text).clipShape(Circle()) }.opacity(text.trimmingCharacters(in: .whitespaces).isEmpty ? 0.4 : 1)
                 }.padding(12)
             }
         }
         .navigationTitle(contact.name).navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(Brand.bg, for: .navigationBar)
         .sheet(item: Binding(get: { sheet.map { SheetWrap(mode: $0) } }, set: { sheet = $0?.mode })) { w in
             AmountSheet(mode: w.mode, contact: contact) { amt, note in if w.mode == .send { bank.send(to: contact, amount: amt, note: note) } else { bank.request(from: contact, amount: amt, note: note) } }.presentationDetents([.large])
         }
     }
     struct SheetWrap: Identifiable { let mode: AmountSheet.Mode; var id: Int { mode == .send ? 0 : 1 } }
     @ViewBuilder func bubble(_ m: PayMsg) -> some View {
-        HStack { if m.fromMe { Spacer(minLength: 40) }
+        HStack { if m.fromMe { Spacer(minLength: 36) }
             if m.kind == .text {
-                Text(m.text).font(.system(size: 15)).foregroundColor(m.fromMe ? .black : Brand.text).padding(.vertical, 9).padding(.horizontal, 13).background(m.fromMe ? Brand.text : Brand.surface).clipShape(RoundedRectangle(cornerRadius: 18))
+                Text(m.text).font(.system(size: 15)).foregroundColor(m.fromMe ? Brand.onText : Brand.text).padding(.vertical, 10).padding(.horizontal, 14).background(m.fromMe ? AnyShapeStyle(Brand.text) : AnyShapeStyle(Brand.elev2)).overlay(RoundedRectangle(cornerRadius: 20).stroke(m.fromMe ? Color.clear : Brand.hairline, lineWidth: 1)).clipShape(RoundedRectangle(cornerRadius: 20))
             } else {
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack(spacing: 8) { Image(systemName: m.kind == .send ? "paperplane.fill" : "arrow.down.left").font(.system(size: 13, weight: .bold)).foregroundColor(.black); Text(m.kind == .send ? "Sent" : "Request").font(.system(size: 12, weight: .bold)).foregroundColor(.black.opacity(0.7)) }
-                    Text(money(m.amount)).font(.system(size: 22, weight: .bold)).foregroundColor(.black)
-                    if !m.note.isEmpty { Text(m.note).font(.system(size: 13)).foregroundColor(.black.opacity(0.75)) }
-                    Text(m.status.capitalized).font(.system(size: 11, weight: .semibold)).foregroundColor(.black.opacity(0.55))
-                    if m.kind == .request && !m.fromMe && m.status == "pending" { PillButton(title: "Pay \(money(m.amount))", style: .dark) { bank.payRequest(contact.id, m.id) } }
-                }.padding(14).frame(width: 220, alignment: .leading).background(Brand.yellow).clipShape(RoundedRectangle(cornerRadius: 18))
+                moneyBubble(m)
             }
-            if !m.fromMe { Spacer(minLength: 40) } }
+            if !m.fromMe { Spacer(minLength: 36) } }
+    }
+    func moneyBubble(_ m: PayMsg) -> some View {
+        let incoming = m.kind == .request && !m.fromMe && m.status == "pending"
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                Image(systemName: m.kind == .send ? "paperplane.fill" : "arrow.down.left").font(.system(size: 14, weight: .bold)).foregroundColor(.black).frame(width: 34, height: 34).background(Color.black.opacity(0.12)).clipShape(Circle())
+                VStack(alignment: .leading, spacing: 1) { Text(m.kind == .send ? T("Sent", "Dërguar") : T("Request", "Kërkesë")).font(.system(size: 12, weight: .bold)).foregroundColor(.black.opacity(0.65)); Text(money(m.amount)).font(.system(size: 24, weight: .bold)).foregroundColor(.black) }
+            }
+            if !m.note.isEmpty { Text(m.note).font(.system(size: 13)).foregroundColor(.black.opacity(0.78)) }
+            HStack(spacing: 6) { Image(systemName: m.status == "paid" ? "checkmark.circle.fill" : "clock.fill").font(.system(size: 11)).foregroundColor(.black.opacity(0.55)); Text(m.status.capitalized).font(.system(size: 11, weight: .semibold)).foregroundColor(.black.opacity(0.55)) }
+            if incoming { PillButton(title: T("Pay", "Paguaj") + " \(money(m.amount))", style: .dark) { bank.payRequest(contact.id, m.id) } }
+        }.padding(16).frame(width: 232, alignment: .leading).background(Brand.gold).clipShape(RoundedRectangle(cornerRadius: 20)).shadow(color: Brand.yellow.opacity(0.22), radius: 12, y: 6)
     }
 }
 
 // MARK: - Cards
 struct CardsView: View {
     @EnvironmentObject var bank: BankModel
+    @EnvironmentObject var game: GameModel
+    @AppStorage("ryze_lang") private var lang = "en"
+    enum CardFlow: Int, Identifiable { case order, applePay, limit, studio; var id: Int { rawValue } }
+    @State private var cardFlow: CardFlow? = nil
+    var cardBars: [Double] {
+        var v = bank.transactions.filter { $0.amount < 0 }.prefix(7).map { abs($0.amount) }
+        while v.count < 7 { v.append(Double((v.count * 151 % 360) + 120)) }
+        return Array(v.prefix(7))
+    }
     var body: some View {
         ScreenScroll {
-            Text("Cards").font(.system(size: 34, weight: .bold)).foregroundColor(Brand.text)
-            ZStack(alignment: .topLeading) {
-                RoundedRectangle(cornerRadius: 22).fill(LinearGradient(colors: [Brand.yellow, Color(hex: 0xFFB020)], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(height: 200)
-                VStack(alignment: .leading) {
-                    HStack { Image("RaiffeisenLogo").resizable().frame(width: 34, height: 34).clipShape(RoundedRectangle(cornerRadius: 9)); Spacer(); Text("Debit Premium").font(.system(size: 13, weight: .semibold)).foregroundColor(.black.opacity(0.7)) }
-                    Spacer()
-                    Text(bank.revealed ? "4827  2156  9043  1124" : "••••  ••••  ••••  \(bank.card.last4)").font(.system(size: 20, weight: .semibold, design: .monospaced)).foregroundColor(.black)
-                    HStack { Text("RYZE").font(.system(size: 13, weight: .bold)).foregroundColor(.black); Spacer(); Text(bank.revealed ? "09/29   CVV 412" : "VISA").font(.system(size: 14, weight: .bold)).foregroundColor(.black) }
-                }.padding(20)
-                if bank.card.frozen { ZStack { Color.black.opacity(0.45); VStack(spacing: 6) { Image(systemName: "snowflake").font(.system(size: 30)).foregroundColor(.white); Text("Frozen").font(.system(size: 14, weight: .bold)).foregroundColor(.white) } }.clipShape(RoundedRectangle(cornerRadius: 22)).frame(height: 200) }
-            }
-            HStack(spacing: 10) {
-                PillButton(title: bank.card.frozen ? "Unfreeze" : "Freeze", system: "snowflake", style: .soft) { bank.toggleFreeze() }
-                PillButton(title: bank.revealed ? "Hide details" : "Show details", system: "eye", style: .soft) { bank.revealed.toggle() }
-                Spacer()
-            }
-            eyebrow("Security")
-            AppCard { VStack(spacing: 0) {
-                toggleRow("Online payments", "globe", $bank.card.online)
-                Divider().background(Brand.hairline)
-                toggleRow("Contactless", "wave.3.right", $bank.card.contactless)
-                Divider().background(Brand.hairline)
-                toggleRow("ATM withdrawals", "banknote", $bank.card.atm)
+            HStack { Text(T("Cards", "Kartat")).font(.system(size: 34, weight: .bold)).foregroundColor(Brand.text); Spacer() }
+
+            CardFace(last4: bank.card.last4, frozen: bank.card.frozen, revealed: bank.revealed, name: game.name, style: bank.cardStyle, customText: bank.cardText)
+                .onTapGesture { withAnimation(.smooth(duration: 0.3)) { bank.revealed.toggle() } }
+
+            AppCard { HStack(spacing: 0) {
+                ctrlTile("snowflake", bank.card.frozen ? T("Unfreeze", "Shkrije") : T("Freeze", "Ngrije"), active: bank.card.frozen) { bank.toggleFreeze() }
+                ctrlDivider
+                ctrlTile(bank.revealed ? "eye.slash" : "eye", bank.revealed ? T("Hide", "Fshih") : T("Details", "Detajet"), active: bank.revealed) { bank.revealed.toggle() }
+                ctrlDivider
+                ctrlTile("creditcard.fill", T("Apple Pay", "Apple Pay")) { cardFlow = .applePay }
+                ctrlDivider
+                ctrlTile("slider.horizontal.3", T("Limits", "Limitet")) { cardFlow = .limit }
             } }
-            AppCard { HStack(spacing: 12) { IconTile(system: "creditcard.and.123"); VStack(alignment: .leading, spacing: 2) { Text("Order a physical card").font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text); Text("Free delivery in 5–7 days").font(.system(size: 12)).foregroundColor(Brand.mute) }; Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint) } }
-            AppCard { HStack(spacing: 12) { IconTile(system: "paintpalette.fill", color: Brand.violet); VStack(alignment: .leading, spacing: 2) { Text("Card skins").font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text); Text("Unlock new designs as you level up").font(.system(size: 12)).foregroundColor(Brand.mute) }; Spacer(); Image(systemName: "lock.fill").foregroundColor(Brand.faint) } }
+
+            HStack(alignment: .top, spacing: 12) {
+                AppCard { VStack(alignment: .leading, spacing: 8) {
+                    Text(T("Spent this month", "Këtë muaj")).font(.system(size: 12, weight: .semibold)).foregroundColor(Brand.mute)
+                    Spacer(minLength: 0)
+                    cardSparkline(cardBars)
+                    Text(money(bank.cardSpent)).font(.system(size: 18, weight: .bold)).foregroundColor(Brand.text)
+                }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading) }.frame(height: 132)
+                Button { cardFlow = .limit } label: { AppCard { VStack(alignment: .leading, spacing: 8) {
+                    Text(T("Monthly limit", "Limiti mujor")).font(.system(size: 12, weight: .semibold)).foregroundColor(Brand.mute)
+                    Spacer(minLength: 0)
+                    Text(money(bank.cardLimit)).font(.system(size: 18, weight: .bold)).foregroundColor(Brand.text)
+                    ProgressBar(value: min(1, bank.cardSpent / bank.cardLimit))
+                    Text("\(Int(min(1, bank.cardSpent / bank.cardLimit) * 100))% " + T("used", "përdorur")).font(.system(size: 11)).foregroundColor(Brand.faint)
+                }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading) }.frame(height: 132) }.buttonStyle(PressStyle())
+            }
+
+            eyebrow(T("Card controls", "Kontrollet e kartës"))
+            AppCard { VStack(spacing: 0) {
+                toggleRow(T("Online payments", "Pagesa online"), "globe", $bank.card.online)
+                Divider().background(Brand.hairline)
+                toggleRow(T("Contactless", "Pa kontakt"), "wave.3.right", $bank.card.contactless)
+                Divider().background(Brand.hairline)
+                toggleRow(T("ATM withdrawals", "Tërheqje ATM"), "banknote", $bank.card.atm)
+            } }
+
+            eyebrow(T("Virtual card", "Kartë virtuale"))
+            if let v = bank.virtualCard {
+                CardFace(last4: v.last4, frozen: v.frozen, revealed: bank.virtualRevealed, name: game.name, style: .midnight, label: T("Virtual", "Virtuale"))
+                    .onTapGesture { withAnimation(.smooth(duration: 0.3)) { bank.virtualRevealed.toggle() } }
+                HStack(spacing: 10) {
+                    PillButton(title: v.frozen ? T("Unfreeze", "Shkrije") : T("Freeze", "Ngrije"), system: "snowflake", style: .soft) { bank.toggleVirtualFreeze() }
+                    PillButton(title: T("Delete", "Fshi"), system: "trash", style: .soft) { withAnimation { bank.deleteVirtualCard() } }
+                    Spacer()
+                }
+            } else {
+                Button { withAnimation { bank.createVirtualCard() } } label: { AppCard { HStack(spacing: 14) { IconTile(system: "plus.rectangle.on.rectangle", color: Brand.violet, size: 44); VStack(alignment: .leading, spacing: 2) { Text(T("Create a virtual card", "Krijo kartë virtuale")).font(.system(size: 16, weight: .semibold)).foregroundColor(Brand.text); Text(T("Safer online shopping, freeze anytime", "Më e sigurt online, ngrije kurdo")).font(.system(size: 12)).foregroundColor(Brand.mute) }; Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint) } } }.buttonStyle(PressStyle())
+            }
+
+            eyebrow(T("Manage", "Menaxho"))
+            Button { cardFlow = .order } label: { AppCard { HStack(spacing: 12) { IconTile(system: "creditcard.and.123"); VStack(alignment: .leading, spacing: 2) { Text(T("Order a physical card", "Porosit kartë fizike")).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text); Text(T("Free delivery in 5-7 days", "Dërgesë falas brenda 5-7 ditëve")).font(.system(size: 12)).foregroundColor(Brand.mute) }; Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint) } } }.buttonStyle(PressStyle())
+            Button { cardFlow = .studio } label: { AppCard { HStack(spacing: 12) { IconTile(system: "paintbrush.fill", color: Brand.violet); VStack(alignment: .leading, spacing: 2) { Text(T("Personalise your card", "Personalizo kartën")).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text); Text(T("Colours and your own text", "Ngjyra dhe teksti yt")).font(.system(size: 12)).foregroundColor(Brand.mute) }; Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint) } } }.buttonStyle(PressStyle())
         }
+        .sheet(item: $cardFlow) { f in
+            switch f {
+            case .order: OrderCardSheet()
+            case .studio: CardStudioSheet()
+            case .applePay: ApplePaySheet()
+            case .limit: CardLimitSheet()
+            }
+        }
+    }
+    var ctrlDivider: some View { Rectangle().fill(Brand.hairline).frame(width: 1, height: 34) }
+    func ctrlTile(_ icon: String, _ label: String, active: Bool = false, _ action: @escaping () -> Void) -> some View {
+        Button(action: action) { VStack(spacing: 7) {
+            Image(systemName: icon).font(.system(size: 17, weight: .semibold)).foregroundColor(active ? .black : Brand.text).frame(width: 44, height: 44).background(active ? AnyShapeStyle(Brand.yellow) : AnyShapeStyle(Brand.elev3)).clipShape(RoundedRectangle(cornerRadius: 13))
+            Text(label).font(.system(size: 11, weight: .medium)).foregroundColor(Brand.mute).lineLimit(1).minimumScaleFactor(0.75)
+        } }.buttonStyle(PressStyle()).frame(maxWidth: .infinity)
+    }
+    func cardSparkline(_ vals: [Double]) -> some View {
+        let mx = vals.max() ?? 1
+        return HStack(alignment: .bottom, spacing: 4) { ForEach(Array(vals.enumerated()), id: \.offset) { _, v in Capsule().fill(Brand.yellow.opacity(0.8)).frame(height: max(4, 28 * CGFloat(pow(v / mx, 0.55)))) } }.frame(height: 28, alignment: .bottom).frame(maxWidth: .infinity, alignment: .leading)
     }
     func toggleRow(_ t: String, _ icon: String, _ v: Binding<Bool>) -> some View { HStack { Image(systemName: icon).foregroundColor(Brand.mute).frame(width: 28); Text(t).font(.system(size: 15)).foregroundColor(Brand.text); Spacer(); Toggle("", isOn: v).labelsHidden().tint(Brand.yellow) }.padding(.vertical, 6) }
 }
 
-// MARK: - Grow
+// MARK: - Savings (goals)
 struct GrowView: View {
     @EnvironmentObject var bank: BankModel
-    @State private var fundId: String? = nil
-    var maxCat: Double { bank.categories.map(\.amount).max() ?? 1 }
+    @AppStorage("ryze_lang") private var lang = "en"
+    enum GrowSheet: Identifiable { case fund(String), exchange, newGoal; var id: String { switch self { case .fund(let g): return "fund-\(g)"; case .exchange: return "exchange"; case .newGoal: return "new" } } }
+    @State private var growSheet: GrowSheet? = nil
     var body: some View {
-        ScreenScroll {
-            Text("Grow").font(.system(size: 34, weight: .bold)).foregroundColor(Brand.text)
-            FeaturedCard { VStack(alignment: .leading, spacing: 4) { Text("TOTAL SAVED").font(.system(size: 12, weight: .semibold)).tracking(1).foregroundColor(.black.opacity(0.55)); Text(money(bank.savedTotal)).font(.system(size: 40, weight: .bold)).foregroundColor(.black); Text("Across \(bank.goals.count) goals").font(.system(size: 14)).foregroundColor(.black.opacity(0.7)) } }
-            eyebrow("Goals")
-            ForEach(bank.goals) { g in AppCard { HStack(spacing: 16) {
-                Ring(v: g.saved / g.target, size: 58).overlay(Image(systemName: g.icon).font(.system(size: 18)).foregroundColor(Brand.yellow))
-                VStack(alignment: .leading, spacing: 3) { Text(g.name).font(.system(size: 16, weight: .semibold)).foregroundColor(Brand.text); Text("\(money(g.saved)) of \(money(g.target))").font(.system(size: 13)).foregroundColor(Brand.mute); if g.roundup { Text("Round-ups on").font(.system(size: 11, weight: .semibold)).foregroundColor(Brand.good) } }
-                Spacer(); PillButton(title: "Add", style: .soft) { fundId = g.id }
-            } } }
-            eyebrow("This month’s spending")
-            AppCard { VStack(spacing: 12) { ForEach(bank.categories) { c in
-                HStack(spacing: 12) { Image(systemName: c.icon).foregroundColor(c.color).frame(width: 24)
-                    VStack(alignment: .leading, spacing: 5) { HStack { Text(c.name).font(.system(size: 14)).foregroundColor(Brand.text); Spacer(); Text(money(c.amount)).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text) }
-                        GeometryReader { gx in ZStack(alignment: .leading) { Capsule().fill(Brand.hairline); Capsule().fill(c.color).frame(width: gx.size.width * (c.amount / maxCat)) } }.frame(height: 6) } }
-            } } }
-            AppCard { HStack(spacing: 12) { IconTile(system: "arrow.left.arrow.right", color: Brand.mint); VStack(alignment: .leading, spacing: 2) { Text("Exchange ALL ↔ EUR").font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text); Text("Live rate, low fees").font(.system(size: 12)).foregroundColor(Brand.mute) }; Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint) } }
+        NavigationStack {
+            ScreenScroll {
+                FeaturedCard { VStack(alignment: .leading, spacing: 4) {
+                    Text(T("TOTAL SAVED", "TOTAL I KURSYER")).font(.system(size: 12, weight: .semibold)).tracking(1).foregroundColor(.black.opacity(0.55))
+                    Text(money(bank.savedTotal)).font(.system(size: 40, weight: .bold)).foregroundColor(.black).contentTransition(.numericText()).animation(.snappy, value: bank.savedTotal)
+                    Text(T("Across \(bank.goals.count) goals", "Në \(bank.goals.count) synime")).font(.system(size: 14)).foregroundColor(.black.opacity(0.7))
+                } }
+                Button { growSheet = .newGoal } label: { AppCard { HStack(spacing: 14) {
+                    IconTile(system: "plus", color: Brand.text, size: 44)
+                    VStack(alignment: .leading, spacing: 2) { Text(T("New savings goal", "Synim i ri kursimi")).font(.system(size: 16, weight: .semibold)).foregroundColor(Brand.text); Text(T("Save toward something you want", "Kurse për diçka që dëshiron")).font(.system(size: 12)).foregroundColor(Brand.mute) }
+                    Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint).font(.system(size: 13))
+                } } }.buttonStyle(PressStyle())
+                if !bank.goals.isEmpty { eyebrow(T("Your goals", "Synimet e tua")) }
+                ForEach(bank.goals) { g in NavigationLink(value: g.id) { goalRow(g) }.buttonStyle(.plain) }
+                Button { growSheet = .exchange } label: { AppCard { HStack(spacing: 12) { IconTile(system: "arrow.left.arrow.right", color: Brand.mint); VStack(alignment: .leading, spacing: 2) { Text(T("Convert currency", "Këmbe valutë")).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text); Text(T("Move between ALL and EUR", "Lëviz mes ALL dhe EUR")).font(.system(size: 12)).foregroundColor(Brand.mute) }; Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint) } } }.buttonStyle(PressStyle())
+            }
+            .navigationTitle(T("Savings", "Kursime")).navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(Brand.bg, for: .navigationBar)
+            .navigationDestination(for: String.self) { gid in GoalDetailView(goalId: gid) }
         }
-        .sheet(item: Binding(get: { fundId.map { GID(id: $0) } }, set: { fundId = $0?.id })) { g in AmountSheet(mode: .fund, goalName: bank.goals.first { $0.id == g.id }?.name) { amt, _ in bank.fundGoal(g.id, amt) }.presentationDetents([.medium]) }
-    }
-    struct GID: Identifiable { let id: String }
-}
-
-// MARK: - Profile (gamification folded in)
-struct ProfileView: View {
-    @EnvironmentObject var game: GameModel
-    @State private var riz = false
-    let cols2 = [GridItem(.flexible()), GridItem(.flexible())]
-    let cols3 = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-    var earned: Int { game.badges.filter { $0.earned }.count }
-    var quests: [Mission] { game.missions.filter { !$0.claimed } }
-    var board: [LeaderRow] { (GameModel.leaderboard + [LeaderRow(id: "you", name: game.name, xp: game.xp, you: true)]).sorted { $0.xp > $1.xp } }
-    var body: some View {
-        ScreenScroll {
-            VStack(spacing: 8) { Avatar(name: game.name, size: 80); Text(game.name).font(.system(size: 22, weight: .bold)).foregroundColor(Brand.text); Text("@\(game.name.lowercased()) · \(game.tier.name) · Level \(game.li.level)").font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.yellow) }.frame(maxWidth: .infinity).padding(.vertical, 6)
-            AppCard { VStack(alignment: .leading, spacing: 10) { Text(game.tier.perk).font(.system(size: 13)).foregroundColor(Brand.mute); Bar(v: game.li.progress); Text("\(game.li.intoLevel)/\(game.li.needed) XP to level \(game.li.level + 1)").font(.system(size: 12)).foregroundColor(Brand.faint) } }
-            LazyVGrid(columns: cols3, spacing: 10) { StatCard(value: "\(game.xp)", label: "Total XP"); StatCard(value: "\(game.coins)", label: "Coins"); StatCard(value: "\(game.streak)d", label: "Streak"); StatCard(value: "\(game.invites)", label: "Invites"); StatCard(value: "\(earned)/\(game.badges.count)", label: "Badges"); StatCard(value: "Lv \(game.li.level)", label: game.tier.name) }
-            if !quests.isEmpty { eyebrow("Quests — earn from real actions"); ForEach(quests.prefix(4)) { MissionRowView(m: $0) } }
-            eyebrow("Badges")
-            LazyVGrid(columns: cols2, spacing: 10) { ForEach(game.badges) { b in AppCard { VStack(spacing: 6) { Image(systemName: b.earned ? b.icon : "lock.fill").font(.system(size: 22)).foregroundColor(b.earned ? Brand.yellow : Brand.faint).frame(width: 48, height: 48).background((b.earned ? Brand.yellow : Color.white).opacity(b.earned ? 0.12 : 0.05)).clipShape(Circle()); Text(b.title).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text); Text(b.desc).font(.system(size: 11)).foregroundColor(Brand.mute).multilineTextAlignment(.center) }.frame(maxWidth: .infinity) }.opacity(b.earned ? 1 : 0.5) } }
-            eyebrow("Rewards store")
-            ForEach(GameModel.rewards) { r in let owned = game.redeemed.contains(r.id); let locked = r.tierMin > game.tierIndex; let afford = game.coins >= r.cost
-                AppCard { HStack(spacing: 14) { IconTile(system: r.icon); VStack(alignment: .leading, spacing: 2) { Text(r.title).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text); Text(r.brand).font(.system(size: 13)).foregroundColor(Brand.mute) }; Spacer()
-                    if owned { Image(systemName: "checkmark.seal.fill").foregroundColor(Brand.good) } else if locked { HStack(spacing: 4) { Image(systemName: "lock.fill"); Text(TIERS[r.tierMin].name) }.font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.faint) } else { PillButton(title: "\(r.cost)", enabled: afford) { game.redeem(r.id) } } } } }
-            eyebrow("Invite friends")
-            AppCard { HStack(spacing: 12) { IconTile(system: "gift.fill", color: Brand.pink); VStack(alignment: .leading, spacing: 2) { Text(game.referralCode).font(.system(size: 16, weight: .bold)).foregroundColor(Brand.text); Text("You both get 200 coins").font(.system(size: 12)).foregroundColor(Brand.mute) }; Spacer(); ShareLink(item: "Join me on Ryze — use code \(game.referralCode)") { Image(systemName: "square.and.arrow.up").foregroundColor(.black).frame(width: 40, height: 40).background(Brand.yellow).clipShape(Circle()) } } }
-            eyebrow("Security & support")
-            AppCard { VStack(spacing: 0) {
-                row("Passcode & Face ID", "lock.fill"); Divider().background(Brand.hairline)
-                row("Notifications", "bell.fill"); Divider().background(Brand.hairline)
-                Button { riz = true } label: { row("Ask Riz", "sparkles") }.buttonStyle(.plain); Divider().background(Brand.hairline)
-                row("Help & support", "questionmark.circle.fill")
-            } }
-            Button { game.resetDemo() } label: { Text("Reset demo").font(.system(size: 16, weight: .semibold)).foregroundColor(Brand.text).frame(maxWidth: .infinity).frame(height: 50).overlay(Capsule().stroke(Brand.text, lineWidth: 1)) }
+        .sheet(item: $growSheet) { s in
+            switch s {
+            case .fund(let gid): AmountSheet(mode: .fund, goalName: bank.goals.first { $0.id == gid }?.name) { amt, _ in bank.fundGoal(gid, amt) }.presentationDetents([.medium])
+            case .exchange: ExchangeView()
+            case .newGoal: AddGoalSheet()
+            }
         }
-        .sheet(isPresented: $riz) { RizSheet(stepWhy: nil, seed: false).presentationDetents([.large]).presentationBackground(Brand.surface) }
     }
-    func row(_ t: String, _ icon: String) -> some View { HStack(spacing: 12) { Image(systemName: icon).foregroundColor(Brand.yellow).frame(width: 26); Text(t).font(.system(size: 15)).foregroundColor(Brand.text); Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint).font(.system(size: 13)) }.padding(.vertical, 12) }
+    func goalRow(_ g: Goal) -> some View {
+        AppCard { HStack(spacing: 16) {
+            Ring(v: g.saved / g.target, size: 54).overlay(Image(systemName: g.icon).font(.system(size: 18)).foregroundColor(Brand.yellow))
+            VStack(alignment: .leading, spacing: 3) {
+                Text(g.name).font(.system(size: 16, weight: .semibold)).foregroundColor(Brand.text)
+                Text("\(money(g.saved)) " + T("of", "nga") + " \(money(g.target))").font(.system(size: 13)).foregroundColor(Brand.mute)
+                if g.roundup { HStack(spacing: 4) { Image(systemName: "arrow.triangle.2.circlepath").font(.system(size: 10)); Text(T("Round-ups on", "Rrumbullakimi aktiv")) }.font(.system(size: 11, weight: .semibold)).foregroundColor(Brand.good) }
+            }
+            Spacer()
+            VStack(alignment: .trailing, spacing: 6) { Text("\(Int(g.saved / g.target * 100))%").font(.system(size: 15, weight: .bold)).foregroundColor(Brand.text); Image(systemName: "chevron.right").foregroundColor(Brand.faint).font(.system(size: 13)) }
+        } }
+    }
 }

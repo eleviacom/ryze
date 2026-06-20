@@ -7,75 +7,69 @@ struct PlanTier: Identifiable {
     var allCount: Int { benefits.count + extra.count }
 }
 
-let PLANS: [PlanTier] = [
-    .init(id: "free", name: "Free", price: "0 L/month", tagline: "Your no-cost youth account", earn: "1 point per 200 L spent",
+var PLANS: [PlanTier] { [
+    .init(id: "spark", name: "Spark", price: T("0 L/month", "0 L/muaj"), tagline: T("Start your rise. Zero cost, zero catch.", "Fillo ngjitjen. Pa kosto, pa kushte."), earn: T("1x RyzePoints · 1 point per 200 L spent", "1x RyzePoints · 1 pikë për 200 L shpenzuar"),
         image: "plan_free", featured: false,
         benefits: [
-            .init(icon: "creditcard", text: "Free virtual card + 1 physical card"),
-            .init(icon: "banknote", text: "20,000 L fee-free ATM withdrawals / month"),
-            .init(icon: "paperplane", text: "Instant Ryze-to-Ryze transfers & bill splits"),
-            .init(icon: "hexagon", text: "1 RyzePoint per 200 L spent"),
-            .init(icon: "target", text: "Savings goals with round-ups"),
+            .init(icon: "creditcard", text: T("Free virtual card + your first physical Ryze card", "Kartë virtuale falas + karta jote e parë fizike Ryze")),
+            .init(icon: "banknote", text: T("20,000 L fee-free ATM withdrawals every month", "20,000 L tërheqje pa tarifë në ATM çdo muaj")),
+            .init(icon: "paperplane", text: T("Instant Ryze-to-Ryze transfers + one-tap bill splits", "Transferta të menjëhershme Ryze-në-Ryze + ndarje faturash me një prekje")),
+            .init(icon: "star.circle", text: T("Earn 1x RyzePoints (1 point per 200 L)", "Fito 1x RyzePoints (1 pikë për 200 L)")),
+            .init(icon: "target", text: T("Savings goals with automatic round-ups", "Synime kursimi me rrumbullakim automatik")),
+            .init(icon: "flame", text: T("Daily streak + starter quests to level up", "Seri ditore + sfida fillestare për të ngjitur nivel")),
         ],
         extra: [
-            .init(icon: "bell", text: "Real-time spend notifications"),
-            .init(icon: "chart.pie", text: "Spending analytics & budgets"),
-            .init(icon: "person.2", text: "Group bills & squad challenges"),
-            .init(icon: "sparkles", text: "Riz AI money assistant"),
-            .init(icon: "lock.shield", text: "Card freeze & security controls"),
+            .init(icon: "sparkles", text: T("Riz AI money coach for budgets and tips", "Riz, trajneri yt AI për buxhete dhe këshilla")),
+            .init(icon: "lock.shield", text: T("Card freeze, limits and real-time alerts", "Ngrirje karte, limite dhe njoftime në kohë reale")),
         ]),
-    .init(id: "plus", name: "Plus", price: "199 L/month", tagline: "Built for students", earn: "2 points per 200 L spent",
+    .init(id: "lift", name: "Lift", price: T("290 L/month", "290 L/muaj"), tagline: T("Made for students. Discounts where you actually spend.", "Bërë për studentët. Zbritje aty ku shpenzon vërtet."), earn: T("2x RyzePoints · 2 points per 200 L spent", "2x RyzePoints · 2 pikë për 200 L shpenzuar"),
         image: "plan_plus", featured: false,
         benefits: [
-            .init(icon: "graduationcap.fill", text: "Student coupons & local discounts"),
-            .init(icon: "hexagon.fill", text: "2 RyzePoints per 200 L spent"),
-            .init(icon: "banknote", text: "50,000 L fee-free ATM / month"),
-            .init(icon: "paintpalette.fill", text: "2 exclusive card skins"),
-            .init(icon: "bolt.heart.fill", text: "Round-up boost on savings"),
+            .init(icon: "graduationcap.fill", text: T("Student coupons: Glovo, cinema tickets and local cafés", "Kupona studentësh: Glovo, bileta kinemaje dhe kafe lokale")),
+            .init(icon: "star.circle.fill", text: T("Earn 2x RyzePoints on everything you buy", "Fito 2x RyzePoints për gjithçka që blen")),
+            .init(icon: "banknote", text: T("50,000 L fee-free ATM withdrawals / month", "50,000 L tërheqje pa tarifë në ATM / muaj")),
+            .init(icon: "antenna.radiowaves.left.and.right", text: T("1 GB mobile data / month (Vodafone, ONE, ALBtelecom)", "1 GB internet celular / muaj (Vodafone, ONE, ALBtelecom)")),
+            .init(icon: "paintpalette.fill", text: T("2 exclusive card skins to flex your style", "2 pamje ekskluzive karte për stilin tënd")),
+            .init(icon: "bolt.heart.fill", text: T("Round-up Boost. Savings grow 2x faster", "Përforcim rrumbullakimi. Kursimet rriten 2x më shpejt")),
         ],
         extra: [
-            .init(icon: "shield.lefthalf.filled", text: "Purchase protection up to 100,000 L"),
-            .init(icon: "ticket", text: "Ticket-cancellation cover for events"),
-            .init(icon: "arrow.left.arrow.right", text: "Higher fee-free exchange limit"),
-            .init(icon: "headphones", text: "Priority support"),
+            .init(icon: "shield.lefthalf.filled", text: T("Streak Shield: skip a day without losing your streak", "Mburojë serie: humb një ditë pa e prishur serinë")),
+            .init(icon: "headphones", text: T("Priority in-app support when you need a human", "Mbështetje me përparësi në app kur të duhet një person")),
         ]),
-    .init(id: "pro", name: "Pro", price: "399 L/month", tagline: "Do more with your money", earn: "4 points per 200 L spent",
+    .init(id: "surge", name: "Surge", price: T("690 L/month", "690 L/muaj"), tagline: T("Hit your stride. The all-rounder most Ryzers pick.", "Gjej ritmin tënd. Zgjedhja e plotë e shumicës së Ryzerëve."), earn: T("4x RyzePoints · 4 points per 200 L spent", "4x RyzePoints · 4 pikë për 200 L shpenzuar"),
         image: "plan_pro", featured: true,
         benefits: [
-            .init(icon: "square.grid.2x2.fill", text: "5 subscriptions included (Spotify, Glovo…)"),
-            .init(icon: "hexagon.fill", text: "4 RyzePoints per 200 L spent"),
-            .init(icon: "creditcard.fill", text: "Premium metallic-look card"),
-            .init(icon: "arrow.uturn.backward.circle.fill", text: "Cashback at partner brands"),
-            .init(icon: "simcard.fill", text: "1 GB eSIM data / month"),
-            .init(icon: "ticket.fill", text: "Exclusive event tickets & drops"),
+            .init(icon: "square.grid.2x2.fill", text: T("3 subscriptions on us: Spotify, Glovo Prime, YouTube and more", "3 abonime falas: Spotify, Glovo Prime, YouTube e të tjera")),
+            .init(icon: "star.circle.fill", text: T("Earn 4x RyzePoints + double points on weekend nights out", "Fito 4x RyzePoints + pikë të dyfishta në daljet e fundjavës")),
+            .init(icon: "arrow.uturn.backward.circle.fill", text: T("Cashback at partner brands (groceries, gyms, bookstores)", "Cashback te markat partnere (ushqime, palestra, libraritë)")),
+            .init(icon: "airplane", text: T("No-fee FX abroad up to 200,000 L / month, perfect for trips", "Këmbim pa tarifë jashtë deri në 200,000 L / muaj, ideal për udhëtime")),
+            .init(icon: "simcard.fill", text: T("3 GB mobile data / month on any Albanian network", "3 GB internet celular / muaj në çdo rrjet shqiptar")),
+            .init(icon: "person.2.fill", text: T("Squad Mode: shared goals and money challenges with friends", "Modaliteti Skuadër: synime të përbashkëta dhe sfida parash me shokët")),
         ],
         extra: [
-            .init(icon: "airplane", text: "Discounted airport lounge access"),
-            .init(icon: "shield.lefthalf.filled", text: "Travel medical insurance"),
-            .init(icon: "infinity", text: "Unlimited fee-free exchange"),
-            .init(icon: "star.fill", text: "Higher cashback rate"),
+            .init(icon: "ticket.fill", text: T("Monthly RyzePoints drop + early access to ticket releases", "Dhuratë mujore RyzePoints + akses i hershëm te biletat")),
+            .init(icon: "shield.lefthalf.filled", text: T("Purchase protection up to 150,000 L", "Mbrojtje blerjeje deri në 150,000 L")),
         ]),
-    .init(id: "metal", name: "Metal", price: "799 L/month", tagline: "Go all in", earn: "6 points per 200 L spent",
+    .init(id: "apex", name: "Apex", price: T("1,490 L/month", "1,490 L/muaj"), tagline: T("Go all in. Built for travel, Erasmus and big plans.", "Hidhu plotësisht. Bërë për udhëtime, Erasmus dhe plane të mëdha."), earn: T("5x RyzePoints · 5 points per 200 L spent", "5x RyzePoints · 5 pikë për 200 L shpenzuar"),
         image: "plan_metal", featured: false,
         benefits: [
-            .init(icon: "creditcard.fill", text: "Reinforced metal card"),
-            .init(icon: "hexagon.fill", text: "6 RyzePoints per 200 L spent"),
-            .init(icon: "airplane", text: "Airport lounge passes included"),
-            .init(icon: "shield.lefthalf.filled", text: "Travel & purchase insurance"),
-            .init(icon: "square.grid.2x2.fill", text: "10 subscriptions included"),
-            .init(icon: "star.fill", text: "Highest cashback + priority support"),
+            .init(icon: "globe", text: T("Unlimited fee-free FX + cheap international transfers, made for Erasmus", "Këmbim pa tarifë i pakufizuar + transferta ndërkombëtare të lira, bërë për Erasmus")),
+            .init(icon: "star.circle.fill", text: T("Earn the max 5x RyzePoints on every purchase", "Fito maksimumin 5x RyzePoints për çdo blerje")),
+            .init(icon: "square.grid.2x2.fill", text: T("6 subscriptions included + highest partner cashback", "6 abonime të përfshira + cashback-u më i lartë te partnerët")),
+            .init(icon: "creditcard.fill", text: T("Standout Apex card (metallic finish) + up to 3 physical cards", "Kartë Apex që bie në sy (përfundim metalik) + deri në 3 karta fizike")),
+            .init(icon: "simcard.fill", text: T("8 GB mobile data / month + roaming data for travel", "8 GB internet celular / muaj + të dhëna roaming për udhëtime")),
+            .init(icon: "bolt.fill", text: T("Quest Boost and Level Boost: rank up twice as fast", "Përforcim sfidash dhe nivelesh: ngjitu dy herë më shpejt")),
         ],
         extra: [
-            .init(icon: "globe", text: "Discount on international transfers"),
-            .init(icon: "simcard.fill", text: "Larger monthly eSIM data"),
-            .init(icon: "ticket.fill", text: "Concierge & priority event access"),
-            .init(icon: "creditcard.and.123", text: "Up to 3 physical cards"),
+            .init(icon: "bell.badge.fill", text: T("Concierge for tickets, trips and last-minute student deals", "Konzierge për bileta, udhëtime dhe oferta studentore të minutës së fundit")),
+            .init(icon: "shield.lefthalf.filled", text: T("Travel and purchase cover for your trips abroad", "Mbulim udhëtimi dhe blerjeje për udhëtimet jashtë")),
         ]),
-]
+] }
 
 struct PlansView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var game: GameModel
+    @AppStorage("ryze_lang") private var lang = "en"
     @State private var sel = 2
     @State private var expanded = false
     var tier: PlanTier { PLANS[sel] }
@@ -87,7 +81,7 @@ struct PlansView: View {
             VStack(spacing: 0) {
                 HStack {
                     Button { dismiss() } label: { Image(systemName: "xmark").foregroundColor(Brand.text).frame(width: 36, height: 36).background(Brand.surface).clipShape(Circle()) }
-                    Spacer(); Text("Upgrade plan").font(.system(size: 17, weight: .semibold)).foregroundColor(Brand.text); Spacer()
+                    Spacer(); Text(T("Upgrade plan", "Përmirëso planin")).font(.system(size: 17, weight: .semibold)).foregroundColor(Brand.text); Spacer()
                     Color.clear.frame(width: 36, height: 36)
                 }.padding(.horizontal, 16).padding(.top, 12)
 
@@ -113,7 +107,7 @@ struct PlansView: View {
                                     Text(tier.price).font(.system(size: 15, weight: .semibold)).foregroundColor(.white.opacity(0.85))
                                 }
                                 Spacer()
-                                if tier.featured { Text("MOST POPULAR").font(.system(size: 10, weight: .bold)).foregroundColor(.black).padding(.horizontal, 9).padding(.vertical, 5).background(Brand.gold).clipShape(Capsule()) }
+                                if tier.featured { Text(T("MOST POPULAR", "MË I ZGJEDHURI")).font(.system(size: 10, weight: .bold)).foregroundColor(.black).padding(.horizontal, 9).padding(.vertical, 5).background(Brand.gold).clipShape(Capsule()) }
                             }.padding(16)
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 24)).specularBorder(24)
@@ -126,13 +120,13 @@ struct PlansView: View {
                             }
                         }
                         Button { withAnimation(.snappy) { expanded.toggle() } } label: {
-                            Text(expanded ? "Show less" : "See all \(tier.allCount) benefits").font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text)
+                            Text(expanded ? T("Show less", "Më pak") : "\(T("See all", "Shiko të")) \(tier.allCount) \(T("benefits", "përfitimet"))").font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text)
                                 .frame(maxWidth: .infinity).padding(.vertical, 14).background(Brand.surface).clipShape(Capsule())
                         }.buttonStyle(PressStyle())
                     }.padding(.horizontal, 20).padding(.bottom, 20)
                 }
 
-                PrimaryButton(title: isCurrent ? "Your current plan" : (tier.id == "free" ? "Switch to Free" : "Join \(tier.name)"), enabled: !isCurrent) {
+                PrimaryButton(title: isCurrent ? T("Your current plan", "Plani yt aktual") : (tier.id == "spark" ? T("Switch to Spark", "Kalo te Spark") : "\(T("Join", "Bashkohu te")) \(tier.name)"), enabled: !isCurrent) {
                     game.setPlan(tier.id); dismiss()
                 }.padding(.horizontal, 20).padding(.bottom, 12)
             }

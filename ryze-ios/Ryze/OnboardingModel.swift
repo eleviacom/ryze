@@ -36,25 +36,25 @@ final class OnboardingModel: ObservableObject {
     }
 
     let steps: [KycStepDef] = [
-        .init(id: "phone", title: "What’s your number?",
-              body: "We’ll text you a code to confirm it’s you. Your phone keeps your account secure — never used for marketing without your say-so.",
-              why: "We verify your phone so only you can reach the account. Albania’s code is +355."),
-        .init(id: "otp", title: "Enter your code",
-              body: "We sent a 6-digit code to your phone. Keep it private — staff will never ask for it. (Demo: any 6 digits work.)",
-              why: "The one-time code proves the phone is yours. Never share it."),
-        .init(id: "identity", title: "Verify it’s you",
-              body: "Two quick taps: scan your ID, then a fast face check. It’s fully automatic — no human watches your video.",
-              why: "By law a bank confirms who you are (KYC, “Know Your Customer”). No person reviews your video live.",
+        .init(id: "phone", title: T("What's your number?", "Sa e ke numrin?"),
+              body: T("We'll text you a code to confirm it's you. Your phone keeps your account secure and is never used for marketing without your say-so.", "Do të të dërgojmë një kod për të konfirmuar se je ti. Numri yt e mban llogarinë të sigurt dhe nuk përdoret kurrë për marketing pa lejen tënde."),
+              why: T("We verify your phone so only you can reach the account. Albania's code is +355.", "E verifikojmë numrin që vetëm ti të hysh në llogari. Kodi i Shqipërisë është +355.")),
+        .init(id: "otp", title: T("Enter your code", "Vendos kodin"),
+              body: T("We sent a 6-digit code to your phone. Keep it private, staff will never ask for it. (Demo: any 6 digits work.)", "Të dërguam një kod me 6 shifra. Mbaje privat, stafi nuk do ta kërkojë kurrë. (Demo: çdo 6 shifra funksionojnë.)"),
+              why: T("The one-time code proves the phone is yours. Never share it.", "Kodi njëpërdorimsh provon se numri është yti. Mos ia jep askujt.")),
+        .init(id: "identity", title: T("Verify it's you", "Verifiko që je ti"),
+              body: T("Two quick taps: scan your ID, then a fast face check. It's fully automatic, no human watches your video.", "Dy hapa të shpejtë: skano letërnjoftimin, pastaj një verifikim i shpejtë i fytyrës. Plotësisht automatik, asnjë person nuk e sheh videon tënde."),
+              why: T("By law a bank confirms who you are (KYC, Know Your Customer). No person reviews your video live.", "Me ligj, banka konfirmon kush je (KYC, Njih Klientin Tënd). Asnjë person nuk e shqyrton videon drejtpërdrejt."),
               image: "identity"),
-        .init(id: "details", title: "Confirm your details",
-              body: "We read these from your ID — just check they’re right. You must be 18 to open this account on your own.",
-              why: "We confirm you’re 18+ (full legal capacity in Albania) and that your name matches your ID."),
-        .init(id: "consents", title: "The agreements",
-              body: "Have a read and tick what applies. The first ones are required to open your account; marketing is your choice.",
-              why: "These consents record your agreement, as every regulated bank must."),
-        .init(id: "notifications", title: "Stay one step ahead",
-              body: "Get alerts for security codes, payments, streaks and rewards. Optional — change it anytime in Settings.",
-              why: "Alerts help you catch anything odd early. It’s optional."),
+        .init(id: "details", title: T("Confirm your details", "Konfirmo të dhënat"),
+              body: T("We read these from your ID, just check they're right. You must be 18 to open this account on your own.", "I lexuam nga letërnjoftimi yt, vetëm sigurohu që janë të sakta. Duhet të jesh 18 vjeç për ta hapur këtë llogari vetë."),
+              why: T("We confirm you're 18+ (full legal capacity in Albania) and that your name matches your ID.", "Konfirmojmë që je mbi 18 vjeç (zotësi e plotë juridike në Shqipëri) dhe që emri përputhet me letërnjoftimin.")),
+        .init(id: "consents", title: T("The agreements", "Marrëveshjet"),
+              body: T("Have a read and tick what applies. The first ones are required to open your account; marketing is your choice.", "Lexoji dhe shëno ato që vlejnë. Të parat janë të detyrueshme për të hapur llogarinë; marketingu është zgjedhja jote."),
+              why: T("These consents record your agreement, as every regulated bank must.", "Këto pëlqime regjistrojnë miratimin tënd, siç kërkon çdo bankë e rregulluar.")),
+        .init(id: "notifications", title: T("Stay one step ahead", "Rri një hap përpara"),
+              body: T("Get alerts for security codes, payments, streaks and rewards. Optional, change it anytime in Settings.", "Merr njoftime për kodet e sigurisë, pagesat, seritë dhe shpërblimet. Opsionale, ndryshoje kurdo te Cilësimet."),
+              why: T("Alerts help you catch anything odd early. It's optional.", "Njoftimet të ndihmojnë të kapësh herët çdo gjë të çuditshme. Janë opsionale.")),
     ]
 
     var current: KycStepDef { steps[min(stepIndex, steps.count - 1)] }
@@ -87,8 +87,8 @@ final class OnboardingModel: ObservableObject {
 
     func next() {
         if current.id == "details" {
-            guard let age = ageFromDob(draft["dob"] ?? "") else { ageError = "Please enter your date of birth as DD/MM/YYYY."; return }
-            if age < 18 { ageError = "Ryze is for ages 18–25 — come back when you turn 18. That’s the only reason."; return }
+            guard let age = ageFromDob(draft["dob"] ?? "") else { ageError = T("Please enter your date of birth as DD/MM/YYYY.", "Vendos datën e lindjes në formatin DD/MM/VVVV."); return }
+            if age < 18 { ageError = T("Ryze is for ages 18-25, come back when you turn 18. That's the only reason.", "Ryze është për moshat 18-25, kthehu kur të mbushësh 18. Kjo është e vetmja arsye."); return }
             ageError = nil
         }
         if stepIndex < steps.count - 1 {

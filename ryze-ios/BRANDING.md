@@ -6,27 +6,26 @@ components in `Ryze/Components.swift` + `Ryze/AppViews.swift`.
 
 ## 1. Essence
 Premium, calm, youthful banking for Raiffeisen (18–25, Albania). Dark, confident, friendly — not
-austere. Three pillars: **scarce gold**, **glass depth**, **the hexagon signature**. Never looks like
-a Revolut clone: depth + warmth + the hexagon are ours.
+austere. Four pillars: **banana-yellow stamp**, **warm-rich dark** (lifted off pure black, never dead), **glass depth**, **modular bento tiles** — with a **vibrant accent set** (coral/mint/violet/sky/pink) for life. Never a Revolut clone: warmth + asymmetric tiles + young color are ours, never the big-number → circle-row → endless-feed stack.
 
 ## 2. Color tokens (`Brand`)
 | Token | Hex | Use |
 |---|---|---|
 | `void` | #000000 | ONLY the balance hero + onboarding canvas (lets flat-black art blend) |
-| `bg` | #0B0B0D | App canvas (warm graphite, not pure black) |
-| `elev1` | #141417 | Card bottom of gradient |
-| `elev2` / `surface` | #1B1B1F | Card top of gradient, chips, fields, neutral circles |
-| `elev3` / `surfacePressed` | #232328 | Pressed / highest surface |
-| `yellow` | #FFE600 | SCARCE: rings, ticks, glyphs, progress, the eyebrow tick — never a big fill |
-| `gold` (gradient) | #FFE45C→#F2C200→#CF9A00 | The ONE premium fill: primary action, featured card, hero accents |
-| `goldEdge` | #FFF0A8 | Specular edge on gold surfaces |
-| `text` | white | Primary text |
-| `mute` | white 62% | Secondary text |
-| `faint` | white 40% | Tertiary / captions / disabled |
-| `hairline` | white 8% | The ONLY border token |
-| `good` | #3CE0A0 | Positive amounts, success ticks |
-| `danger` | #E23B4A | Destructive / errors |
-| `violet/mint/pink` | — | Illustration / category accents ONLY, never UI chrome |
+| `bg` | #151412 | App canvas — **warm charcoal, lifted off pure black** + a faint banana top-glow |
+| `elev1` | #1E1C19 | Card bottom of gradient |
+| `elev2` / `surface` | #272421 | Card top of gradient, chips, fields — warm, visibly lifts off `bg` |
+| `elev3` / `surfacePressed` | #332F2B | Pressed / highest surface |
+| `yellow` | #F8D01F | **Banana Yellow** — the brand stamp. SCARCE: rings, ticks, glyphs, progress — never a big neutral fill |
+| `gold` (gradient) | #FFE470→#F8D01F→#D4A200 | The ONE premium fill: primary action, featured card, hero accents |
+| `goldEdge` | #FFEFA8 | Specular edge on gold surfaces |
+| `text` | white / #131210 | Primary text |
+| `mute` | #B0B0B0 (palette Gray) | Secondary text + idle icons |
+| `faint` | #76736D | Tertiary / captions / disabled |
+| `hairline` | white 9% | The ONLY border token |
+| `good` | #2FD98A | Positive amounts, success ticks |
+| `danger` | #FF4D52 | Destructive / errors |
+| `coral/mint/violet/sky/pink` | #FF6F47 / #2FE3B6 / #8B5CFF / #46A8FF / #FF5C8A | **Vibrant accent set** — categories, reward tiles, illustrative icon tiles. Young & playful; never primary UI chrome (that stays banana + neutral) |
 
 **Gold rule (most important):** gold is scarce ink. Per screen, at most ONE gold fill (the primary
 action or the featured surface). Everything else is neutral glass with yellow only as a thin accent.
@@ -38,7 +37,7 @@ Depth comes from luminance + a specular edge + a 2-layer shadow — NOT from fla
   shadows = contact `black 60% r2 y1` + ambient `black 40% r22 y14`.
 - **FeaturedCard (gold):** `Brand.gold` fill + softLight sheen `[white 30%, clear] .topLeading→.center`
   + `goldEdge 50%` stroke + clip(24) + glow `yellow 26% r22 y12`.
-- **Balance/points hero (void):** `Brand.void` fill + top-leading gold `RadialGradient([#F2C200 13%, clear])`
+- **Balance/points hero (void):** `Brand.void` fill + top-leading banana `RadialGradient([#F8D01F 13%, clear])`
   + `.specularBorder(24)` + soft shadow. Reserved for the one hero number per screen.
 - **Radii:** tiles/chips 12–14, cards/heroes 24, pills = Capsule. **Border:** always `hairline` (white 8%).
 - Helpers: `.specularBorder(_ radius)` (top-lit stroke). Sheets: `.presentationCornerRadius(28)`.
@@ -73,11 +72,16 @@ last item clears the floating tab bar (do NOT rely on `.contentMargins` — it m
 - `MissionRowView(m:)` — quest/challenge row. `ToastBanner(toast:)` — top reward toast.
 - `AmountSheet(mode:.send/.request/.add/.fund)` — money entry sheet.
 
-## 7. The signature — the Ryze hexagon
-- `Hexagon: Shape` — flat-top hexagon. Used as the points glyph (`hexagon.fill`), outline accents,
-  and celebration particles.
-- `CelebrationOverlay(trigger:)` — yellow+white hexagon particles bursting outward; mounted in
-  `MainTabView` and fired by `game.celebrate` (every claim / redeem / check-in / account-opened).
+## 7. The signature — bento tiles + confetti
+- **Bento dashboard (Home):** asymmetric glass tiles, NOT a balance-banner → circle-row → linear-feed
+  stack. Hero row = a void **balance tile** beside the single gold **level/points tile** (equal height);
+  a contained **move-money console** (square `IconTile` actions in ONE `AppCard` with hairline dividers
+  — never a floating circle row); a **goal + this-week-spend** tile pair; a **bounded** activity card
+  (cap ~5 rows + "See all" → `TxnHistorySheet`). This modular rhythm is the Ryze shape Revolut can't copy.
+- **Points glyph:** `star.circle.fill` in `yellow` (the RyzePoints mark). Mini **sparkline** = `HStack`
+  of `Capsule`s, range-compressed (`pow(v/max, 0.55)`) so one big value doesn't dominate the chart.
+- `CelebrationOverlay(trigger:)` — yellow+white **confetti** (dots + rounded chips) bursting outward;
+  mounted in `MainTabView`, fired by `game.celebrate` (every claim / redeem / check-in / account-opened).
   Reuse it on any "win" moment.
 - Gold surfaces get a single diagonal sheen (softLight white gradient). Reuse the same sheen recipe.
 - Hero numbers roll (numericText). Icons that react use `.symbolEffect(.bounce, value: trigger)`.
@@ -94,10 +98,10 @@ idle. Tabs: Home `house.fill` · Cards `creditcard.fill` · Pay `paperplane.fill
 · Rewards `gift.fill`. Tab tint = `Brand.yellow`.
 
 ## 10. Do / Don't
-- DO: scarce gold, glass depth, tabular numerals, the hexagon for wins, the eyebrow tick, `hairline`
+- DO: scarce gold, glass depth, tabular numerals, bento tiles + confetti for wins, the eyebrow tick, `hairline`
   for every border, `AppCard`/`FeaturedCard` for surfaces.
 - DON'T: more than one gold fill per screen, pure-black app surfaces (only `void` for the hero),
-  drop shadows without lifted bg, mixed border opacities, ad-hoc font sizes, generic confetti (use hexagons).
+  drop shadows without lifted bg, mixed border opacities, ad-hoc font sizes, floating circle-action rows on Home (use the move-money console).
 
 ## 11. Apply to a NEW section — checklist
 1. Wrap surfaces in `AppCard`; one hero in `FeaturedCard` or the void-hero recipe.
@@ -105,5 +109,5 @@ idle. Tabs: Home `house.fill` · Cards `creditcard.fill` · Pay `paperplane.fill
 3. Numbers: rounded bold + `.contentTransition(.numericText())` for any hero figure.
 4. Actions: `PrimaryButton` or `QuickAction(prominent:)` — exactly one gold accent.
 5. Borders = `hairline`; radii 24 (cards) / Capsule (pills) / 12–14 (tiles).
-6. Any "win" → bump `game.celebrate` for the hexagon burst + haptic.
+6. Any "win" → bump `game.celebrate` for the confetti burst + haptic.
 7. Reuse `IconTile`, `Avatar`, `Ring`, `MissionRowView`. Add `.buttonStyle(PressStyle())` to custom buttons.

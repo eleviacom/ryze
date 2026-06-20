@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		02A0283F995CF6A64B680A79 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 288CA01C0AF85A7DFED9CDA0 /* Assets.xcassets */; };
+		120E371B7838DDE40BD7A898 /* RizRichText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51885919029AB3D6FEDEF7B3 /* RizRichText.swift */; };
+		12B1F46B57D159576A5D14BE /* RizService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D56308A3B45E515BBDA6C17 /* RizService.swift */; };
 		1C4ADA802BC02F15E8306784 /* Bank.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9588FAAABD5073276B1F5FE /* Bank.swift */; };
 		1C4E8AE21EA34F80DA162DE2 /* Legal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C189DACFA4B4FD65C8E9AECE /* Legal.swift */; };
 		1E58A1A602BCBA2BE0055C1F /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8CE861661007ACC81D5C23A /* Theme.swift */; };
@@ -15,6 +17,8 @@
 		481C62D8B156BAD6EA7DFA8F /* Riz.swift in Sources */ = {isa = PBXBuildFile; fileRef = B763334074912918593B92B8 /* Riz.swift */; };
 		4E19EC46F89EC14F687E2F90 /* AppViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149ED19E871E9434405C2650 /* AppViews.swift */; };
 		54B6ABBB0FEF50C35B4AB82D /* OnboardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A809D64D30D08A5C5EE9D5 /* OnboardingFlow.swift */; };
+		6BD22F27C3B9F43F9A976958 /* Flows.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FFFE5F83C04802B2317EDD8 /* Flows.swift */; };
+		7CFFFFFBAC25ECA14A9413C1 /* RizSecret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902A606C21909E3D94197E9 /* RizSecret.swift */; };
 		8CDC17BA1CCC630A15E7CF32 /* Sections.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86C457C70F70AC2187CA030 /* Sections.swift */; };
 		A015FCFAAF99BD7459DFADC8 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB947E4945696C5B0618497C /* Game.swift */; };
 		B44AE11FF177F1FD56592555 /* Plans.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272FB7F58EB95A417ED0E158 /* Plans.swift */; };
@@ -24,10 +28,14 @@
 
 /* Begin PBXFileReference section */
 		149ED19E871E9434405C2650 /* AppViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViews.swift; sourceTree = "<group>"; };
+		1FFFE5F83C04802B2317EDD8 /* Flows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flows.swift; sourceTree = "<group>"; };
 		272FB7F58EB95A417ED0E158 /* Plans.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plans.swift; sourceTree = "<group>"; };
 		288CA01C0AF85A7DFED9CDA0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		29DFDAD4403748500CD237FC /* RyzeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RyzeApp.swift; sourceTree = "<group>"; };
 		437CF8667BB1E0134BAEA85B /* OnboardingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModel.swift; sourceTree = "<group>"; };
+		51885919029AB3D6FEDEF7B3 /* RizRichText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RizRichText.swift; sourceTree = "<group>"; };
+		5902A606C21909E3D94197E9 /* RizSecret.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RizSecret.swift; sourceTree = "<group>"; };
+		7D56308A3B45E515BBDA6C17 /* RizService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RizService.swift; sourceTree = "<group>"; };
 		A9588FAAABD5073276B1F5FE /* Bank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bank.swift; sourceTree = "<group>"; };
 		AB947E4945696C5B0618497C /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		B763334074912918593B92B8 /* Riz.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Riz.swift; sourceTree = "<group>"; };
@@ -47,12 +55,16 @@
 				288CA01C0AF85A7DFED9CDA0 /* Assets.xcassets */,
 				A9588FAAABD5073276B1F5FE /* Bank.swift */,
 				C9EC5D72C01847AB4D9F7B87 /* Components.swift */,
+				1FFFE5F83C04802B2317EDD8 /* Flows.swift */,
 				AB947E4945696C5B0618497C /* Game.swift */,
 				C189DACFA4B4FD65C8E9AECE /* Legal.swift */,
 				D9A809D64D30D08A5C5EE9D5 /* OnboardingFlow.swift */,
 				437CF8667BB1E0134BAEA85B /* OnboardingModel.swift */,
 				272FB7F58EB95A417ED0E158 /* Plans.swift */,
 				B763334074912918593B92B8 /* Riz.swift */,
+				51885919029AB3D6FEDEF7B3 /* RizRichText.swift */,
+				5902A606C21909E3D94197E9 /* RizSecret.swift */,
+				7D56308A3B45E515BBDA6C17 /* RizService.swift */,
 				29DFDAD4403748500CD237FC /* RyzeApp.swift */,
 				D86C457C70F70AC2187CA030 /* Sections.swift */,
 				E8CE861661007ACC81D5C23A /* Theme.swift */,
@@ -146,12 +158,16 @@
 				4E19EC46F89EC14F687E2F90 /* AppViews.swift in Sources */,
 				1C4ADA802BC02F15E8306784 /* Bank.swift in Sources */,
 				EFDF2C7A0B943E68EF9AE4D5 /* Components.swift in Sources */,
+				6BD22F27C3B9F43F9A976958 /* Flows.swift in Sources */,
 				A015FCFAAF99BD7459DFADC8 /* Game.swift in Sources */,
 				1C4E8AE21EA34F80DA162DE2 /* Legal.swift in Sources */,
 				54B6ABBB0FEF50C35B4AB82D /* OnboardingFlow.swift in Sources */,
 				27BAFCDFB769EED71703B323 /* OnboardingModel.swift in Sources */,
 				B44AE11FF177F1FD56592555 /* Plans.swift in Sources */,
 				481C62D8B156BAD6EA7DFA8F /* Riz.swift in Sources */,
+				120E371B7838DDE40BD7A898 /* RizRichText.swift in Sources */,
+				7CFFFFFBAC25ECA14A9413C1 /* RizSecret.swift in Sources */,
+				12B1F46B57D159576A5D14BE /* RizService.swift in Sources */,
 				D8CEE4E7B2BC7B10DDD90DED /* RyzeApp.swift in Sources */,
 				8CDC17BA1CCC630A15E7CF32 /* Sections.swift in Sources */,
 				1E58A1A602BCBA2BE0055C1F /* Theme.swift in Sources */,
