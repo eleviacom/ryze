@@ -10,7 +10,11 @@ struct Reward: Identifiable { let id: String; let title: String; let brand: Stri
 struct Badge: Identifiable, Codable { let id: String; let title: String; let icon: String; let desc: String; var earned: Bool }
 struct LeaderRow: Identifiable { let id: String; let name: String; let xp: Int; var you: Bool = false }
 struct SquadMember: Identifiable, Codable { let id: String; let name: String; var contributed: Int }
-struct Toast: Equatable { let label: String; let xp: Int; let coins: Int }
+struct Toast: Equatable { let label: String; let xp: Int; let coins: Int; var respect: Int = 0 }
+
+// Unlockable city map (GTA-style fog of war): spots you discover by visiting, each worth points + respect.
+enum SpotKind: String, Codable { case atm, shop, landmark, park, spot }
+struct DiscoverySpot: Identifiable { let id, name, sub, icon: String; let x, y: Double; let points, respect: Int; let kind: SpotKind }
 
 struct Tier { let name: String; let minLevel: Int; let color: Color; let perk: String }
 let TIERS: [Tier] = [
@@ -52,9 +56,13 @@ final class GameModel: ObservableObject {
     @Published var squad = GameModel.seedSquad
     @Published var aiMission: Mission? = nil
     @Published var toast: Toast? = nil
+    @Published var pendingRizPrompt: String? = nil   // analytics insight → Assistant tab deep-link (transient)
     @Published var avatarData: Data? = nil
     @Published var plan: String = "spark"
     @Published var celebrate = 0
+    @Published var showWelcome = false               // first-run starter-challenges sheet, shown once after onboarding
+    @Published var respect = 0                        // GTA-style "respect" earned by discovering the city
+    @Published var discovered: Set<String> = []       // unlocked discovery-map spot ids
     let referralCode = "RYZE-\(Int.random(in: 1000...9999))"
 
     init() {
@@ -64,6 +72,8 @@ final class GameModel: ObservableObject {
             name = "Klevi"; xp = 320; coins = 480; streak = 4; kycVerified = true; onboarded = true
             if let i = missions.firstIndex(where: { $0.id == "ob-verify" }) { missions[i].progress = 1; missions[i].claimed = true }
         }
+        if env["RYZE_WELCOME"] != nil { onboarded = true; showWelcome = true }   // demo/screenshot hook
+        if env["RYZE_MAP"] != nil { discovered = ["blok", "atm-blok", "skanderbeg", "toptani", "pazari"]; respect = 230 }   // demo/screenshot hook
         if let pl = env["RYZE_PLAN"] { plan = pl }
     }
 
@@ -79,9 +89,11 @@ final class GameModel: ObservableObject {
         var missions: [Mission] = []
         var badges: [Badge] = []
         var squad: Squad? = nil
+        var respect = 0
+        var discovered: Set<String> = []
     }
     func saveState() {
-        let s = Snapshot(onboarded: onboarded, kycVerified: kycVerified, name: name, xp: xp, coins: coins, streak: streak, invites: invites, savedTotal: savedTotal, lastCheckIn: lastCheckIn, redeemed: redeemed, plan: plan, avatarData: avatarData, missions: missions, badges: badges, squad: squad)
+        let s = Snapshot(onboarded: onboarded, kycVerified: kycVerified, name: name, xp: xp, coins: coins, streak: streak, invites: invites, savedTotal: savedTotal, lastCheckIn: lastCheckIn, redeemed: redeemed, plan: plan, avatarData: avatarData, missions: missions, badges: badges, squad: squad, respect: respect, discovered: discovered)
         if let d = try? JSONEncoder().encode(s) { SecureStore.save(d, "game") }
     }
     func loadState() {
@@ -94,6 +106,7 @@ final class GameModel: ObservableObject {
         if !s.missions.isEmpty { missions = s.missions }
         if !s.badges.isEmpty { badges = s.badges }
         if let sq = s.squad { squad = sq }
+        respect = s.respect; discovered = s.discovered
     }
 
     var li: LevelInfo { levelInfo(xp) }
@@ -108,10 +121,19 @@ final class GameModel: ObservableObject {
     ]
 
     private func today() -> String { let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; return f.string(from: Date()) }
-    private func fire(_ label: String, _ xpG: Int, _ coinsG: Int) {
-        toast = Toast(label: label, xp: xpG, coins: coinsG); celebrate += 1
+    private func fire(_ label: String, _ xpG: Int, _ coinsG: Int, respect: Int = 0) {
+        toast = Toast(label: label, xp: xpG, coins: coinsG, respect: respect); celebrate += 1
         let snap = celebrate
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.2) { if self.celebrate == snap { self.toast = nil } }
+    }
+
+    // Visit/check-in at a city spot: unlock it, clear the fog, bank points + respect.
+    func discover(_ s: DiscoverySpot) {
+        guard !discovered.contains(s.id) else { return }
+        discovered.insert(s.id)
+        coins += s.points; respect += s.respect; xp += s.points / 3
+        evalBadges()
+        fire("📍 " + T("\(s.name) unlocked", "\(s.name) u zhbllokua"), s.points / 3, s.points, respect: s.respect)
     }
 
     func generateAi() {
@@ -179,11 +201,15 @@ final class GameModel: ObservableObject {
     }
 
     func completeAccount(name: String?) {
+        guard !onboarded else { return }   // idempotent: ignore double-taps from Success/Skip
         if let n = name, !n.isEmpty { self.name = n }
         if let i = missions.firstIndex(where: { $0.id == "ob-verify" }) { missions[i].progress = missions[i].target; missions[i].claimed = true }
         xp += 120; coins += 50; kycVerified = true; evalBadges()
-        fire("Account opened!", 120, 50)
+        fire("\(planLabel) opened!", 120, 50)   // single toast, names the chosen plan (set silently before this call)
         withAnimation(.easeInOut) { onboarded = true }
+        saveState()                            // persist immediately, don't wait for backgrounding
+        // First entry into the app: surface the starter challenges once MainTabView has settled.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { self.showWelcome = true }
     }
 
     func resetDemo() {
@@ -213,6 +239,7 @@ extension GameModel {
     static let seedMissions: [Mission] = [
         .init(id: "ob-verify", title: "Verify your identity", desc: "Open your account", icon: "person.text.rectangle", xp: 120, coins: 50, category: "starter", progress: 0, target: 1, claimed: false),
         .init(id: "m-topup", title: "Add your first money", desc: "Top up your account", icon: "plus.circle.fill", xp: 80, coins: 30, category: "starter", progress: 0, target: 1, claimed: false),
+        .init(id: "m-card", title: "Order your card", desc: "Get a Ryze card on its way", icon: "creditcard.fill", xp: 100, coins: 40, category: "starter", progress: 0, target: 1, claimed: false),
         .init(id: "m-transfer", title: "Make your first transfer", desc: "Send money to a friend", icon: "paperplane.fill", xp: 120, coins: 50, category: "starter", progress: 0, target: 1, claimed: false),
         .init(id: "m-split", title: "Split a bill", desc: "Share a cost with friends", icon: "person.2.fill", xp: 90, coins: 40, category: "starter", progress: 0, target: 1, claimed: false),
         .init(id: "m-goal", title: "Start a savings goal", desc: "Save toward something", icon: "flag.fill", xp: 90, coins: 30, category: "starter", progress: 0, target: 1, claimed: false),
@@ -239,6 +266,21 @@ extension GameModel {
         .init(id: "b-onboard", title: "All Set", icon: "checkmark.seal.fill", desc: "Finished onboarding", earned: false),
         .init(id: "b-squad", title: "Team Player", icon: "person.3.fill", desc: "Completed a squad goal", earned: false),
         .init(id: "b-saver", title: "Stacker", icon: "banknote.fill", desc: "Saved €100 total", earned: false),
+    ]
+    // Discovery-map spots — normalized (x,y) positions on a stylized Tirana map. Visit to unlock.
+    static let discoverySpots: [DiscoverySpot] = [
+        .init(id: "skanderbeg", name: "Skanderbeg Square", sub: "Landmark", icon: "flag.fill", x: 0.50, y: 0.44, points: 60, respect: 20, kind: .landmark),
+        .init(id: "ethem", name: "Et'hem Bey Mosque", sub: "Landmark", icon: "building.columns.fill", x: 0.56, y: 0.40, points: 50, respect: 15, kind: .landmark),
+        .init(id: "pyramid", name: "Pyramid of Tirana", sub: "Landmark", icon: "triangle.fill", x: 0.40, y: 0.55, points: 60, respect: 20, kind: .landmark),
+        .init(id: "toptani", name: "Toptani Center", sub: "Shopping", icon: "cart.fill", x: 0.58, y: 0.34, points: 50, respect: 15, kind: .shop),
+        .init(id: "pazari", name: "Pazari i Ri", sub: "Market", icon: "basket.fill", x: 0.68, y: 0.31, points: 45, respect: 14, kind: .shop),
+        .init(id: "blok", name: "Blloku", sub: "Nightlife", icon: "music.note", x: 0.45, y: 0.63, points: 40, respect: 12, kind: .spot),
+        .init(id: "atm-blok", name: "Raiffeisen ATM · Blloku", sub: "ATM", icon: "banknote.fill", x: 0.53, y: 0.67, points: 30, respect: 10, kind: .atm),
+        .init(id: "atm-center", name: "Raiffeisen ATM · Center", sub: "ATM", icon: "banknote.fill", x: 0.60, y: 0.48, points: 30, respect: 10, kind: .atm),
+        .init(id: "uni", name: "University of Tirana", sub: "Landmark", icon: "graduationcap.fill", x: 0.44, y: 0.77, points: 40, respect: 12, kind: .landmark),
+        .init(id: "park", name: "Grand Park & Lake", sub: "Park", icon: "leaf.fill", x: 0.57, y: 0.82, points: 40, respect: 12, kind: .park),
+        .init(id: "teg", name: "TEG Mall", sub: "Shopping", icon: "bag.fill", x: 0.80, y: 0.80, points: 50, respect: 15, kind: .shop),
+        .init(id: "dajti", name: "Dajti Ekspres", sub: "Cable car", icon: "cablecar.fill", x: 0.87, y: 0.20, points: 70, respect: 25, kind: .landmark),
     ]
     static let seedSquad = Squad(name: "Tirana Crew", goalTitle: "Invite 10 friends together", goal: 10, progress: 4, rewardCoins: 500,
         members: [.init(id: "m0", name: "You", contributed: 1), .init(id: "m1", name: "Elsa", contributed: 2), .init(id: "m2", name: "Drin", contributed: 1)])

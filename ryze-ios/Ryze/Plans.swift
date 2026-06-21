@@ -1,10 +1,43 @@
 import SwiftUI
 
 struct PlanBenefit: Identifiable { let id = UUID(); let icon: String; let text: String }
+
+// A Gen-Z subscription perk shown as a branded app-icon tile. We render brand colour + a
+// representative glyph (never a real logo asset) so it reads as the service without trademark risk.
+struct BrandSub: Identifiable { let id = UUID(); let name: String; let hex: UInt; let glyph: String }
+enum Subs {
+    static let spotify     = BrandSub(name: "Spotify",  hex: 0x1DB954, glyph: "music.note")
+    static let netflix     = BrandSub(name: "Netflix",  hex: 0xC00611, glyph: "play.fill")
+    static let youtube     = BrandSub(name: "YouTube",  hex: 0xFF0033, glyph: "play.rectangle.fill")
+    static let disney      = BrandSub(name: "Disney+",  hex: 0x1A2B7B, glyph: "sparkles")
+    static let prime       = BrandSub(name: "Prime",    hex: 0x00A8E1, glyph: "shippingbox.fill")
+    static let appleMusic  = BrandSub(name: "Music",    hex: 0xFA2D48, glyph: "music.note.list")
+}
+
 struct PlanTier: Identifiable {
     let id: String; let name: String; let price: String; let tagline: String; let earn: String
     let image: String; let featured: Bool; let benefits: [PlanBenefit]; let extra: [PlanBenefit]
+    var subs: [BrandSub] = []
     var allCount: Int { benefits.count + extra.count }
+    // Accent used for the plan's glow + badges; keeps yellow as the brand stamp on free/popular.
+    var tint: Color {
+        switch id {
+        case "lift": return Brand.violet
+        case "surge": return Brand.yellow
+        case "apex": return Color(hex: 0xB7C0CC)   // brushed steel
+        default: return Brand.yellow
+        }
+    }
+    // Gradient + ink for the rendered card face (same aesthetic as CardFace) — no photo, matches the app's cards.
+    var cardColors: [Color] {
+        switch id {
+        case "lift": return [Color(hex: 0x7E6CFF), Color(hex: 0x4636B0), Color(hex: 0x241C57)]
+        case "surge": return [Color(hex: 0xFFE470), Color(hex: 0xF8D01F), Color(hex: 0xD4A200)]
+        case "apex": return [Color(hex: 0xEDF1F5), Color(hex: 0xB3BCC7), Color(hex: 0x7C8693)]
+        default: return [Color(hex: 0x2C2C30), Color(hex: 0x171715), Color(hex: 0x0B0B0C)]  // Spark graphite
+        }
+    }
+    var cardInk: Color { (id == "surge" || id == "apex") ? .black : .white }
 }
 
 var PLANS: [PlanTier] { [
@@ -35,11 +68,12 @@ var PLANS: [PlanTier] { [
         extra: [
             .init(icon: "shield.lefthalf.filled", text: T("Streak Shield: skip a day without losing your streak", "Mburojë serie: humb një ditë pa e prishur serinë")),
             .init(icon: "headphones", text: T("Priority in-app support when you need a human", "Mbështetje me përparësi në app kur të duhet një person")),
-        ]),
+        ],
+        subs: [Subs.spotify]),
     .init(id: "surge", name: "Surge", price: T("690 L/month", "690 L/muaj"), tagline: T("Hit your stride. The all-rounder most Ryzers pick.", "Gjej ritmin tënd. Zgjedhja e plotë e shumicës së Ryzerëve."), earn: T("4x RyzePoints · 4 points per 200 L spent", "4x RyzePoints · 4 pikë për 200 L shpenzuar"),
         image: "plan_pro", featured: true,
         benefits: [
-            .init(icon: "square.grid.2x2.fill", text: T("3 subscriptions on us: Spotify, Glovo Prime, YouTube and more", "3 abonime falas: Spotify, Glovo Prime, YouTube e të tjera")),
+            .init(icon: "square.grid.2x2.fill", text: T("Spotify, Netflix & YouTube Premium, on us", "Spotify, Netflix & YouTube Premium, falas")),
             .init(icon: "star.circle.fill", text: T("Earn 4x RyzePoints + double points on weekend nights out", "Fito 4x RyzePoints + pikë të dyfishta në daljet e fundjavës")),
             .init(icon: "arrow.uturn.backward.circle.fill", text: T("Cashback at partner brands (groceries, gyms, bookstores)", "Cashback te markat partnere (ushqime, palestra, libraritë)")),
             .init(icon: "airplane", text: T("No-fee FX abroad up to 200,000 L / month, perfect for trips", "Këmbim pa tarifë jashtë deri në 200,000 L / muaj, ideal për udhëtime")),
@@ -49,13 +83,14 @@ var PLANS: [PlanTier] { [
         extra: [
             .init(icon: "ticket.fill", text: T("Monthly RyzePoints drop + early access to ticket releases", "Dhuratë mujore RyzePoints + akses i hershëm te biletat")),
             .init(icon: "shield.lefthalf.filled", text: T("Purchase protection up to 150,000 L", "Mbrojtje blerjeje deri në 150,000 L")),
-        ]),
+        ],
+        subs: [Subs.spotify, Subs.netflix, Subs.youtube]),
     .init(id: "apex", name: "Apex", price: T("1,490 L/month", "1,490 L/muaj"), tagline: T("Go all in. Built for travel, Erasmus and big plans.", "Hidhu plotësisht. Bërë për udhëtime, Erasmus dhe plane të mëdha."), earn: T("5x RyzePoints · 5 points per 200 L spent", "5x RyzePoints · 5 pikë për 200 L shpenzuar"),
         image: "plan_metal", featured: false,
         benefits: [
             .init(icon: "globe", text: T("Unlimited fee-free FX + cheap international transfers, made for Erasmus", "Këmbim pa tarifë i pakufizuar + transferta ndërkombëtare të lira, bërë për Erasmus")),
             .init(icon: "star.circle.fill", text: T("Earn the max 5x RyzePoints on every purchase", "Fito maksimumin 5x RyzePoints për çdo blerje")),
-            .init(icon: "square.grid.2x2.fill", text: T("6 subscriptions included + highest partner cashback", "6 abonime të përfshira + cashback-u më i lartë te partnerët")),
+            .init(icon: "square.grid.2x2.fill", text: T("6 subscriptions incl. Netflix, Disney+ & Prime", "6 abonime përfshirë Netflix, Disney+ & Prime")),
             .init(icon: "creditcard.fill", text: T("Standout Apex card (metallic finish) + up to 3 physical cards", "Kartë Apex që bie në sy (përfundim metalik) + deri në 3 karta fizike")),
             .init(icon: "simcard.fill", text: T("8 GB mobile data / month + roaming data for travel", "8 GB internet celular / muaj + të dhëna roaming për udhëtime")),
             .init(icon: "bolt.fill", text: T("Quest Boost and Level Boost: rank up twice as fast", "Përforcim sfidash dhe nivelesh: ngjitu dy herë më shpejt")),
@@ -63,8 +98,43 @@ var PLANS: [PlanTier] { [
         extra: [
             .init(icon: "bell.badge.fill", text: T("Concierge for tickets, trips and last-minute student deals", "Konzierge për bileta, udhëtime dhe oferta studentore të minutës së fundit")),
             .init(icon: "shield.lefthalf.filled", text: T("Travel and purchase cover for your trips abroad", "Mbulim udhëtimi dhe blerjeje për udhëtimet jashtë")),
-        ]),
+        ],
+        subs: [Subs.spotify, Subs.netflix, Subs.youtube, Subs.disney, Subs.prime, Subs.appleMusic]),
 ] }
+
+// MARK: - Subscription perk tiles (shared by onboarding plan picker + in-app PlansView)
+struct SubTile: View {
+    let sub: BrandSub
+    var size: CGFloat = 44
+    var body: some View {
+        let c = Color(hex: sub.hex)
+        RoundedRectangle(cornerRadius: size * 0.28, style: .continuous)
+            .fill(LinearGradient(colors: [c.opacity(0.95), c], startPoint: .top, endPoint: .bottom))
+            .frame(width: size, height: size)
+            .overlay(Image(systemName: sub.glyph).font(.system(size: size * 0.42, weight: .bold)).foregroundColor(.white))
+            .overlay(RoundedRectangle(cornerRadius: size * 0.28, style: .continuous).strokeBorder(.white.opacity(0.18), lineWidth: 1))
+            .shadow(color: c.opacity(0.45), radius: 8, y: 3)
+    }
+}
+
+struct SubsRow: View {
+    let subs: [BrandSub]
+    var tileSize: CGFloat = 44
+    var body: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            Text((subs.count == 1 ? T("Subscription on us", "Abonim falas")
+                                  : "\(subs.count) " + T("subscriptions on us", "abonime falas")).uppercased())
+                .font(.system(size: 11, weight: .bold)).tracking(0.8).foregroundColor(Brand.mute)
+            HStack(spacing: 10) {
+                ForEach(subs, id: \.name) { SubTile(sub: $0, size: tileSize) }
+                Spacer(minLength: 0)
+            }
+            Text(subs.map(\.name).joined(separator: " · "))
+                .font(.system(size: 12)).foregroundColor(Brand.mute)
+                .lineLimit(2).fixedSize(horizontal: false, vertical: true)
+        }
+    }
+}
 
 struct PlansView: View {
     @Environment(\.dismiss) private var dismiss
@@ -114,11 +184,12 @@ struct PlansView: View {
 
                         Text(tier.tagline).font(.system(size: 15)).foregroundColor(Brand.mute)
                         VStack(spacing: 0) {
-                            ForEach(rows) { b in
+                            ForEach(rows, id: \.text) { b in
                                 HStack(spacing: 14) { Image(systemName: b.icon).font(.system(size: 18)).foregroundColor(Brand.yellow).frame(width: 28); Text(b.text).font(.system(size: 16)).foregroundColor(Brand.text); Spacer() }
                                     .padding(.vertical, 11)
                             }
                         }
+                        if !tier.subs.isEmpty { SubsRow(subs: tier.subs).padding(.vertical, 2) }
                         Button { withAnimation(.snappy) { expanded.toggle() } } label: {
                             Text(expanded ? T("Show less", "Më pak") : "\(T("See all", "Shiko të")) \(tier.allCount) \(T("benefits", "përfitimet"))").font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text)
                                 .frame(maxWidth: .infinity).padding(.vertical, 14).liquidCapsule()

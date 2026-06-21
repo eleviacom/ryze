@@ -74,6 +74,7 @@ struct Ring: View { var v: Double; var size: CGFloat = 52
     var body: some View { ZStack { Circle().stroke(Brand.hairline, lineWidth: 5); Circle().trim(from: 0, to: max(0.02, min(1, v))).stroke(Brand.yellow, style: StrokeStyle(lineWidth: 5, lineCap: .round)).rotationEffect(.degrees(-90)) }.frame(width: size, height: size) } }
 private func eyebrow(_ s: String) -> some View { HStack(spacing: 7) { Capsule().fill(Brand.yellowInk).frame(width: 14, height: 2); Text(s.uppercased()).font(.system(size: 11, weight: .semibold)).tracking(1.4).foregroundColor(Brand.faint) } }
 struct ScreenScroll<C: View>: View {
+    var background: AnyView? = nil
     @ViewBuilder var content: C
     var body: some View {
         ScrollView(.vertical) {
@@ -82,15 +83,33 @@ struct ScreenScroll<C: View>: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ZStack { Brand.bg; RadialGradient(colors: [Brand.yellow.opacity(0.05), .clear], center: .top, startRadius: 4, endRadius: 380) }.ignoresSafeArea())
+        .background(background ?? AnyView(ZStack { Brand.bg; RadialGradient(colors: [Brand.yellow.opacity(0.05), .clear], center: .top, startRadius: 4, endRadius: 380) }.ignoresSafeArea()))
     }
+}
+
+// Slow drifting warm gradient — the Home backdrop. Yellow stays dominant (brand stamp).
+struct AnimatedGradientBG: View {
+    var active: Bool = true   // pause the loop when Home isn't the visible tab (no off-screen GPU drain)
+    @State private var t = false
+    var body: some View {
+        ZStack {
+            Brand.bg
+            RadialGradient(colors: [Brand.yellow.opacity(0.16), .clear], center: t ? .topLeading : .topTrailing, startRadius: 6, endRadius: 380)
+            RadialGradient(colors: [Brand.coral.opacity(0.10), .clear], center: t ? .bottomTrailing : .bottomLeading, startRadius: 6, endRadius: 340)
+            RadialGradient(colors: [Brand.violet.opacity(0.08), .clear], center: t ? .center : .top, startRadius: 6, endRadius: 320)
+        }
+        .ignoresSafeArea()
+        .onAppear { if active { start() } }
+        .onChange(of: active) { _, on in if on { start() } else { withAnimation(.easeOut(duration: 0.4)) { t = false } } }
+    }
+    private func start() { withAnimation(.easeInOut(duration: 9).repeatForever(autoreverses: true)) { t = true } }
 }
 struct StatCard: View { let value: String; let label: String
     var body: some View { VStack(alignment: .leading, spacing: 2) { Text(value).font(.system(size: 20, weight: .bold)).foregroundColor(Brand.text); Text(label).font(.system(size: 12)).foregroundColor(Brand.mute) }.padding(14).frame(maxWidth: .infinity, alignment: .leading).liquidSurface(12) } }
 struct DarkButton: View { let title: String; var system: String? = nil; let action: () -> Void
     var body: some View { Button(action: action) { HStack(spacing: 7) { if let s = system { Image(systemName: s) }; Text(title).font(.system(size: 16, weight: .semibold)) }.foregroundColor(.white).frame(maxWidth: .infinity).frame(height: 50).background(Color.black).clipShape(Capsule()) }.buttonStyle(PressStyle()) } }
 struct ToastBanner: View { let toast: Toast
-    var body: some View { HStack(spacing: 12) { Text(toast.label).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text).lineLimit(1); if toast.xp > 0 { Text("+\(toast.xp) XP").font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.good) }; if toast.coins != 0 { Text("\(toast.coins > 0 ? "+" : "")\(toast.coins)").font(.system(size: 14, weight: .semibold)).foregroundColor(toast.coins < 0 ? Brand.mute : Brand.yellow) } }.padding(.vertical, 12).padding(.horizontal, 18).liquidCapsule() } }
+    var body: some View { HStack(spacing: 12) { Text(toast.label).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text).lineLimit(1); if toast.xp > 0 { Text("+\(toast.xp) XP").font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.good) }; if toast.coins != 0 { Text("\(toast.coins > 0 ? "+" : "")\(toast.coins)").font(.system(size: 14, weight: .semibold)).foregroundColor(toast.coins < 0 ? Brand.mute : Brand.yellow) }; if toast.respect != 0 { HStack(spacing: 3) { Image(systemName: "flame.fill").font(.system(size: 11)); Text("+\(toast.respect)") }.font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.violet) } }.padding(.vertical, 12).padding(.horizontal, 18).liquidCapsule() } }
 struct QuickAction: View { let icon: String; let label: String; var prominent: Bool = false; let action: () -> Void
     var body: some View { Button(action: action) { VStack(spacing: 7) {
         Image(systemName: icon).font(.system(size: 18, weight: .semibold)).foregroundColor(prominent ? .black : Brand.text)
@@ -159,6 +178,80 @@ struct MainTabView: View {
         }
         .animation(.spring(response: 0.4), value: game.toast)
         .sensoryFeedback(.success, trigger: game.celebrate)
+        .sheet(isPresented: $game.showWelcome) {
+            WelcomeChallengesSheet(sel: $sel).environmentObject(game)
+        }
+    }
+}
+
+// MARK: - First-run welcome challenges (slides up the first time you enter the app after onboarding)
+struct WelcomeChallengesSheet: View {
+    @EnvironmentObject var game: GameModel
+    @Binding var sel: Int
+    @Environment(\.dismiss) private var dismiss
+    @AppStorage("ryze_lang") private var lang = "en"
+
+    private struct Quest: Identifiable { let id, icon, title, sub: String; let xp, coins, tab: Int }
+    private var quests: [Quest] { [
+        .init(id: "m-topup",    icon: "plus.circle.fill", title: T("Top up your account", "Mbush llogarinë"),       sub: T("Add your first money to get going", "Shto paratë e para për të nisur"), xp: 80,  coins: 30, tab: 0),
+        .init(id: "m-card",     icon: "creditcard.fill",  title: T("Apply for your card", "Apliko për kartën"),       sub: T("Order a Ryze card to your door", "Porosit një kartë Ryze në shtëpi"),  xp: 100, coins: 40, tab: 1),
+        .init(id: "m-transfer", icon: "paperplane.fill",  title: T("Make your first transfer", "Transferimi i parë"), sub: T("Send money to a friend", "Dërgo para një shoku"),                     xp: 120, coins: 50, tab: 2),
+        .init(id: "m-goal",     icon: "flag.fill",        title: T("Start a savings goal", "Nis një synim kursimi"),  sub: T("Save toward something you want", "Kurse për diçka që dëshiron"),       xp: 90,  coins: 30, tab: 0),
+        .init(id: "s-invite",   icon: "person.2.fill",    title: T("Refer a friend", "Fto një shok"),                 sub: T("You both earn rewards", "Të dy fitoni shpërblime"),                   xp: 200, coins: 100, tab: 4),
+    ] }
+    private var doneCount: Int { quests.filter { claimed($0.id) }.count }
+    private func claimed(_ id: String) -> Bool { game.missions.first { $0.id == id }?.claimed ?? false }
+    private func go(_ q: Quest) { dismiss(); DispatchQueue.main.async { withAnimation { sel = q.tab } } }
+
+    // Sized to fill the sheet on one screen — no scrolling; Spacers absorb the slack.
+    // Close button lives in-flow (inside the content insets) so the sheet's rounded corner never clips it.
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Spacer()
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark").font(.system(size: 13, weight: .bold)).foregroundColor(Brand.mute)
+                        .frame(width: 32, height: 32).background(Brand.surface).clipShape(Circle())
+                }
+            }
+            VStack(alignment: .leading, spacing: 9) {
+                ZStack { Circle().fill(Brand.gold).frame(width: 56, height: 56)
+                    Image(systemName: "party.popper.fill").font(.system(size: 24, weight: .semibold)).foregroundColor(.black) }
+                    .shadow(color: Brand.yellow.opacity(0.3), radius: 14, y: 7)
+                Text(T("You're all set, \(game.name)!", "Gati je, \(game.name)!")).font(.system(size: 25, weight: .bold)).foregroundColor(Brand.text)
+                Text(T("Knock out these starter quests to set up Ryze and bank your first rewards.", "Plotëso këto sfida fillestare për të rregulluar Ryze dhe për të fituar shpërblimet e para.")).font(.system(size: 14)).foregroundColor(Brand.mute).fixedSize(horizontal: false, vertical: true)
+                Text("\(doneCount)/\(quests.count) " + T("done", "u krye")).font(.system(size: 12, weight: .semibold)).tracking(0.6).foregroundColor(Brand.faint)
+            }
+            Spacer(minLength: 12)
+            VStack(spacing: 10) {
+                ForEach(quests) { q in
+                    Button { go(q) } label: { questRow(q) }.buttonStyle(PressStyle())
+                }
+            }
+            Spacer(minLength: 12)
+            PrimaryButton(title: T("Start exploring", "Fillo eksplorimin")) { dismiss() }
+        }
+        .padding(.horizontal, 20).padding(.top, 6).padding(.bottom, 14)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(Brand.bg.ignoresSafeArea())
+    }
+
+    @ViewBuilder private func questRow(_ q: Quest) -> some View {
+        HStack(spacing: 13) {
+            IconTile(system: q.icon, size: 42)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(q.title).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text)
+                Text(q.sub).font(.system(size: 12)).foregroundColor(Brand.mute).lineLimit(1)
+                HStack(spacing: 9) {
+                    Text("+\(q.xp) XP").font(.system(size: 11, weight: .semibold)).foregroundColor(Brand.good)
+                    Text("+\(q.coins) " + T("coins", "monedha")).font(.system(size: 11, weight: .semibold)).foregroundColor(Brand.yellow)
+                }
+            }
+            Spacer(minLength: 0)
+            if claimed(q.id) { Image(systemName: "checkmark.seal.fill").font(.system(size: 19)).foregroundColor(Brand.good) }
+            else { Image(systemName: "chevron.right").font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.faint) }
+        }
+        .padding(.vertical, 12).padding(.horizontal, 14).frame(maxWidth: .infinity).liquidSurface(18)
     }
 }
 
@@ -167,12 +260,13 @@ struct HomeView: View {
     @EnvironmentObject var game: GameModel
     @EnvironmentObject var bank: BankModel
     @Binding var sel: Int
-    @State private var rizNudge = true
     @State private var sparkUp = false   // sparkline bars rise in on appear
     @AppStorage("ryze_lang") private var lang = "en"
-    enum HSheet: Int, Identifiable { case add, profile, grow, history, analytics, exchange, search; var id: Int { rawValue } }
+    enum HSheet: Int, Identifiable { case add, profile, grow, history, analytics, exchange, search, map; var id: Int { rawValue } }
     @State private var homeSheet: HSheet? = nil
-    var nearestGoal: Goal? { bank.goals.min { ($0.saved / $0.target) > ($1.saved / $1.target) } }
+    // Goal closest to done (most motivating on Home); target>0 guard avoids a NaN sort.
+    func goalRatio(_ g: Goal) -> Double { g.target > 0 ? g.saved / g.target : 0 }
+    var nearestGoal: Goal? { bank.goals.max { goalRatio($0) < goalRatio($1) } }
     var weekNet: Double { bank.transactions.filter { $0.amount < 0 }.prefix(8).reduce(0) { $0 + $1.amount } }
     var weekBars: [Double] {
         var v = bank.transactions.filter { $0.amount < 0 }.prefix(7).map { abs($0.amount) }
@@ -180,16 +274,15 @@ struct HomeView: View {
         return Array(v.prefix(7))
     }
     var body: some View {
-        ScreenScroll {
-            TopBar(name: game.name, imageData: game.avatarData, onProfile: { homeSheet = .profile }, onAnalytics: { homeSheet = .analytics }, onSearch: { homeSheet = .search })
+        ScreenScroll(background: AnyView(AnimatedGradientBG(active: sel == 0))) {
+            TopBar(name: game.name, imageData: game.avatarData, onProfile: { homeSheet = .profile }, onAnalytics: { homeSheet = .analytics }, onSearch: { homeSheet = .search }, onMap: { homeSheet = .map })
 
-            // 1) Hero bento, balance tile (void) + level/points tile (the one gold fill)
-            HStack(alignment: .top, spacing: 12) {
-                balanceTile.frame(height: 178).redactWhileCapturing().pressable().onTapGesture { homeSheet = .analytics }
-                Button { sel = 4 } label: { levelTile.frame(height: 178) }.buttonStyle(PressStyle())
-            }
+            // 1) Accounts — swipeable, minimal, centered big balance
+            AccountsCarousel()
+                .frame(height: 178)
+                .redactWhileCapturing()
 
-            // 2) Move-money console, contained square actions in one card (no floating circles)
+            // 2) Move-money console
             AppCard { HStack(spacing: 0) {
                 moveTile("plus", T("Add", "Shto")) { homeSheet = .add }
                 moveDivider
@@ -200,63 +293,43 @@ struct HomeView: View {
                 moveTile("arrow.left.arrow.right", T("Exchange", "Këmbe")) { homeSheet = .exchange }
             } }
 
-            // 3) Mixed bento row, savings goal + this-week spend
-            HStack(alignment: .top, spacing: 12) {
-                if let g = nearestGoal {
-                    Button { homeSheet = .grow } label: { goalTile(g).frame(height: 128) }.buttonStyle(PressStyle())
+            // 3) Recent activity — straight under the actions, no header; See all lives at the card's bottom
+            AppCard { VStack(spacing: 0) {
+                ForEach(Array(bank.transactions.prefix(5).enumerated()), id: \.element.id) { _, t in
+                    txnRow(t)
+                    Rectangle().fill(Brand.hairline).frame(height: 1)
                 }
-                spendTile.frame(height: 128).pressable().onTapGesture { homeSheet = .analytics }
+                Button { homeSheet = .history } label: {
+                    HStack { Text(T("See all activity", "Shiko gjithçka")).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text); Spacer(); Image(systemName: "chevron.right").font(.system(size: 12, weight: .semibold)).foregroundColor(Brand.faint) }
+                        .padding(.vertical, 13).contentShape(Rectangle())
+                }.buttonStyle(.plain)
+            } }
+
+            // 4) This week + New phone — full-width cards near the bottom
+            Button { homeSheet = .analytics } label: { spendTile }.buttonStyle(PressStyle())
+            if let g = nearestGoal {
+                Button { homeSheet = .grow } label: { goalTile(g) }.buttonStyle(PressStyle())
             }
 
-            // 4) Riz nudge
-            if rizNudge { AppCard { HStack(spacing: 12) { IconTile(system: "sparkles", size: 40); VStack(alignment: .leading, spacing: 2) { Text("Riz").font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.yellowInk); Text(T("You spent 20% more on eating out this week. Want to set a budget?", "Shpenzove 20% më shumë për ushqim këtë javë. Të vendosim një buxhet?")).font(.system(size: 13)).foregroundColor(Brand.mute) }; Spacer(); Button { withAnimation { rizNudge = false } } label: { Image(systemName: "xmark").foregroundColor(Brand.faint).font(.system(size: 12)) } } } }
-
-            // 5) Activity, bounded + capped card with See all
-            HStack { eyebrow(T("Recent", "Së fundmi")); Spacer(); Button { homeSheet = .history } label: { HStack(spacing: 3) { Text(T("See all", "Shiko të gjitha")).font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.text); Image(systemName: "chevron.right").font(.system(size: 11)).foregroundColor(Brand.faint) } } }
-            AppCard { VStack(spacing: 0) { ForEach(Array(bank.transactions.prefix(5).enumerated()), id: \.element.id) { i, t in
-                txnRow(t)
-                if i < 4 { Rectangle().fill(Brand.hairline).frame(height: 1) }
-            } } }
+            // 5) Challenges — the engagement hook, very bottom
+            challengesCard
         }
         .sheet(item: $homeSheet) { s in
             switch s {
-            case .add: AmountSheet(mode: .add) { amt, _ in bank.addMoney(amt) }.presentationDetents([.medium])
+            case .add: AddMoneySheet()
             case .profile: ProfileSheet()
             case .grow: GrowView()
             case .history: TxnHistorySheet()
-            case .analytics: AnalyticsView()
+            case .analytics: AnalyticsView(onAskRiz: { p in game.pendingRizPrompt = p; homeSheet = nil; sel = 3 })
             case .exchange: ExchangeView()
             case .search: SearchSheet()
+            case .map: DiscoveryMapView()
             }
         }
     }
 
-    // Balance tile, signature void surface + warm glow + odometer + week sparkline
-    private var balanceTile: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack { Text(T("Balance", "Gjendja")).font(.system(size: 11, weight: .bold)).tracking(1.2).foregroundColor(Brand.faint); Spacer(); Button { withAnimation(.smooth(duration: 0.35)) { bank.hideBalance.toggle() } } label: { Image(systemName: bank.hideBalance ? "eye.slash" : "eye").font(.system(size: 13)).foregroundColor(Brand.mute).symbolEffect(.bounce, value: bank.hideBalance) } }
-            Spacer(minLength: 6)
-            ZStack(alignment: .leading) {
-                Text(money(bank.totalALL)).font(.system(size: 27, weight: .bold, design: .rounded)).foregroundStyle(LinearGradient(colors: [.white, Color.white.opacity(0.78)], startPoint: .top, endPoint: .bottom)).contentTransition(.numericText()).blur(radius: bank.hideBalance ? 14 : 0).opacity(bank.hideBalance ? 0 : 1)
-                if bank.hideBalance { Text("•• ••• L").font(.system(size: 27, weight: .bold, design: .rounded)).foregroundColor(.white) }
-            }.lineLimit(1).minimumScaleFactor(0.6)
-            Text(bank.hideBalance ? " " : money(bank.accounts[1].balance, "EUR")).font(.system(size: 12)).foregroundColor(Brand.mute)
-            Spacer(minLength: 8)
-            sparkline(weekBars, color: Color.white.opacity(0.28), height: 22)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .padding(16)
-        .background(ZStack {
-            RoundedRectangle(cornerRadius: 24).fill(Brand.void)
-            RoundedRectangle(cornerRadius: 24).fill(RadialGradient(colors: [Color(hex: 0xF8D01F).opacity(0.13), .clear], center: .topLeading, startRadius: 8, endRadius: 220))
-        })
-        .specularBorder(24).clipShape(RoundedRectangle(cornerRadius: 24))
-        .shadow(color: .black.opacity(0.5), radius: 18, y: 10)
-        .animation(.snappy(duration: 0.5), value: bank.totalALL)
-        .environment(\.colorScheme, .dark)
-    }
-
-    // Level / points tile, the single gold fill on Home
+    // Level / points tile — kept for the upcoming Rewards migration (next task); not rendered on Home anymore.
+    // ponytail: TODO(rewards) move this into RewardsHub then delete from here.
     private var levelTile: some View {
         FeaturedCard { VStack(alignment: .leading, spacing: 0) {
             HStack { Text("LEVEL \(game.li.level)").font(.system(size: 11, weight: .bold)).tracking(1.2).foregroundColor(.black.opacity(0.6)); Spacer(); Image(systemName: "star.circle.fill").font(.system(size: 15)).foregroundColor(.black.opacity(0.7)) }
@@ -269,26 +342,46 @@ struct HomeView: View {
         }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading) }
     }
 
-    // Savings goal tile
+    // Savings goal tile — full-width horizontal
     private func goalTile(_ g: Goal) -> some View {
-        AppCard { VStack(alignment: .leading, spacing: 10) {
-            Ring(v: g.saved / g.target, size: 38).overlay(Image(systemName: g.icon).font(.system(size: 14)).foregroundColor(Brand.yellow))
-            Spacer(minLength: 0)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(g.name).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text).lineLimit(1)
-                Text("\(Int(g.saved / g.target * 100))% · \(money(g.saved))").font(.system(size: 12)).foregroundColor(Brand.mute).lineLimit(1)
+        AppCard { HStack(spacing: 14) {
+            Ring(v: g.saved / g.target, size: 46).overlay(Image(systemName: g.icon).font(.system(size: 16)).foregroundColor(Brand.yellow))
+            VStack(alignment: .leading, spacing: 3) {
+                Text(g.name).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text).lineLimit(1)
+                Text("\(Int(g.saved / g.target * 100))% · \(money(g.saved)) " + T("of", "nga") + " \(money(g.target))").font(.system(size: 12)).foregroundColor(Brand.mute).lineLimit(1)
             }
-        }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading) }
+            Spacer(minLength: 0)
+            Image(systemName: "chevron.right").font(.system(size: 13)).foregroundColor(Brand.faint)
+        }.frame(maxWidth: .infinity, alignment: .leading) }
     }
 
-    // This-week spend tile
+    // This-week spend tile — full-width horizontal
     private var spendTile: some View {
-        AppCard { VStack(alignment: .leading, spacing: 8) {
-            HStack { Text(T("This week", "Këtë javë")).font(.system(size: 12, weight: .semibold)).foregroundColor(Brand.mute); Spacer(); Image(systemName: "chart.bar.fill").font(.system(size: 11)).foregroundColor(Brand.faint) }
-            Spacer(minLength: 0)
-            sparkline(weekBars, color: Brand.yellow.opacity(0.8), height: 32)
-            Text("−\(money(weekNet))").font(.system(size: 17, weight: .bold)).foregroundColor(Brand.text)
-        }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading) }
+        AppCard { HStack(spacing: 14) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text(T("This week", "Këtë javë")).font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.mute)
+                Text("−\(money(weekNet))").font(.system(size: 22, weight: .bold)).foregroundColor(Brand.text).lineLimit(1).minimumScaleFactor(0.7)
+            }
+            Spacer(minLength: 12)
+            sparkline(weekBars, color: Brand.yellow.opacity(0.85), height: 40).frame(maxWidth: 132)
+        }.frame(maxWidth: .infinity, alignment: .leading) }
+    }
+
+    private var openCount: Int { game.missions.filter { !$0.claimed }.count }
+    // Challenges hook — gold accent card that drops you into the Rewards quests
+    private var challengesCard: some View {
+        Button { sel = 4 } label: {
+            FeaturedCard { HStack(spacing: 14) {
+                Image(systemName: "flame.fill").font(.system(size: 22)).foregroundColor(.black)
+                    .frame(width: 46, height: 46).background(Color.black.opacity(0.12)).clipShape(RoundedRectangle(cornerRadius: 13))
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(T("Challenges", "Sfida")).font(.system(size: 16, weight: .bold)).foregroundColor(.black)
+                    Text("\(openCount) " + T("quests waiting", "sfida të hapura") + "  ·  🔥 \(game.streak) " + T("day streak", "ditë seri")).font(.system(size: 13)).foregroundColor(.black.opacity(0.72)).lineLimit(1)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right").font(.system(size: 14, weight: .semibold)).foregroundColor(.black.opacity(0.6))
+            } }
+        }.buttonStyle(PressStyle())
     }
 
     private func sparkline(_ vals: [Double], color: Color, height: CGFloat) -> some View {
@@ -311,6 +404,80 @@ struct HomeView: View {
         HStack(spacing: 12) { IconTile(system: t.icon, color: t.amount > 0 ? Brand.good : Brand.text, size: 40)
             VStack(alignment: .leading, spacing: 2) { Text(t.merchant).font(.system(size: 15, weight: .medium)).foregroundColor(Brand.text); Text("\(t.category) · \(t.day)").font(.system(size: 12)).foregroundColor(Brand.faint) }
             Spacer(); Text("\(t.amount > 0 ? "+" : "-")\(money(t.amount, t.currency))").font(.system(size: 15, weight: .semibold)).foregroundColor(t.amount > 0 ? Brand.good : Brand.text) }.padding(.vertical, 11)
+    }
+}
+
+// MARK: - Accounts carousel (Revolut-style swipeable LEK + EUR)
+struct AccountsCarousel: View {
+    @EnvironmentObject var bank: BankModel
+    @State private var idx: Int? = 0
+    @State private var page = 0            // committed page for the dots (idx goes nil mid-swipe)
+    private var sel: Int { page }
+    var body: some View {
+        VStack(spacing: 10) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(Array(bank.accounts.enumerated()), id: \.element.id) { i, acc in
+                        AccountCard(account: acc, hidden: bank.hideBalance, fxRate: bank.fxRate,
+                                    onToggleHide: { withAnimation(.smooth(duration: 0.35)) { bank.hideBalance.toggle() } })
+                            .containerRelativeFrame(.horizontal) { len, _ in bank.accounts.count > 1 ? len * 0.92 : len }   // 8% peek hints the swipe
+                            .id(i)
+                    }
+                }
+                .scrollTargetLayout()
+            }
+            .scrollTargetBehavior(.viewAligned)
+            .scrollPosition(id: $idx)
+            .onChange(of: idx) { _, v in if let v { page = v } }
+            .frame(maxHeight: .infinity)
+
+            if bank.accounts.count > 1 {
+                HStack(spacing: 7) {
+                    ForEach(0..<bank.accounts.count, id: \.self) { i in
+                        Capsule().fill(i == sel ? Brand.yellow : Brand.hairline)
+                            .frame(width: i == sel ? 18 : 6, height: 6).animation(.snappy, value: sel)
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct AccountCard: View {
+    let account: Account
+    let hidden: Bool
+    let fxRate: Double
+    var onToggleHide: () -> Void
+    private var isEUR: Bool { account.currency == "EUR" }
+    private var converted: String { isEUR ? money(account.balance * fxRate, "ALL") : money(account.balance / fxRate, "EUR") }
+    var body: some View {
+        VStack(spacing: 6) {
+            HStack {
+                Spacer()
+                Button(action: onToggleHide) { Image(systemName: hidden ? "eye.slash" : "eye").font(.system(size: 15)).foregroundColor(Brand.mute).symbolEffect(.bounce, value: hidden) }
+            }
+            Spacer()
+            ZStack {   // currency reads from the amount itself (… L / €…), so no flag/name needed
+                Text(money(account.balance, account.currency)).font(.system(size: 42, weight: .bold, design: .rounded))
+                    .foregroundStyle(LinearGradient(colors: [.white, Color.white.opacity(0.8)], startPoint: .top, endPoint: .bottom))
+                    .contentTransition(.numericText()).blur(radius: hidden ? 18 : 0).opacity(hidden ? 0 : 1)
+                if hidden { Text(isEUR ? "€ • • • •" : "• • • • L").font(.system(size: 42, weight: .bold, design: .rounded)).foregroundColor(.white) }
+            }.lineLimit(1).minimumScaleFactor(0.5)
+            Text(hidden ? " " : "≈ \(converted)").font(.system(size: 14)).foregroundColor(Brand.mute)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(18)
+        .background(ZStack {
+            // Lifted off pure black — a warm gold (ALL) / cool blue (EUR) card with a stronger color glow.
+            RoundedRectangle(cornerRadius: 24).fill(LinearGradient(
+                colors: isEUR ? [Color(hex: 0x244A6E), Color(hex: 0x152A42)]
+                              : [Color(hex: 0x4C3F20), Color(hex: 0x2B2417)],
+                startPoint: .topLeading, endPoint: .bottomTrailing))
+            RoundedRectangle(cornerRadius: 24).fill(RadialGradient(colors: [(isEUR ? Brand.sky : Brand.yellow).opacity(0.34), .clear], center: .topLeading, startRadius: 8, endRadius: 320))
+        })
+        .specularBorder(24).clipShape(RoundedRectangle(cornerRadius: 24))
+        .environment(\.colorScheme, .dark)
     }
 }
 
@@ -345,7 +512,6 @@ struct PayView: View {
     @State private var path: [String] = (ProcessInfo.processInfo.environment["RYZE_THREAD"].map { [$0] }) ?? []
     var pending: [(Contact, PayMsg)] { bank.contacts.compactMap { c in if let m = bank.threads[c.id]?.last, m.kind == .request, !m.fromMe, m.status == "pending" { return (c, m) }; return nil } }
     var filtered: [Contact] { search.isEmpty ? bank.contacts : bank.contacts.filter { $0.name.localizedCaseInsensitiveContains(search) || $0.tag.localizedCaseInsensitiveContains(search) } }
-    var recent: [Txn] { bank.transactions.filter { ["Sent", "Added", "Transfer", "Exchange"].contains($0.category) }.prefix(4).map { $0 } }
     var body: some View {
         NavigationStack(path: $path) {
             ScreenScroll {
@@ -364,10 +530,8 @@ struct PayView: View {
                     payTile("person.2.fill", T("Split", "Ndaj")) { flow = .split }
                 } }
                 if !pending.isEmpty {
-                    eyebrow(T("Requests", "Kërkesa"))
                     ForEach(pending, id: \.0.id) { c, m in AppCard { HStack(spacing: 12) { Avatar(name: c.name, size: 42); VStack(alignment: .leading, spacing: 2) { Text(c.name).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text); Text(T("asks", "kërkon") + " \(money(m.amount)) · \(m.note)").font(.system(size: 12)).foregroundColor(Brand.mute).lineLimit(1) }; Spacer(); PillButton(title: T("Pay", "Paguaj")) { bank.payRequest(c.id, m.id) } } } }
                 }
-                eyebrow(T("Pay a friend", "Paguaj një mik"))
                 HStack(spacing: 8) { Image(systemName: "magnifyingglass").foregroundColor(Brand.mute); TextField("", text: $search, prompt: Text(T("Search name or @tag", "Kërko emër ose @tag")).foregroundColor(Brand.faint)).foregroundColor(Brand.text).autocorrectionDisabled() }.padding(.horizontal, 14).frame(height: 46).liquidCapsule()
                 if search.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 16) { ForEach(bank.contacts) { c in NavigationLink(value: c.id) { VStack(spacing: 6) { Avatar(name: c.name, size: 56); Text(c.name.split(separator: " ").first.map(String.init) ?? c.name).font(.system(size: 12)).foregroundColor(Brand.mute) } } } }.padding(.vertical, 2) }
@@ -376,18 +540,11 @@ struct PayView: View {
                     NavigationLink(value: c.id) { HStack(spacing: 12) { Avatar(name: c.name, size: 44); VStack(alignment: .leading, spacing: 2) { Text(c.name).font(.system(size: 15, weight: .medium)).foregroundColor(Brand.text); Text(c.tag + " · " + T("on Ryze", "në Ryze")).font(.system(size: 12)).foregroundColor(Brand.faint) }; Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint).font(.system(size: 13)) }.padding(.vertical, 11) }.buttonStyle(.plain)
                     if idx < filtered.count - 1 { Rectangle().fill(Brand.hairline).frame(height: 1) }
                 } } }
-                if !recent.isEmpty && search.isEmpty {
-                    eyebrow(T("Recent", "Së fundmi"))
-                    AppCard { VStack(spacing: 0) { ForEach(Array(recent.enumerated()), id: \.element.id) { idx, t in
-                        HStack(spacing: 12) { IconTile(system: t.icon, color: t.amount > 0 ? Brand.good : Brand.text, size: 40); VStack(alignment: .leading, spacing: 2) { Text(t.merchant).font(.system(size: 15, weight: .medium)).foregroundColor(Brand.text); Text("\(t.category) · \(t.day)").font(.system(size: 12)).foregroundColor(Brand.faint) }; Spacer(); Text("\(t.amount > 0 ? "+" : "-")\(money(t.amount, t.currency))").font(.system(size: 15, weight: .semibold)).foregroundColor(t.amount > 0 ? Brand.good : Brand.text) }.padding(.vertical, 11)
-                        if idx < recent.count - 1 { Rectangle().fill(Brand.hairline).frame(height: 1) }
-                    } } }
-                }
             }
             .navigationDestination(for: String.self) { id in if let c = bank.contacts.first(where: { $0.id == id }) { ChatThreadView(contact: c) } }
             .sheet(item: $flow) { f in
                 switch f {
-                case .add: AmountSheet(mode: .add) { amt, _ in bank.addMoney(amt) }.presentationDetents([.medium])
+                case .add: AddMoneySheet()
                 case .scan: ScanPayView()
                 case .bank: BankTransferView()
                 case .split: SplitBillView()

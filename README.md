@@ -20,7 +20,7 @@ rewards game. **Punchline: banking that levels up with you.**
 | `ryze-ios/` | **The product** — native SwiftUI app (iOS 17+). |
 | `ryze/` | Earlier React Native / Expo reference implementation. |
 | `ryze-ios/BRANDING.md` | Design system (warm-dark canvas, scarce Raiffeisen yellow stamp). |
-| `ryze-app-screenshots/` | Screenshots of every app section (EN + dark). |
+| `screenshots/` | 48 screenshots of every app screen (EN, dark) + `capture.sh` to regenerate. |
 | `ryze-video/` | Demo-video + pitch-deck pipeline (Remotion). |
 | `ryze-deck.pdf` | Pitch deck.  ·  `SUBMISSION.md` | Submission copy. |
 

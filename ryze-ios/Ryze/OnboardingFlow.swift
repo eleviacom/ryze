@@ -41,8 +41,11 @@ struct OnboardingFlow: View {
 
             switch model.phase {
             case .value: WelcomeCarousel(model: model)
-            case .kyc: KycContainer(model: model, onWhyTap: { step in why = WhyInfo(title: step.title, body: step.why ?? step.body) })
-            case .success: SuccessView { game.completeAccount(name: model.draft["firstName"]) }
+            case .kyc: KycContainer(model: model, onWhyTap: { step in why = WhyInfo(title: step.title, body: step.why) })
+            case .success: SuccessView(planLabel: "Ryze " + model.selectedPlan.name) {
+                game.plan = model.selectedPlan.id   // set silently; completeAccount fires the one toast + persists
+                game.completeAccount(name: model.draft["firstName"])
+            }
             }
 
             if model.phase == .value {
@@ -161,8 +164,13 @@ struct KycContainer: View {
         case "phone": return T("Send code", "Dërgo kodin")
         case "otp": return T("Verify", "Verifiko")
         case "identity": return T("Continue", "Vazhdo")
-        case "details": return T("Confirm", "Konfirmo")
-        case "consents": return T("Agree & open my account", "Prano dhe hap llogarinë")
+        case "details", "address": return T("Continue", "Vazhdo")
+        case "usage": return T("Done", "Gati")
+        case "plan":
+            let p = model.selectedPlan
+            return p.id == "spark" ? T("Continue free with Spark", "Vazhdo falas me Spark")
+                                   : "\(T("Choose", "Zgjidh")) \(p.name) · \(p.price)"
+        case "consents": return T("Agree & continue", "Prano dhe vazhdo")
         default: return T("Continue", "Vazhdo")
         }
     }
@@ -177,6 +185,9 @@ struct KycContainer: View {
             }
             .padding(.horizontal, 20).padding(.top, 10).padding(.bottom, 8)
 
+            if step.id == "plan" {
+                PlanPickerStep(model: model, onWhy: { onWhyTap(step) })   // full-bleed swipeable carousel
+            } else {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(step.title).display(32).foregroundColor(Brand.text).fixedSize(horizontal: false, vertical: true).padding(.bottom, 10)
@@ -192,12 +203,19 @@ struct KycContainer: View {
                 .transition(.asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity),
                                         removal: .move(edge: .leading).combined(with: .opacity)))
             }
+            }
 
             VStack(spacing: 10) {
-                if step.id == "notifications" {
+                switch step.id {
+                case "passcode":
+                    EmptyView()   // the keypad auto-advances once the passcode is confirmed
+                case "faceid":
+                    PrimaryButton(title: T("Enable Face ID", "Aktivizo Face ID")) { model.faceIDEnabled = true; model.next() }
+                    GhostButton(title: T("Maybe later", "Ndoshta më vonë")) { model.next() }
+                case "notifications":
                     PrimaryButton(title: T("I want to be notified", "Dua të njoftohem")) { model.next() }
                     GhostButton(title: T("Maybe later", "Ndoshta më vonë")) { model.next() }
-                } else {
+                default:
                     PrimaryButton(title: cta(step.id), enabled: model.canContinue) { model.next() }
                 }
             }
@@ -213,6 +231,15 @@ struct StepBody: View {
     func bind(_ key: String) -> Binding<String> {
         Binding(get: { model.draft[key] ?? "" }, set: { model.draft[key] = $0 })
     }
+    // (id, SF symbol, label) for the "what will you use Ryze for?" multi-select.
+    static let usageOptions: [(String, String, String)] = [
+        ("spend", "creditcard.fill", T("Everyday spending", "Shpenzime të përditshme")),
+        ("save", "banknote.fill", T("Saving & budgeting", "Kursim & buxhet")),
+        ("transfers", "arrow.left.arrow.right", T("Sending money", "Dërgim parash")),
+        ("salary", "building.columns.fill", T("Getting paid", "Të marrësh pagesë")),
+        ("shopping", "bag.fill", T("Online shopping", "Blerje online")),
+        ("travel", "airplane", T("Travel abroad", "Udhëtime jashtë")),
+    ]
     var body: some View {
         switch model.current.id {
         case "phone":
@@ -233,10 +260,10 @@ struct StepBody: View {
             .sheet(isPresented: $showFace) { FaceCheckSheet { model.simulateFace() } }
         case "details":
             VStack(alignment: .leading, spacing: 14) {
-                RyzeField(label: T("First name", "Emri"), text: bind("firstName"), placeholder: T("First name", "Emri"))
-                RyzeField(label: T("Last name", "Mbiemri"), text: bind("lastName"), placeholder: T("Last name", "Mbiemri"))
-                RyzeField(label: T("Date of birth", "Data e lindjes"), text: bind("dob"), placeholder: "DD/MM/YYYY", keyboard: .numbersAndPunctuation)
-                RyzeField(label: "Email", text: bind("email"), placeholder: "you@email.com", keyboard: .emailAddress)
+                RyzeField(label: T("First name", "Emri"), text: bind("firstName"), placeholder: T("First name", "Emri"), contentType: .givenName, autocaps: .words)
+                RyzeField(label: T("Last name", "Mbiemri"), text: bind("lastName"), placeholder: T("Last name", "Mbiemri"), contentType: .familyName, autocaps: .words)
+                RyzeDateField(label: T("Date of birth", "Data e lindjes"), text: bind("dob"))
+                RyzeField(label: "Email", text: bind("email"), placeholder: "you@email.com", keyboard: .emailAddress, contentType: .emailAddress, autocaps: .never)
                 if let e = model.ageError {
                     HStack(alignment: .top, spacing: 8) {
                         Image(systemName: "info.circle.fill").foregroundColor(Brand.yellow)
@@ -252,6 +279,34 @@ struct StepBody: View {
                     if c.id != Legal.consents.last?.id { Divider().background(Brand.hairline) }
                 }
                 Text(Legal.disclaimer).font(.system(size: 12)).foregroundColor(Brand.faint).padding(.top, 12)
+            }
+        case "passcode":
+            PasscodeStep(model: model)
+        case "faceid":
+            VStack(spacing: 16) {
+                ZStack {
+                    Circle().fill(Brand.yellow.opacity(0.12)).frame(width: 120, height: 120)
+                    Image(systemName: "faceid").font(.system(size: 56)).foregroundColor(Brand.yellow)
+                }.padding(.vertical, 24)
+            }.frame(maxWidth: .infinity)
+        case "address":
+            VStack(alignment: .leading, spacing: 14) {
+                AddressAutocompleteField(label: T("Street address", "Adresa"), street: bind("street")) { _, city, postal in
+                    // street is already written through the binding; only fill city/postal if still empty (don't clobber manual edits)
+                    if !city.isEmpty, (model.draft["city"] ?? "").isEmpty { model.draft["city"] = city }
+                    if !postal.isEmpty, (model.draft["postal"] ?? "").isEmpty { model.draft["postal"] = postal }
+                }
+                HStack(alignment: .top, spacing: 12) {
+                    RyzeField(label: T("City", "Qyteti"), text: bind("city"), placeholder: "Tiranë", contentType: .addressCity, autocaps: .words)
+                    RyzeField(label: T("Postal code", "Kodi postar"), text: bind("postal"), placeholder: "1001", keyboard: .numbersAndPunctuation, contentType: .postalCode)
+                }
+                RyzeField(label: T("Country", "Shteti"), text: .constant("🇦🇱 " + T("Albania", "Shqipëri")), placeholder: "").disabled(true).opacity(0.6)
+            }
+        case "usage":
+            VStack(spacing: 10) {
+                ForEach(StepBody.usageOptions, id: \.0) { o in
+                    SelectRow(icon: o.1, label: o.2, selected: model.usage.contains(o.0)) { model.toggleUsage(o.0) }
+                }
             }
         case "notifications":
             VStack(spacing: 16) {
@@ -278,8 +333,281 @@ struct StepBody: View {
     }
 }
 
+// MARK: - Passcode (Revolut-style create + confirm with a custom keypad)
+struct PasscodeStep: View {
+    @ObservedObject var model: OnboardingModel
+    enum Stage { case create, confirm }
+    @State private var stage: Stage = .create
+    @State private var entry = ""
+    @State private var first = ""
+    @State private var error = false
+    @State private var shake: CGFloat = 0
+    private let keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "⌫"]
+
+    var body: some View {
+        VStack(spacing: 30) {
+            Text(error ? T("Passcodes didn't match, try again", "Kodet nuk përputhen, provo sërish")
+                       : (stage == .create ? T("Enter a 6-digit passcode", "Vendos një kod 6-shifror")
+                                            : T("Re-enter to confirm", "Rivendose për ta konfirmuar")))
+                .font(.system(size: 15, weight: .medium)).foregroundColor(error ? Brand.danger : Brand.mute)
+
+            HStack(spacing: 18) {
+                ForEach(0..<6, id: \.self) { i in
+                    Circle().fill(i < entry.count ? Brand.yellow : Color.clear)
+                        .overlay(Circle().stroke(i < entry.count ? Brand.yellow : Brand.hairline, lineWidth: 1.5))
+                        .frame(width: 16, height: 16)
+                }
+            }
+            .modifier(Shake(animatableData: shake))
+
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 14) {
+                ForEach(keys, id: \.self) { k in key(k) }
+            }
+            .padding(.horizontal, 8)
+        }
+        .frame(maxWidth: .infinity)
+        .sensoryFeedback(.selection, trigger: entry)
+    }
+
+    private func key(_ k: String) -> some View {
+        Button { tap(k) } label: {
+            Group {
+                if k == "⌫" { Image(systemName: "delete.left").font(.system(size: 24)) }
+                else if k.isEmpty { Color.clear }
+                else { Text(k).font(.system(size: 30, weight: .regular)) }
+            }
+            .foregroundColor(Brand.text)
+            .frame(maxWidth: .infinity).frame(height: 62)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(PressStyle())
+        .disabled(k.isEmpty)
+    }
+
+    private func tap(_ k: String) {
+        if k == "⌫" { if !entry.isEmpty { entry.removeLast() }; error = false; return }
+        guard !k.isEmpty, entry.count < 6 else { return }
+        error = false
+        entry += k
+        if entry.count == 6 { commit() }
+    }
+
+    // ponytail: 0.12s lets the 6th dot paint before we clear/advance.
+    private func commit() {
+        if stage == .create {
+            first = entry
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { entry = ""; stage = .confirm }
+        } else if entry == first {
+            model.passcode = entry
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { model.next() }
+        } else {
+            withAnimation(.linear(duration: 0.45)) { shake += 1 }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { entry = ""; first = ""; stage = .create; error = true }
+        }
+    }
+}
+
+struct Shake: GeometryEffect {
+    var animatableData: CGFloat
+    func effectValue(size: CGSize) -> ProjectionTransform {
+        ProjectionTransform(CGAffineTransform(translationX: 9 * sin(animatableData * .pi * 4), y: 0))
+    }
+}
+
+// Toggleable list row for the usage-purpose multi-select.
+struct SelectRow: View {
+    let icon: String
+    let label: String
+    let selected: Bool
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 14) {
+                Image(systemName: icon).font(.system(size: 17))
+                    .foregroundColor(selected ? Brand.onAccent : Brand.text)
+                    .frame(width: 38, height: 38)
+                    .background(selected ? Brand.yellow : Color.clear)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(selected ? .clear : Brand.hairline, lineWidth: 1))
+                Text(label).font(.system(size: 16, weight: .medium)).foregroundColor(Brand.text)
+                Spacer(minLength: 0)
+                Image(systemName: selected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 20)).foregroundColor(selected ? Brand.yellow : Brand.faint)
+            }
+            .padding(.horizontal, 14).frame(height: 60)
+            .liquidSurface(14)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Plan picker (Revolut-style swipeable plan cards)
+struct PlanPickerStep: View {
+    @ObservedObject var model: OnboardingModel
+    let onWhy: () -> Void
+    // nil until the user (or a deep-link) scrolls — so selection/CTA/dots read model.planIndex correctly on the first frame.
+    @State private var scrolled: Int? = nil
+    private var current: Int { scrolled ?? model.planIndex }
+
+    var body: some View {
+        VStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(T("Pick your plan", "Zgjidh planin tënd")).display(32).foregroundColor(Brand.text)
+                Text(model.current.body).font(.system(size: 15)).foregroundColor(Brand.mute).lineSpacing(2)
+                    .lineLimit(2).fixedSize(horizontal: false, vertical: true)
+                Button(action: onWhy) {
+                    Text(T("Why do we need it?", "Pse na duhet?")).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.yellow)
+                }.padding(.top, 2)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 24).padding(.top, 2)
+
+            GeometryReader { geo in
+                let compact = geo.size.height < 470   // iPhone SE / mini: shrink the card so nothing clips
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach(Array(PLANS.enumerated()), id: \.element.id) { i, p in
+                            PlanCardBig(plan: p, selected: i == current, compact: compact)
+                                .containerRelativeFrame(.horizontal) { len, _ in len * 0.86 }   // 14% peek of the next plan
+                                .scrollTransition { c, phase in
+                                    c.scaleEffect(phase.isIdentity ? 1 : 0.93).opacity(phase.isIdentity ? 1 : 0.65)
+                                }
+                                .id(i)
+                        }
+                    }
+                    .scrollTargetLayout()
+                }
+                .contentMargins(.horizontal, 24, for: .scrollContent)
+                .scrollTargetBehavior(.viewAligned)
+                .scrollPosition(id: $scrolled)
+            }
+
+            HStack(spacing: 7) {
+                ForEach(0..<PLANS.count, id: \.self) { i in
+                    Capsule().fill(i == current ? Brand.yellow : Brand.hairline)
+                        .frame(width: i == current ? 18 : 6, height: 6)
+                        .animation(.snappy, value: current)
+                }
+            }
+            .padding(.bottom, 4)
+        }
+        // deep-link (RYZE_PLAN): scroll to the preset plan after layout settles
+        .onAppear { if model.planIndex != 0 { DispatchQueue.main.async { withAnimation(.snappy) { scrolled = model.planIndex } } } }
+        .onChange(of: scrolled) { _, v in if let v { model.planIndex = v } }
+        .sensoryFeedback(.selection, trigger: current)
+    }
+}
+
+// A rendered plan card in the app's CardFace gradient aesthetic (no debit-card photo).
+struct PlanMiniCard: View {
+    let plan: PlanTier
+    var height: CGFloat = 132
+    private var ink: Color { plan.cardInk }
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(LinearGradient(colors: plan.cardColors, startPoint: .topLeading, endPoint: .bottomTrailing))
+            if plan.cardInk == .white {   // white sheen only on the dark cards; it washes the light gold/steel faces
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(LinearGradient(colors: [.white.opacity(0.22), .clear], startPoint: .topLeading, endPoint: .center)).blendMode(.softLight)
+            }
+            VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    Image("RaiffeisenLogo").resizable().frame(width: 26, height: 26).clipShape(RoundedRectangle(cornerRadius: 7))
+                    Spacer()
+                    Text("RYZE " + plan.name.uppercased()).font(.system(size: 11, weight: .heavy)).tracking(0.6).foregroundColor(ink.opacity(0.92))
+                }
+                Spacer()
+                HStack(spacing: 8) {
+                    RoundedRectangle(cornerRadius: 4).fill(ink.opacity(0.22)).frame(width: 30, height: 22)
+                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(ink.opacity(0.28), lineWidth: 1))
+                    Image(systemName: "wave.3.right").font(.system(size: 12)).foregroundColor(ink.opacity(0.55))
+                    Spacer()
+                    Text("VISA").font(.system(size: 13, weight: .bold)).foregroundColor(ink)
+                }
+            }
+            .padding(14)
+        }
+        .frame(height: height)
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).strokeBorder(.white.opacity(0.18), lineWidth: 1))
+        .shadow(color: plan.tint.opacity(0.40), radius: 16, y: 9)
+        .shadow(color: .black.opacity(0.35), radius: 8, y: 4)
+    }
+}
+
+struct PlanCardBig: View {
+    let plan: PlanTier
+    let selected: Bool
+    var compact: Bool = false
+    private var heroH: CGFloat { compact ? 116 : 168 }
+    private var perkCount: Int { compact ? 2 : 3 }
+    private var tile: CGFloat { compact ? 34 : 38 }
+    private var pad: CGFloat { compact ? 16 : 20 }
+    private var earnShort: String { plan.earn.split(separator: "·").first.map { $0.trimmingCharacters(in: .whitespaces) } ?? plan.earn }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ZStack {
+                RadialGradient(colors: [plan.tint.opacity(0.30), .clear], center: .center, startRadius: 4, endRadius: 210)
+                PlanMiniCard(plan: plan, height: heroH - 30)
+                    .padding(.horizontal, 18)
+                    .rotationEffect(.degrees(-2))
+            }
+            .frame(height: heroH).frame(maxWidth: .infinity).clipped()
+
+            VStack(alignment: .leading, spacing: compact ? 9 : 13) {
+                if plan.featured {
+                    Text(T("MOST POPULAR", "MË I ZGJEDHURI"))
+                        .font(.system(size: 9, weight: .bold)).foregroundColor(.black)
+                        .padding(.horizontal, 8).padding(.vertical, 4).background(Brand.gold).clipShape(Capsule())
+                        .fixedSize()
+                }
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Text(plan.name).font(.system(size: 26, weight: .bold)).foregroundColor(Brand.text).lineLimit(1).fixedSize()
+                    Spacer(minLength: 6)
+                    Text(plan.price).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.mute).lineLimit(1).fixedSize()
+                }
+                HStack(spacing: 6) {
+                    Image(systemName: "star.circle.fill").font(.system(size: 14)).foregroundColor(Brand.yellow)
+                    Text(earnShort).font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.text).lineLimit(1)
+                }
+                VStack(alignment: .leading, spacing: 9) {
+                    ForEach(plan.benefits.prefix(perkCount), id: \.text) { b in
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "checkmark").font(.system(size: 12, weight: .bold)).foregroundColor(plan.tint).padding(.top, 2)
+                            Text(b.text).font(.system(size: 14)).foregroundColor(Brand.text).lineLimit(2).fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
+                Spacer(minLength: 6)
+                if plan.subs.isEmpty {
+                    Text(T("Upgrade anytime for Spotify, Netflix & more", "Përmirëso kurdo për Spotify, Netflix e të tjera"))
+                        .font(.system(size: 12)).foregroundColor(Brand.mute)
+                } else {
+                    SubsRow(subs: plan.subs, tileSize: tile)
+                }
+            }
+            .padding(pad).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(
+            ZStack {
+                Color(hex: 0x161412)
+                LinearGradient(colors: [plan.tint.opacity(0.14), .clear], startPoint: .top, endPoint: .center)
+            }
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 28, style: .continuous)
+            .strokeBorder(selected ? Brand.yellow : Brand.hairline, lineWidth: selected ? 2 : 1))
+        .shadow(color: selected ? plan.tint.opacity(0.35) : .black.opacity(0.3), radius: selected ? 22 : 10, y: 10)
+        .animation(.snappy(duration: 0.3), value: selected)
+    }
+}
+
 // MARK: - Success + stub home
 struct SuccessView: View {
+    var planLabel: String = "Ryze Spark"
     let onStart: () -> Void
     @State private var burst = 0
     var body: some View {
@@ -298,7 +626,7 @@ struct SuccessView: View {
             VStack(alignment: .leading, spacing: 12) {
                 Spacer()
                 Text(T("Welcome to Ryze", "Mirë se erdhe te Ryze")).display(36).foregroundColor(.white).fixedSize(horizontal: false, vertical: true)
-                Text(T("Your Raiffeisen account is open and ready. Your card is on its way, and your first quests are waiting.", "Llogaria jote Raiffeisen është e hapur dhe gati. Karta po vjen dhe sfidat e para të presin."))
+                Text(T("Your \(planLabel) account is open and ready. Your card is on its way, and your first quests are waiting.", "Llogaria jote \(planLabel) është e hapur dhe gati. Karta po vjen dhe sfidat e para të presin."))
                     .font(.system(size: 17)).foregroundColor(.white.opacity(0.8)).lineSpacing(3)
                 PrimaryButton(title: T("Start playing", "Fillo të luash"), action: onStart).padding(.top, 8)
             }

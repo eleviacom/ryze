@@ -3625,7 +3625,7 @@ SIMCTL_CHILD_RYZE_HOME=1 SIMCTL_CHILD_RYZE_TAB=3 \
 | `ryze-ios/BRANDING.md` | Design system reference. |
 | `ryze-ios/SECURITY.md` | Honest security posture. |
 | `ryze/` | Earlier React Native / Expo reference implementation. |
-| `ryze-app-screenshots/` | Screenshots of every app section (EN + dark). |
+| `screenshots/` | 48 screenshots of every app screen (EN, dark) + `capture.sh` to regenerate. |
 | `ryze-video/` | Demo-video + pitch-deck pipeline (Remotion). |
 | `ryze-deck.pdf` | Pitch deck. |
 

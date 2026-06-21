@@ -51,6 +51,9 @@ struct RootView: View {
             else if v == "scan" { ScanPayView() }
             else if v == "split" { SplitBillView() }
             else if v == "bank" { BankTransferView() }
+            else if v == "addmoney" { AddMoneySheet() }
+            else if v == "atm" { ATMMapSheet() }
+            else if v == "map" { DiscoveryMapView() }
             else if v == "redeem" { RewardsStoreSheet() }
             else if v == "earn" { EarnSheet() }
             else if v == "search" { SearchSheet() }

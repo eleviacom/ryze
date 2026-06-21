@@ -1,6 +1,7 @@
 import SwiftUI
 import PhotosUI
 import CoreImage.CIFilterBuiltins
+import MapKit
 
 // MARK: - Top bar (avatar opens Profile)
 struct TopBar: View {
@@ -9,11 +10,13 @@ struct TopBar: View {
     var onProfile: () -> Void
     var onAnalytics: () -> Void = {}
     var onSearch: () -> Void = {}
+    var onMap: () -> Void = {}
     var body: some View {
         HStack(spacing: 12) {
             Button(action: onProfile) { Avatar(name: name, size: 40, imageData: imageData) }
             Button(action: onSearch) { HStack { Image(systemName: "magnifyingglass").foregroundColor(Brand.mute); Text(T("Search", "Kërko")).foregroundColor(Brand.mute).font(.system(size: 15)); Spacer() }.padding(.horizontal, 14).frame(height: 40).liquidCapsule() }.buttonStyle(.plain)
             Button(action: onAnalytics) { Image(systemName: "chart.bar.fill").foregroundColor(Brand.text).frame(width: 40, height: 40).liquidCircle() }
+            Button(action: onMap) { Image(systemName: "map.fill").foregroundColor(Brand.text).frame(width: 40, height: 40).liquidCircle() }
         }
     }
 }
@@ -300,7 +303,7 @@ struct AssistantView: View {
         Name: \(game.name)
         Plan: \(game.planLabel) (earn rate \(PLANS.first { $0.id == game.plan }?.earn ?? "1x"))
         Level \(game.li.level), tier \(game.tier.name), RyzePoints \(game.coins), streak \(game.streak) days
-        Balance: \(money(bank.totalALL)) main + \(money(bank.accounts[1].balance, "EUR"))
+        Balance: \(money(bank.totalALL)) main + \(money(bank.totalEUR, "EUR"))
         This month: income \(money(bank.monthIncome)), spent \(money(bank.monthSpend))
         Spending by category: \(cats)
         Savings goals: \(goals)
@@ -348,7 +351,15 @@ struct AssistantView: View {
                 }.padding(16)
             }
         }
-        .onAppear { if let q = ProcessInfo.processInfo.environment["RYZE_ASK"], !didAsk { didAsk = true; send(q) } }
+        .onAppear {
+            if let q = ProcessInfo.processInfo.environment["RYZE_ASK"], !didAsk { didAsk = true; send(q) }
+            consumePending()
+        }
+        .onChange(of: game.pendingRizPrompt) { _, _ in consumePending() }
+    }
+    // Deep-linked prompt from the Analytics insight card → ask Riz with full context.
+    func consumePending() {
+        if let p = game.pendingRizPrompt { game.pendingRizPrompt = nil; send(p) }
     }
     func capCard(_ icon: String, _ title: String, _ prompt: String) -> some View {
         Button { send(prompt) } label: {
@@ -459,112 +470,20 @@ struct CouponTicket: View {
 struct RewardsHub: View {
     @EnvironmentObject var game: GameModel
     @AppStorage("ryze_lang") private var lang = "en"
-    enum RRoute: Identifiable { case profile, plans, earn, redeem, analytics, search; case coming(String); case coupon(String); var id: String { switch self { case .coming(let s): return "coming-\(s)"; case .coupon(let s): return "coupon-\(s)"; default: return "r-\(String(describing: self))" } } }
+    enum RRoute: Identifiable { case profile, plans, earn, redeem, analytics, search, map; case coming(String); case coupon(String); var id: String { switch self { case .coming(let s): return "coming-\(s)"; case .coupon(let s): return "coupon-\(s)"; default: return "r-\(String(describing: self))" } } }
     @State private var route: RRoute? = nil
-    @State private var selCat: String? = ProcessInfo.processInfo.environment["RYZE_CAT"]
     private var today: String { let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; return f.string(from: Date()) }
     var currentPlan: PlanTier? { PLANS.first { $0.id == game.plan } }
-    var nextPlan: PlanTier? { let i = PLANS.firstIndex { $0.id == game.plan } ?? 0; return i + 1 < PLANS.count ? PLANS[i + 1] : nil }
-    let cats: [(String, String, Color)] = [("Food", "fork.knife", Brand.coral), ("Streaming", "play.tv.fill", Brand.good), ("Shopping", "bag.fill", Brand.pink), ("Mobile", "antenna.radiowaves.left.and.right", Brand.sky)]
     var body: some View {
         ScreenScroll {
-            TopBar(name: game.name, imageData: game.avatarData, onProfile: { route = .profile }, onAnalytics: { route = .analytics }, onSearch: { route = .search })
+            TopBar(name: game.name, imageData: game.avatarData, onProfile: { route = .profile }, onAnalytics: { route = .analytics }, onSearch: { route = .search }, onMap: { route = .map })
 
-            // 1) Season hero, level + tier journey + points (void surface, the signature)
-            VStack(alignment: .leading, spacing: 16) {
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Eyebrow(text: T("Your season", "Sezoni yt"))
-                        HStack(spacing: 10) {
-                            Text("\(T("Level", "Niveli")) \(game.li.level)").font(.system(size: 28, weight: .bold, design: .rounded)).foregroundStyle(LinearGradient(colors: [.white, Color.white.opacity(0.8)], startPoint: .top, endPoint: .bottom))
-                            tierPill(game.tier)
-                        }
-                    }
-                    Spacer()
-                    VStack(alignment: .trailing, spacing: 2) {
-                        HStack(spacing: 6) { Image(systemName: "star.circle.fill").foregroundColor(Brand.yellow).font(.system(size: 18)).symbolEffect(.bounce, value: game.celebrate); Text("\(game.coins)").font(.system(size: 22, weight: .bold, design: .rounded)).foregroundColor(.white).contentTransition(.numericText()).animation(.snappy, value: game.coins) }
-                        Text(T("points", "pikë")).font(.system(size: 12)).foregroundColor(Brand.mute)
-                    }
-                }
-                tierTrack
-                VStack(alignment: .leading, spacing: 6) {
-                    ProgressBar(value: game.li.progress)
-                    Text("\(game.li.needed - game.li.intoLevel) \(T("XP to Level", "XP për Nivelin")) \(game.li.level + 1)").font(.system(size: 12)).foregroundColor(Brand.faint)
-                }
-            }
-            .padding(20).frame(maxWidth: .infinity, alignment: .leading)
-            .background(ZStack {
-                RoundedRectangle(cornerRadius: 24).fill(Brand.void)
-                RoundedRectangle(cornerRadius: 24).fill(RadialGradient(colors: [Color(hex: 0xF8D01F).opacity(0.16), .clear], center: .topLeading, startRadius: 8, endRadius: 300))
-            })
-            .specularBorder(24).clipShape(RoundedRectangle(cornerRadius: 24))
-            .shadow(color: .black.opacity(0.5), radius: 20, y: 12)
-            .environment(\.colorScheme, .dark)
-
-            // 2) Streak / daily check-in (Play)
-            let done = game.lastCheckIn == today
-            AppCard { HStack(spacing: 14) {
-                IconTile(system: "flame.fill", color: Brand.coral, size: 46)
-                VStack(alignment: .leading, spacing: 2) { Text("\(game.streak)-\(T("day streak", "ditë seri"))").font(.system(size: 16, weight: .semibold)).foregroundColor(Brand.text); Text(done ? T("Checked in today · back tomorrow", "U regjistrove sot · kthehu nesër") : T("Check in daily to grow your multiplier", "Regjistrohu çdo ditë për shumëzues")).font(.system(size: 12)).foregroundColor(Brand.mute) }
-                Spacer()
-                if done { Image(systemName: "checkmark.seal.fill").foregroundColor(Brand.good).font(.system(size: 24)) } else { PillButton(title: T("Check in", "Regjistrohu")) { game.dailyCheckIn() } }
-            } }
-
-            // 5) Perks marketplace, earn by spending, redeem at stores (original coupon design)
-            AppCard { HStack(spacing: 12) { IconTile(system: "star.circle.fill", color: Brand.yellowInk, size: 42); VStack(alignment: .leading, spacing: 2) { Text("\(game.planLabel) · " + T("earn as you spend", "fito teksa shpenzon")).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text); Text(currentPlan?.earn ?? "1x RyzePoints · 1 point per 200 L spent").font(.system(size: 12)).foregroundColor(Brand.mute) }; Spacer() } }
-            HStack { Eyebrow(text: T("Redeem at stores", "Përdor në dyqane")); Spacer(); seeAll { route = .redeem } }
-            ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 8) { ForEach(Array(cats.enumerated()), id: \.offset) { _, c in
-let on = selCat == c.0
-                Button { withAnimation(.snappy) { selCat = on ? nil : c.0 } } label: { HStack(spacing: 7) { Image(systemName: c.1).font(.system(size: 13)).foregroundColor(on ? .white : c.2); Text(c.0).font(.system(size: 13, weight: .semibold)).foregroundColor(on ? .white : Brand.text) }.padding(.horizontal, 14).frame(height: 40).background(on ? AnyShapeStyle(c.2) : AnyShapeStyle(Brand.surface)).overlay(Capsule().stroke(on ? Color.clear : Brand.hairline, lineWidth: 1)).clipShape(Capsule()) }.buttonStyle(PressStyle())
-            } }.padding(.vertical, 1) }
-            ForEach(selCat == nil ? Array(GameModel.rewards.prefix(4)) : GameModel.rewards.filter { rewardCategory($0.id) == selCat }) { r in couponTicket(r) }
-
-            // 3) Plan upsell / status, the ONE gold fill on the screen (only when there's a higher tier)
-            if let n = nextPlan {
-                Button { route = .plans } label: { FeaturedCard { HStack(spacing: 14) {
-                    Image(systemName: "crown.fill").font(.system(size: 22)).foregroundColor(.black)
-                    VStack(alignment: .leading, spacing: 2) { Text(T("Upgrade to Ryze \(n.name)", "Kalo te Ryze \(n.name)")).font(.system(size: 16, weight: .bold)).foregroundColor(.black); Text(n.earn).font(.system(size: 12)).foregroundColor(.black.opacity(0.72)).lineLimit(1) }
-                    Spacer(); Image(systemName: "chevron.right").foregroundColor(.black.opacity(0.7))
-                } } }.buttonStyle(PressStyle())
-            } else {
-                Button { route = .plans } label: { AppCard { HStack(spacing: 14) {
-                    IconTile(system: "crown.fill", color: Brand.yellow, size: 44)
-                    VStack(alignment: .leading, spacing: 2) { Text(T("You're on \(game.planLabel)", "Je në \(game.planLabel)")).font(.system(size: 16, weight: .semibold)).foregroundColor(Brand.text); Text(T("Top tier. All perks unlocked.", "Niveli më i lartë. Të gjitha përfitimet.")).font(.system(size: 12)).foregroundColor(Brand.mute) }
-                    Spacer(); Image(systemName: "chevron.right").foregroundColor(Brand.faint)
-                } } }.buttonStyle(PressStyle())
-            }
-
-            // 4) Quests (Play)
-            HStack { Eyebrow(text: T("Quests · earn points", "Sfida · fito pikë")); Spacer(); seeAll { route = .earn } }
-            ForEach(game.missions.filter { !$0.claimed }.prefix(3)) { MissionRowView(m: $0) }
-
-
-            // 6) Your squad (Belong)
-            Eyebrow(text: T("Your squad", "Skuadra jote"))
-            AppCard { VStack(alignment: .leading, spacing: 12) {
-                HStack { VStack(alignment: .leading, spacing: 2) { Text(game.squad.name).font(.system(size: 16, weight: .semibold)).foregroundColor(Brand.text); Text(game.squad.goalTitle).font(.system(size: 12)).foregroundColor(Brand.mute) }; Spacer(); Text("\(game.squad.progress)/\(game.squad.goal)").font(.system(size: 16, weight: .bold)).foregroundColor(Brand.yellow) }
-                ProgressBar(value: Double(game.squad.progress) / Double(max(1, game.squad.goal)))
-                HStack(spacing: -8) {
-                    ForEach(game.squad.members) { m in Avatar(name: m.name, size: 34).overlay(Circle().stroke(Brand.elev2, lineWidth: 2)) }
-                    Button { game.simulateReferral() } label: { Image(systemName: "plus").font(.system(size: 14, weight: .bold)).foregroundColor(Brand.text).frame(width: 34, height: 34).liquidCircle() }.padding(.leading, 12)
-                    Spacer()
-                }
-            } }
-
-            // 7) Invite & earn (Belong)
-            Eyebrow(text: T("Invite & earn", "Fto & fito"))
-            AppCard { HStack(spacing: 14) {
-                IconTile(system: "gift.fill", color: Brand.pink, size: 46)
-                VStack(alignment: .leading, spacing: 2) { Text(game.referralCode).font(.system(size: 16, weight: .bold)).foregroundColor(Brand.text); Text(T("You both get 200 points", "Ju të dy merrni 200 pikë")).font(.system(size: 12)).foregroundColor(Brand.mute) }
-                Spacer()
-                ShareLink(item: "Join me on Ryze, use code \(game.referralCode) and we both get 200 points.") { Image(systemName: "square.and.arrow.up").foregroundColor(.black).frame(width: 42, height: 42).background(Brand.yellow).clipShape(Circle()) }
-            } }
-
-            // 8) Badges
-            Eyebrow(text: T("Badges", "Stema"))
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-                ForEach(game.badges) { b in AppCard { VStack(spacing: 6) { Image(systemName: b.earned ? b.icon : "lock.fill").font(.system(size: 22)).foregroundColor(b.earned ? Brand.yellow : Brand.faint).frame(width: 48, height: 48).background((b.earned ? Brand.yellow : Brand.text).opacity(b.earned ? 0.12 : 0.06)).clipShape(Circle()); Text(b.title).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text); Text(b.desc).font(.system(size: 11)).foregroundColor(Brand.mute).multilineTextAlignment(.center) }.frame(maxWidth: .infinity) }.opacity(b.earned ? 1 : 0.55) }
-            }
+            pointsHero
+            actionsCard
+            discoverCard
+            challengesCard
+            categoryGrid
+            featuredRewards
         }
         .sheet(item: $route) { r in
             switch r {
@@ -574,51 +493,185 @@ let on = selCat == c.0
             case .redeem: RewardsStoreSheet()
             case .analytics: AnalyticsView()
             case .search: SearchSheet()
+            case .map: DiscoveryMapView()
             case .coming(let str): ComingSoonSheet(title: str)
             case .coupon(let rid): if let rr = GameModel.rewards.first(where: { $0.id == rid }) { CouponRedeemedSheet(reward: rr) }
             }
         }
         .onAppear { if ProcessInfo.processInfo.environment["RYZE_SHEET"] == "plans" { route = .plans } }
     }
-    func tierPill(_ t: Tier) -> some View {
-        HStack(spacing: 5) { Circle().fill(t.color).frame(width: 7, height: 7); Text(t.name).font(.system(size: 12, weight: .bold)).foregroundColor(.white) }.padding(.horizontal, 10).frame(height: 26).background(Color.white.opacity(0.08)).clipShape(Capsule()).overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 1))
+    // MARK: points hero (big, centered, like Home balance)
+    private var pointsHero: some View {
+        VStack(spacing: 12) {
+            Text(game.planLabel).font(.system(size: 13, weight: .medium)).foregroundColor(.white.opacity(0.6))
+            HStack(alignment: .center, spacing: 12) {
+                ZStack {
+                    Image(systemName: "hexagon.fill").font(.system(size: 40)).foregroundStyle(Brand.gold)
+                    Image(systemName: "sparkle").font(.system(size: 16, weight: .bold)).foregroundColor(.black)
+                }
+                Text("\(game.coins)").font(.system(size: 52, weight: .bold, design: .rounded))
+                    .foregroundStyle(LinearGradient(colors: [.white, Color.white.opacity(0.82)], startPoint: .top, endPoint: .bottom))
+                    .contentTransition(.numericText()).animation(.snappy, value: game.coins)
+                    .lineLimit(1).minimumScaleFactor(0.5)
+            }
+            Text(T("RyzePoints", "RyzePikë") + " · " + earnRate).font(.system(size: 13)).foregroundColor(Brand.mute)
+        }
+        .frame(maxWidth: .infinity).padding(.vertical, 26).padding(.horizontal, 20)
+        .background(ZStack {
+            RoundedRectangle(cornerRadius: 24).fill(Brand.void)
+            RoundedRectangle(cornerRadius: 24).fill(RadialGradient(colors: [Brand.yellow.opacity(0.16), .clear], center: .center, startRadius: 8, endRadius: 300))
+        })
+        .specularBorder(24).clipShape(RoundedRectangle(cornerRadius: 24))
+        .environment(\.colorScheme, .dark)
     }
-    var tierTrack: some View {
-        let cur = game.tierIndex
-        return HStack(spacing: 0) {
-            ForEach(Array(TIERS.enumerated()), id: \.offset) { idx, t in
-                VStack(spacing: 7) {
-                    ZStack {
-                        Circle().fill(idx <= cur ? Brand.yellow : Brand.elev3).frame(width: 16, height: 16)
-                        if idx < cur { Image(systemName: "checkmark").font(.system(size: 8, weight: .black)).foregroundColor(.black) }
-                        if idx == cur { Circle().stroke(Brand.yellow.opacity(0.45), lineWidth: 3).frame(width: 24, height: 24) }
-                    }.frame(height: 24)
-                    Text(t.name).font(.system(size: 10, weight: idx == cur ? .bold : .regular)).foregroundColor(idx == cur ? .white : Brand.faint)
-                }.frame(maxWidth: .infinity)
+    private var earnRate: String {
+        let e = currentPlan?.earn ?? "1 point per 200 L spent"
+        let parts = e.split(separator: "·")
+        return (parts.count > 1 ? String(parts.last!) : e).trimmingCharacters(in: .whitespaces)
+    }
+
+    // MARK: action icons (Earn / Redeem / Perks / Invite) — like Home's console
+    private var actionsCard: some View {
+        AppCard { HStack(spacing: 0) {
+            actionTile("plus", T("Earn", "Fito")) { route = .earn }
+            actionDivider
+            actionTile("giftcard.fill", T("Redeem", "Përdor")) { route = .redeem }
+            actionDivider
+            actionTile("crown.fill", T("Perks", "Përfitime")) { route = .plans }
+            actionDivider
+            ShareLink(item: T("Join me on Ryze, use code \(game.referralCode) and we both get 200 points.", "Bashkohu me mua në Ryze, përdor kodin \(game.referralCode) dhe marrim nga 200 pikë.")) { actionLabel("person.2.fill", T("Invite", "Fto")) }.frame(maxWidth: .infinity)
+        } }
+    }
+    private var actionDivider: some View { Rectangle().fill(Brand.hairline).frame(width: 1, height: 36) }
+
+    // Discovery-map entry — also reachable from the Home top bar (map icon).
+    private var discoverCard: some View {
+        Button { route = .map } label: {
+            AppCard { HStack(spacing: 14) {
+                ZStack { RoundedRectangle(cornerRadius: 13).fill(Brand.sky.opacity(0.18)).frame(width: 46, height: 46)
+                    Image(systemName: "map.fill").font(.system(size: 20)).foregroundColor(Brand.sky) }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(T("Discover Tirana", "Zbulo Tiranën")).font(.system(size: 16, weight: .bold)).foregroundColor(Brand.text)
+                    Text("\(game.discovered.count)/\(GameModel.discoverySpots.count) " + T("spots · 🔥 \(game.respect) respect", "vende · 🔥 \(game.respect) respekt")).font(.system(size: 12)).foregroundColor(Brand.mute).lineLimit(1)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right").font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.faint)
+            } }
+        }.buttonStyle(PressStyle())
+    }
+    private func actionLabel(_ icon: String, _ label: String) -> some View {
+        VStack(spacing: 7) { IconTile(system: icon, color: Brand.text, size: 44); Text(label).font(.system(size: 12, weight: .medium)).foregroundColor(Brand.mute) }.frame(maxWidth: .infinity)
+    }
+    private func actionTile(_ icon: String, _ label: String, _ action: @escaping () -> Void) -> some View {
+        Button(action: action) { actionLabel(icon, label) }.buttonStyle(PressStyle())
+    }
+
+    // MARK: challenges (daily check-in + 2 daily challenges)
+    // exclude m-checkin — it's already the dedicated streak row above
+    private var dailyChallenges: [Mission] { Array(game.missions.filter { !$0.claimed && $0.id != "m-checkin" }.prefix(2)) }
+    private var challengesCard: some View {
+        let done = game.lastCheckIn == today
+        return AppCard { VStack(spacing: 0) {
+            HStack(spacing: 14) {
+                IconTile(system: "flame.fill", color: Brand.coral, size: 44)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(game.streak)-\(T("day streak", "ditë seri"))").font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text)
+                    Text(done ? T("Checked in today · back tomorrow", "U regjistrove sot · kthehu nesër") : T("Check in to keep your streak", "Regjistrohu për të mbajtur serinë")).font(.system(size: 12)).foregroundColor(Brand.mute)
+                }
+                Spacer()
+                if done { Image(systemName: "checkmark.seal.fill").foregroundColor(Brand.good).font(.system(size: 22)) }
+                else { PillButton(title: T("Check in", "Regjistrohu")) { game.dailyCheckIn() } }
+            }.padding(.vertical, 4)
+            ForEach(dailyChallenges) { m in
+                Rectangle().fill(Brand.hairline).frame(height: 1).padding(.vertical, 4)
+                challengeRow(m)
+            }
+        } }
+    }
+    private func challengeRow(_ m: Mission) -> some View {
+        HStack(spacing: 12) {
+            IconTile(system: m.icon, color: Brand.yellow, size: 40)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(m.title).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text).lineLimit(1)
+                Text("+\(m.xp) XP · +\(m.coins) " + T("pts", "pikë")).font(.system(size: 12)).foregroundColor(Brand.mute)
+            }
+            Spacer(minLength: 6)
+            if m.progress >= m.target { PillButton(title: T("Claim", "Merr")) { game.claim(m.id) } }
+            else { PillButton(title: m.target > 1 ? "+1" : T("Go", "Fillo"), style: .soft) { game.progress(m.id, by: m.target > 1 ? 1 : m.target) } }
+        }.padding(.vertical, 4)
+    }
+
+    // MARK: category icons (premium tiles)
+    private var rewardCats: [(String, String, Color)] {
+        [(T("Food", "Ushqim"), "fork.knife", Brand.coral),
+         (T("Streaming", "Streaming"), "play.tv.fill", Brand.good),
+         (T("Shopping", "Blerje"), "bag.fill", Brand.pink),
+         (T("Mobile", "Celular"), "antenna.radiowaves.left.and.right", Brand.sky),
+         (T("Travel", "Udhëtim"), "airplane", Brand.yellow),
+         (T("Gaming", "Lojëra"), "gamecontroller.fill", Brand.violet),
+         (T("Coffee", "Kafe"), "cup.and.saucer.fill", Brand.coral),
+         (T("Fashion", "Modë"), "tshirt.fill", Brand.pink)]
+    }
+    private var categoryGrid: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 4), spacing: 16) {
+            ForEach(Array(rewardCats.enumerated()), id: \.offset) { _, c in
+                Button { route = .redeem } label: {
+                    VStack(spacing: 8) {
+                        Image(systemName: c.1).font(.system(size: 21, weight: .medium)).foregroundColor(c.2)
+                            .frame(width: 56, height: 56).background(c.2.opacity(0.14)).clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
+                        Text(c.0).font(.system(size: 12, weight: .medium)).foregroundColor(Brand.mute).lineLimit(1)
+                    }.frame(maxWidth: .infinity)
+                }.buttonStyle(PressStyle())
+            }
+        }.padding(.vertical, 2)
+    }
+
+    // MARK: featured rewards — real generated images (Revolut-style)
+    private var featured: [(img: String, id: String)] {
+        [("reward_music", "r-spotify"), ("reward_food", "r-kfc"), ("reward_gaming", "r-game"), ("reward_fashion", "r-fashion")]
+    }
+    private var featuredRewards: some View {
+        VStack(spacing: 14) {
+            ForEach(featured, id: \.id) { f in
+                if let r = GameModel.rewards.first(where: { $0.id == f.id }) { rewardImageCard(f.img, r) }
             }
         }
     }
-    func seeAll(_ action: @escaping () -> Void) -> some View {
-        Button(action: action) { HStack(spacing: 3) { Text(T("See all", "Të gjitha")).font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.text); Image(systemName: "chevron.right").font(.system(size: 11)).foregroundColor(Brand.faint) } }
+    private func rewardImageCard(_ img: String, _ r: Reward) -> some View {
+        let owned = game.redeemed.contains(r.id)
+        let locked = r.tierMin > game.tierIndex
+        let afford = game.coins >= r.cost
+        // Only open the coupon if it can actually be redeemed; otherwise send to the store (shows locked/afford state).
+        return Button { if owned || (afford && !locked) { route = .coupon(r.id) } else { route = .redeem } } label: {
+            ZStack(alignment: .bottomLeading) {
+                Image(img).resizable().scaledToFill().frame(maxWidth: .infinity).frame(height: 196).clipped()
+                LinearGradient(colors: [.clear, .clear, .black.opacity(0.82)], startPoint: .top, endPoint: .bottom)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(r.brand.uppercased()).font(.system(size: 10, weight: .bold)).tracking(0.6).foregroundColor(.white.opacity(0.7))
+                    Text(r.title).font(.system(size: 18, weight: .bold)).foregroundColor(.white).lineLimit(1)
+                }.padding(16).frame(maxWidth: .infinity, alignment: .leading)
+                costPill(r, owned: owned, locked: locked)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading).padding(12)
+            }
+            .frame(maxWidth: .infinity).frame(height: 196)
+            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).strokeBorder(Brand.hairline, lineWidth: 1))
+        }.buttonStyle(PressStyle())
     }
-    func couponTicket(_ r: Reward) -> some View {
-        let owned = game.redeemed.contains(r.id); let locked = r.tierMin > game.tierIndex; let afford = game.coins >= r.cost
-        return CouponTicket(r: r, color: perkColor(r.id), owned: owned, locked: locked, afford: afford, tierName: TIERS[r.tierMin].name) { route = .coupon(r.id) }
+    // Lifted off the photo with a stroke + shadow so the gold pill reads on light images too.
+    private func costPill(_ r: Reward, owned: Bool, locked: Bool) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: owned ? "checkmark.seal.fill" : locked ? "lock.fill" : "hexagon.fill").font(.system(size: 11, weight: .bold))
+            Text(owned ? T("Owned", "E marrë") : locked ? TIERS[r.tierMin].name : "\(r.cost)").font(.system(size: 12, weight: .bold))
+        }
+        .foregroundColor(owned || locked ? .white : .black)
+        .padding(.horizontal, 9).frame(height: 26)
+        .background(owned ? AnyShapeStyle(.ultraThinMaterial) : locked ? AnyShapeStyle(Color.black.opacity(0.55)) : AnyShapeStyle(Brand.gold))
+        .clipShape(Capsule())
+        .overlay(Capsule().strokeBorder(.white.opacity(0.18), lineWidth: 0.5))
+        .shadow(color: .black.opacity(0.3), radius: 6, y: 2)
     }
-    func perkColor(_ id: String) -> Color {
-        ["r-spotify": Brand.good, "r-coffee": Brand.coral, "r-cinema": Brand.violet, "r-cashback": Brand.yellow, "r-data": Brand.sky, "r-merch": Brand.pink, "r-glovo": Brand.yellow, "r-kfc": Brand.coral, "r-game": Brand.violet, "r-fashion": Brand.pink][id] ?? Brand.yellow
-    }
-    func perkCard(_ r: Reward) -> some View {
-        let owned = game.redeemed.contains(r.id); let locked = r.tierMin > game.tierIndex; let afford = game.coins >= r.cost
-        return AppCard { HStack(spacing: 14) {
-            IconTile(system: r.icon, color: perkColor(r.id), size: 46)
-            VStack(alignment: .leading, spacing: 2) { Text(r.title).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text); Text(r.brand).font(.system(size: 12)).foregroundColor(Brand.mute) }
-            Spacer()
-            if owned { Image(systemName: "checkmark.seal.fill").foregroundColor(Brand.good) }
-            else if locked { HStack(spacing: 4) { Image(systemName: "lock.fill"); Text(TIERS[r.tierMin].name) }.font(.system(size: 12, weight: .semibold)).foregroundColor(Brand.faint) }
-            else { PillButton(title: "\(r.cost)", enabled: afford) { game.redeem(r.id) } }
-        } }
-    }
+
 }
 
 struct InfoTextSheet: View {
@@ -676,5 +729,98 @@ extension ProfileDetailView {
                     .background(binding.wrappedValue == o.0 ? AnyShapeStyle(Brand.gold) : AnyShapeStyle(Brand.elev3)).clipShape(Capsule())
             }.buttonStyle(PressStyle())
         } }.padding(8)
+    }
+}
+
+// MARK: - Discovery map (GTA-style fog of war over a stylized Tirana)
+struct DiscoveryMapView: View {
+    @EnvironmentObject var game: GameModel
+    @Environment(\.dismiss) private var dismiss
+    @AppStorage("ryze_lang") private var lang = "en"
+    private let spots = GameModel.discoverySpots
+
+    private func kindColor(_ k: SpotKind) -> Color {
+        switch k { case .atm: Brand.yellow; case .shop: Brand.coral; case .landmark: Brand.sky; case .park: Brand.mint; case .spot: Brand.violet }
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            header
+            GeometryReader { geo in
+                ZStack {
+                    realMap
+                    fog(geo.size).allowsHitTesting(false)
+                    ForEach(spots) { s in
+                        marker(s).position(x: s.x * geo.size.width, y: s.y * geo.size.height)
+                    }
+                }
+                .clipped()
+            }
+            footer
+        }
+        .background(Brand.bg.ignoresSafeArea())
+    }
+
+    private var header: some View {
+        HStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(T("Discover Tirana", "Zbulo Tiranën")).font(.system(size: 20, weight: .bold)).foregroundColor(Brand.text)
+                Text("\(game.discovered.count)/\(spots.count) " + T("unlocked", "të zhbllokuara")).font(.system(size: 12)).foregroundColor(Brand.mute)
+            }
+            Spacer()
+            HStack(spacing: 5) { Image(systemName: "flame.fill").font(.system(size: 12)).foregroundColor(Brand.violet); Text("\(game.respect)").font(.system(size: 14, weight: .bold)).foregroundColor(Brand.text); Text(T("respect", "respekt")).font(.system(size: 12)).foregroundColor(Brand.mute) }
+                .padding(.horizontal, 12).frame(height: 34).liquidCapsule()
+            Button { dismiss() } label: { Image(systemName: "xmark").font(.system(size: 13, weight: .bold)).foregroundColor(Brand.mute).frame(width: 32, height: 32).background(Brand.surface).clipShape(Circle()) }
+        }.padding(.horizontal, 20).padding(.top, 8).padding(.bottom, 12)
+    }
+
+    private var footer: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "hand.tap.fill").font(.system(size: 16)).foregroundColor(Brand.yellow)
+            Text(T("Tap a spot to check in — unlock ATMs, malls and landmarks to clear the map and earn RyzePoints + respect.", "Prek një vend për t'u regjistruar — zhblloko ATM, qendra dhe pika interesi për të pastruar hartën dhe fituar RyzePikë + respekt.")).font(.system(size: 12)).foregroundColor(Brand.mute).fixedSize(horizontal: false, vertical: true)
+        }.padding(.horizontal, 20).padding(.vertical, 14)
+    }
+
+    @ViewBuilder private func marker(_ s: DiscoverySpot) -> some View {
+        let on = game.discovered.contains(s.id)
+        Button {
+            if !on { withAnimation(.spring(response: 0.45, dampingFraction: 0.7)) { game.discover(s) } }
+        } label: {
+            VStack(spacing: 3) {
+                ZStack {
+                    Circle().fill(on ? AnyShapeStyle(kindColor(s.kind)) : AnyShapeStyle(Color.black.opacity(0.55)))
+                        .frame(width: on ? 38 : 30, height: on ? 38 : 30)
+                        .overlay(Circle().stroke(on ? Color.white.opacity(0.55) : Brand.yellow.opacity(0.5), lineWidth: on ? 1.5 : 1))
+                        .shadow(color: on ? kindColor(s.kind).opacity(0.65) : .clear, radius: on ? 9 : 0)
+                    Image(systemName: on ? s.icon : "questionmark").font(.system(size: on ? 16 : 13, weight: .bold)).foregroundColor(on ? .black : Brand.yellow)
+                }
+                if on {
+                    Text(s.name).font(.system(size: 10, weight: .semibold)).foregroundColor(.white).lineLimit(1)
+                        .padding(.horizontal, 6).padding(.vertical, 2).background(Capsule().fill(Color.black.opacity(0.55))).fixedSize()
+                }
+            }
+        }.buttonStyle(PressStyle())
+    }
+
+    // Real streets — a fixed, non-interactive dark MapKit map of central Tirana, under the fog.
+    private var realMap: some View {
+        Map(initialPosition: .region(MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 41.3265, longitude: 19.8190), latitudinalMeters: 2600, longitudinalMeters: 2600)), interactionModes: []) { }
+            .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll, showsTraffic: false))
+            .environment(\.colorScheme, .dark)
+            .allowsHitTesting(false)
+    }
+
+    // Fog of war — dark everywhere, softly erased around each discovered spot.
+    private func fog(_ size: CGSize) -> some View {
+        Canvas { ctx, sz in
+            ctx.fill(Path(CGRect(origin: .zero, size: sz)), with: .color(Color.black.opacity(0.8)))
+            ctx.blendMode = .destinationOut
+            for s in spots where game.discovered.contains(s.id) {
+                let c = CGPoint(x: s.x * sz.width, y: s.y * sz.height)
+                let rad = sz.width * 0.22
+                ctx.fill(Path(ellipseIn: CGRect(x: c.x - rad, y: c.y - rad, width: rad * 2, height: rad * 2)),
+                         with: .radialGradient(Gradient(colors: [.black, .black.opacity(0)]), center: c, startRadius: rad * 0.25, endRadius: rad))
+            }
+        }
     }
 }

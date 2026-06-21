@@ -1,5 +1,7 @@
 import SwiftUI
 import MapKit
+import Charts
+import UIKit
 
 fileprivate func plainNum(_ v: Double, _ ccy: String) -> String {
     let f = NumberFormatter(); f.numberStyle = .decimal; f.maximumFractionDigits = ccy == "EUR" ? 2 : 0
@@ -11,8 +13,13 @@ struct AnalyticsView: View {
     @EnvironmentObject var bank: BankModel
     @Environment(\.dismiss) private var dismiss
     @AppStorage("ryze_lang") private var lang = "en"
-    var maxCat: Double { bank.categories.map(\.amount).max() ?? 1 }
-    var net: Double { bank.monthIncome - bank.monthSpend }
+    @State private var drawn = false   // animates the trading line + donut in
+    var onAskRiz: (String) -> Void = { _ in }
+    private var insightPrompt: String { T("How can I cut my eating-out spending this month?", "Si mund t'i ul shpenzimet për ushqim jashtë këtë muaj?") }
+
+    var spent: Double { bank.categories.reduce(0) { $0 + $1.amount } }
+    var net: Double { bank.monthIncome - spent }
+    var trendColor: Color { net >= 0 ? Brand.good : Brand.danger }
     var topMerchants: [(name: String, total: Double, icon: String)] {
         var dict: [String: (Double, String)] = [:]
         for t in bank.transactions where t.amount < 0 {
@@ -21,51 +28,160 @@ struct AnalyticsView: View {
         }
         return dict.map { (name: $0.key, total: $0.value.0, icon: $0.value.1) }.sorted { $0.total > $1.total }.prefix(4).map { $0 }
     }
+    // Deterministic, trading-style balance trajectory for the month (rises by `net`, with realistic wiggle).
+    private var trend: [Double] {
+        let n = 26
+        let end = bank.totalALL
+        let start = end - max(8000, net)
+        return (0..<n).map { i in
+            if i == n - 1 { return end }
+            let p = Double(i) / Double(n - 1)
+            let base = start + (end - start) * p
+            let wiggle = sin(Double(i) * 0.85) * 1500 + sin(Double(i) * 2.1 + 1) * 850 + cos(Double(i) * 0.4) * 600
+            return max(0, base + wiggle)
+        }
+    }
+
     var body: some View {
         NavigationStack {
             ScreenScroll {
-                AppCard { VStack(alignment: .leading, spacing: 14) {
-                    Eyebrow(text: T("This month", "Këtë muaj"))
-                    HStack(spacing: 12) {
-                        flowStat(T("Money in", "Hyrje"), bank.monthIncome, Brand.good, "arrow.down.left")
-                        flowStat(T("Money out", "Dalje"), bank.monthSpend, Brand.danger, "arrow.up.right")
-                    }
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack { Text(T("Net flow", "Fluksi neto")).font(.system(size: 13)).foregroundColor(Brand.mute); Spacer(); Text("\(net >= 0 ? "+" : "−")\(money(net))").font(.system(size: 15, weight: .bold)).foregroundColor(net >= 0 ? Brand.good : Brand.text) }
-                        GeometryReader { gx in let tot = max(bank.monthIncome, bank.monthSpend, 1)
-                            VStack(alignment: .leading, spacing: 7) {
-                                Capsule().fill(Brand.good).frame(width: max(6, gx.size.width * CGFloat(bank.monthIncome / tot)), height: 8)
-                                Capsule().fill(Brand.danger.opacity(0.85)).frame(width: max(6, gx.size.width * CGFloat(bank.monthSpend / tot)), height: 8)
-                            }
-                        }.frame(height: 23)
-                    }
-                } }
-                Eyebrow(text: T("Where it goes", "Ku shkojnë paratë"))
-                AppCard { VStack(spacing: 12) { ForEach(bank.categories) { c in
-                    HStack(spacing: 12) { Image(systemName: c.icon).foregroundColor(c.color).frame(width: 24)
-                        VStack(alignment: .leading, spacing: 5) {
-                            HStack { Text(c.name).font(.system(size: 14)).foregroundColor(Brand.text); Spacer(); Text(money(c.amount)).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text) }
-                            GeometryReader { gx in ZStack(alignment: .leading) { Capsule().fill(Brand.hairline); Capsule().fill(c.color).frame(width: gx.size.width * CGFloat(c.amount / maxCat)) } }.frame(height: 6)
-                        }
-                    }
-                } } }
-                Eyebrow(text: T("Top merchants", "Tregtarët kryesorë"))
-                AppCard { VStack(spacing: 0) { ForEach(Array(topMerchants.enumerated()), id: \.offset) { i, m in
-                    HStack(spacing: 12) { IconTile(system: m.icon, color: Brand.text, size: 38)
-                        Text(m.name).font(.system(size: 15, weight: .medium)).foregroundColor(Brand.text)
-                        Spacer(); Text(money(m.total)).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text) }.padding(.vertical, 11)
-                    if i < topMerchants.count - 1 { Rectangle().fill(Brand.hairline).frame(height: 1) }
-                } } }
-                Eyebrow(text: T("Insight", "Këshillë"))
-                AppCard { HStack(spacing: 12) { IconTile(system: "sparkles", size: 40); VStack(alignment: .leading, spacing: 2) { Text("Riz").font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.yellow); Text(T("Eating out is your biggest category this month. A weekly cap of 4,000 L would save about 2,400 L.", "Ushqimi jashtë është kategoria më e madhe këtë muaj. Një limit javor prej 4,000 L do të kursente rreth 2,400 L.")).font(.system(size: 13)).foregroundColor(Brand.mute) }; Spacer(minLength: 0) } }
+                heroCard
+                donutCard
+                merchantsCard
+                insightCard
             }
             .navigationTitle(T("Analytics", "Analitika")).navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Brand.bg, for: .navigationBar)
             .toolbar { ToolbarItem(placement: .topBarTrailing) { Button(T("Done", "U krye")) { dismiss() } } }
         }
+        .onAppear { withAnimation(.easeOut(duration: 0.9)) { drawn = true } }
     }
-    func flowStat(_ label: String, _ v: Double, _ color: Color, _ icon: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) { HStack(spacing: 6) { Image(systemName: icon).foregroundColor(color).font(.system(size: 13)); Text(label).font(.system(size: 12)).foregroundColor(Brand.mute) }; Text(money(v)).font(.system(size: 20, weight: .bold, design: .rounded)).foregroundColor(Brand.text).lineLimit(1).minimumScaleFactor(0.6) }.frame(maxWidth: .infinity, alignment: .leading).padding(14).liquidSurface(14)
+
+    // MARK: hero — trading graph on a void card
+    private var heroCard: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .center) {
+                Text(money(bank.totalALL)).font(.system(size: 36, weight: .bold, design: .rounded))
+                    .foregroundStyle(LinearGradient(colors: [.white, Color.white.opacity(0.82)], startPoint: .top, endPoint: .bottom))
+                    .lineLimit(1).minimumScaleFactor(0.6)
+                Spacer()
+                HStack(spacing: 4) {
+                    Image(systemName: net >= 0 ? "arrow.up.right" : "arrow.down.right").font(.system(size: 11, weight: .bold))
+                    Text("\(net >= 0 ? "+" : "−")\(money(net))").font(.system(size: 13, weight: .bold))
+                }.foregroundColor(trendColor).padding(.horizontal, 10).frame(height: 28).background(trendColor.opacity(0.16)).clipShape(Capsule())
+            }
+            tradingChart.frame(height: 120)
+            HStack(spacing: 22) {
+                legendStat(Brand.good, T("Money in", "Hyrje"), bank.monthIncome)
+                legendStat(Brand.coral, T("Money out", "Dalje"), spent)
+                Spacer()
+            }
+        }
+        .padding(20).frame(maxWidth: .infinity, alignment: .leading)
+        .background(ZStack {
+            RoundedRectangle(cornerRadius: 24).fill(Brand.void)
+            RoundedRectangle(cornerRadius: 24).fill(RadialGradient(colors: [trendColor.opacity(0.13), .clear], center: .topTrailing, startRadius: 8, endRadius: 360))
+        })
+        .specularBorder(24).clipShape(RoundedRectangle(cornerRadius: 24))
+        .environment(\.colorScheme, .dark)
+    }
+
+    private var tradingChart: some View {
+        let lo = (trend.min() ?? 0) - 2500, hi = (trend.max() ?? 1) + 2500
+        let shown = drawn ? trend.count : 1
+        return Chart {
+            ForEach(Array(trend.prefix(shown).enumerated()), id: \.offset) { i, v in
+                LineMark(x: .value("d", i), y: .value("v", v))
+                    .interpolationMethod(.catmullRom)
+                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                    .foregroundStyle(trendColor)
+                AreaMark(x: .value("d", i), y: .value("v", v))
+                    .interpolationMethod(.catmullRom)
+                    .foregroundStyle(LinearGradient(colors: [trendColor.opacity(0.32), trendColor.opacity(0.02)], startPoint: .top, endPoint: .bottom))
+            }
+            if drawn, let last = trend.last {
+                PointMark(x: .value("d", trend.count - 1), y: .value("v", last))
+                    .foregroundStyle(.white).symbolSize(40)
+                PointMark(x: .value("d", trend.count - 1), y: .value("v", last))
+                    .foregroundStyle(trendColor).symbolSize(110).opacity(0.35)
+            }
+        }
+        .chartXAxis(.hidden).chartYAxis(.hidden)
+        .chartYScale(domain: lo...hi)
+        .chartXScale(domain: 0...(trend.count - 1))
+    }
+
+    private func legendStat(_ c: Color, _ label: String, _ v: Double) -> some View {
+        HStack(spacing: 8) {
+            Circle().fill(c).frame(width: 8, height: 8)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(label).font(.system(size: 11)).foregroundColor(.white.opacity(0.55))
+                Text(money(v)).font(.system(size: 13, weight: .semibold)).foregroundColor(.white)
+            }
+        }
+    }
+
+    // MARK: category donut
+    private var donutCard: some View {
+        AppCard { HStack(alignment: .center, spacing: 18) {
+            ZStack {
+                Chart(bank.categories) { c in
+                    SectorMark(angle: .value("Amount", c.amount), innerRadius: .ratio(0.66), angularInset: 2)
+                        .cornerRadius(4)
+                        .foregroundStyle(c.color)
+                        .opacity(drawn ? 1 : 0)
+                }
+                .chartLegend(.hidden)
+                .frame(width: 134, height: 134)
+                VStack(spacing: 1) {
+                    Text(money(spent)).font(.system(size: 16, weight: .bold, design: .rounded)).foregroundColor(Brand.text).lineLimit(1).minimumScaleFactor(0.5)
+                    Text(T("spent", "shpenzuar")).font(.system(size: 11)).foregroundColor(Brand.faint)
+                }
+            }
+            VStack(alignment: .leading, spacing: 12) {
+                ForEach(bank.categories) { c in
+                    HStack(spacing: 9) {
+                        Circle().fill(c.color).frame(width: 9, height: 9)
+                        Text(c.name).font(.system(size: 13)).foregroundColor(Brand.text).lineLimit(1)
+                        Spacer(minLength: 6)
+                        Text("\(Int((c.amount / max(spent, 1)) * 100))%").font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.mute)
+                    }
+                }
+            }
+        } }
+    }
+
+    // MARK: top merchants with proportional bars
+    private var merchantsCard: some View {
+        AppCard { VStack(spacing: 16) { ForEach(Array(topMerchants.enumerated()), id: \.offset) { _, m in
+            HStack(spacing: 12) {
+                IconTile(system: m.icon, color: Brand.text, size: 38)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack { Text(m.name).font(.system(size: 14, weight: .medium)).foregroundColor(Brand.text); Spacer(); Text(money(m.total)).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text) }
+                    GeometryReader { gx in ZStack(alignment: .leading) {
+                        Capsule().fill(Brand.hairline)
+                        Capsule().fill(Brand.yellow.opacity(0.75)).frame(width: gx.size.width * CGFloat(m.total / (topMerchants.first?.total ?? 1)))
+                    } }.frame(height: 5)
+                }
+            }
+        } } }
+    }
+
+    private var insightCard: some View {
+        Button { onAskRiz(insightPrompt) } label: {
+            AppCard { HStack(alignment: .top, spacing: 12) {
+                IconTile(system: "sparkles", color: Brand.yellow, size: 40)
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 5) {
+                        Text("Riz").font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.yellowInk)
+                        Text("· " + T("tap to ask", "trokit për të pyetur")).font(.system(size: 12)).foregroundColor(Brand.faint)
+                    }
+                    Text(T("Eating out is your biggest category this month. A weekly cap of 4,000 L would save about 2,400 L.", "Ushqimi jashtë është kategoria më e madhe këtë muaj. Një limit javor prej 4,000 L do të kursente rreth 2,400 L.")).font(.system(size: 13)).foregroundColor(Brand.mute).multilineTextAlignment(.leading).fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right").font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.faint)
+            } }
+        }.buttonStyle(PressStyle())
     }
 }
 
@@ -565,5 +681,120 @@ struct CardStudioSheet: View {
             .toolbar { ToolbarItem(placement: .topBarLeading) { Button { dismiss() } label: { Image(systemName: "xmark").foregroundColor(Brand.text) } } }
             .onAppear { style = bank.cardStyle; text = bank.cardText }
         }
+    }
+}
+
+// MARK: - Add money — choose a top-up method (Apple Pay / card / bank / cash at ATM)
+struct AddMoneySheet: View {
+    @EnvironmentObject var bank: BankModel
+    @Environment(\.dismiss) private var dismiss
+    @AppStorage("ryze_lang") private var lang = "en"
+    enum Route: Identifiable { case topup, bank, atm
+        var id: Int { switch self { case .topup: 0; case .bank: 1; case .atm: 2 } } }
+    @State private var route: Route? = nil
+
+    var body: some View {
+        ScreenScroll(background: AnyView(Brand.bg.ignoresSafeArea())) {
+            HStack { Text(T("Add money", "Shto para")).font(.system(size: 27, weight: .bold)).foregroundColor(Brand.text); Spacer()
+                Button { dismiss() } label: { Image(systemName: "xmark").font(.system(size: 13, weight: .bold)).foregroundColor(Brand.mute).frame(width: 32, height: 32).background(Brand.surface).clipShape(Circle()) } }
+            Text(T("Pick how you'd like to top up your account.", "Zgjidh si dëshiron ta mbushësh llogarinë.")).font(.system(size: 14)).foregroundColor(Brand.mute)
+            methodRow("applelogo", T("Apple Pay", "Apple Pay"), T("Instant top-up from your wallet", "Mbushje e menjëhershme nga wallet")) { route = .topup }
+            methodRow("creditcard.fill", T("Debit or credit card", "Kartë debiti ose krediti"), T("Add from another bank card", "Shto nga një kartë tjetër")) { route = .topup }
+            methodRow("building.columns.fill", T("Bank transfer", "Transfertë bankare"), T("Move money into your Ryze IBAN", "Dërgo te IBAN-i yt Ryze")) { route = .bank }
+            methodRow("mappin.and.ellipse", T("Cash at an ATM", "Para në ATM"), T("Find a Raiffeisen ATM to deposit cash", "Gjej një ATM Raiffeisen për të depozituar")) { route = .atm }
+        }
+        .sheet(item: $route) { r in
+            switch r {
+            case .topup: AmountSheet(mode: .add) { amt, _ in bank.addMoney(amt) }.presentationDetents([.medium])
+            case .bank: BankTopUpInfo().presentationDetents([.medium, .large])
+            case .atm: ATMMapSheet().presentationDetents([.large])
+            }
+        }
+    }
+    @ViewBuilder private func methodRow(_ icon: String, _ title: String, _ sub: String, _ action: @escaping () -> Void) -> some View {
+        Button(action: action) { AppCard { HStack(spacing: 14) {
+            IconTile(system: icon)
+            VStack(alignment: .leading, spacing: 3) { Text(title).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text); Text(sub).font(.system(size: 12)).foregroundColor(Brand.mute).lineLimit(1) }
+            Spacer(minLength: 0)
+            Image(systemName: "chevron.right").font(.system(size: 13, weight: .semibold)).foregroundColor(Brand.faint)
+        } } }.buttonStyle(PressStyle())
+    }
+}
+
+// MARK: - Top up by bank transfer — your receiving details
+struct BankTopUpInfo: View {
+    @Environment(\.dismiss) private var dismiss
+    @AppStorage("ryze_lang") private var lang = "en"
+    private let iban = "AL35 2021 1109 0000 0012 3456 7890"
+    var body: some View {
+        ScreenScroll(background: AnyView(Brand.bg.ignoresSafeArea())) {
+            HStack { Text(T("Bank transfer", "Transfertë bankare")).font(.system(size: 22, weight: .bold)).foregroundColor(Brand.text); Spacer()
+                Button { dismiss() } label: { Image(systemName: "xmark").foregroundColor(Brand.mute) } }
+            Text(T("Transfer to these details from any bank — money usually lands within minutes.", "Transfero te këto të dhëna nga çdo bankë — paratë zakonisht mbërrijnë brenda minutash.")).font(.system(size: 14)).foregroundColor(Brand.mute)
+            AppCard { VStack(alignment: .leading, spacing: 0) {
+                detail(T("Account holder", "Mbajtësi i llogarisë"), "Klevi Berisha")
+                Rectangle().fill(Brand.hairline).frame(height: 1).padding(.vertical, 11)
+                detail("IBAN", iban)
+                Rectangle().fill(Brand.hairline).frame(height: 1).padding(.vertical, 11)
+                detail(T("Bank", "Banka"), "Raiffeisen Bank Albania")
+                Rectangle().fill(Brand.hairline).frame(height: 1).padding(.vertical, 11)
+                detail("BIC / SWIFT", "SGSBALTX")
+            } }
+            Button { UIPasteboard.general.string = iban.replacingOccurrences(of: " ", with: "") } label: {
+                HStack(spacing: 8) { Image(systemName: "doc.on.doc"); Text(T("Copy IBAN", "Kopjo IBAN-in")) }.font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text).frame(maxWidth: .infinity).frame(height: 50).liquidCapsule()
+            }.buttonStyle(PressStyle())
+        }
+    }
+    @ViewBuilder private func detail(_ k: String, _ v: String) -> some View {
+        VStack(alignment: .leading, spacing: 3) { Text(k).font(.system(size: 12)).foregroundColor(Brand.faint); Text(v).font(.system(size: 15, weight: .semibold)).foregroundColor(Brand.text).textSelection(.enabled) }.frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+// MARK: - Cash deposit — map of nearby Raiffeisen ATMs
+struct ATMMapSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @AppStorage("ryze_lang") private var lang = "en"
+    struct ATM: Identifiable { let id, name, addr, dist: String; let lat, lon: Double
+        var coord: CLLocationCoordinate2D { .init(latitude: lat, longitude: lon) } }
+    private let atms: [ATM] = [
+        .init(id: "a1", name: "Raiffeisen — Sheshi Skënderbej", addr: "Bulevardi Dëshmorët e Kombit", dist: "0.3 km", lat: 41.32756, lon: 19.81860),
+        .init(id: "a2", name: "Raiffeisen — Blloku", addr: "Rruga Ibrahim Rugova", dist: "0.7 km", lat: 41.31980, lon: 19.81560),
+        .init(id: "a3", name: "Raiffeisen — Rruga e Kavajës", addr: "Rruga e Kavajës 59", dist: "1.1 km", lat: 41.32660, lon: 19.80790),
+        .init(id: "a4", name: "Raiffeisen — Qyteti Studenti", addr: "Rruga Muhamet Gjollesha", dist: "1.6 km", lat: 41.31250, lon: 19.81230),
+        .init(id: "a5", name: "Raiffeisen — Rruga e Durrësit", addr: "Rruga e Durrësit 230", dist: "2.0 km", lat: 41.32980, lon: 19.80300),
+    ]
+    private var region: MKCoordinateRegion { .init(center: .init(latitude: 41.3232, longitude: 19.8130), latitudinalMeters: 3000, longitudinalMeters: 3000) }
+    private func directions(_ a: ATM) { if let u = URL(string: "http://maps.apple.com/?daddr=\(a.lat),\(a.lon)&dirflg=w") { UIApplication.shared.open(u) } }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ZStack(alignment: .top) {
+                Map(initialPosition: .region(region)) {
+                    ForEach(atms) { a in Marker(a.name, systemImage: "banknote.fill", coordinate: a.coord).tint(Brand.yellow) }
+                }
+                .ignoresSafeArea(edges: .top)
+                HStack {
+                    Text(T("Deposit cash", "Depozito para")).font(.system(size: 18, weight: .bold)).foregroundColor(.white).shadow(radius: 4)
+                    Spacer()
+                    Button { dismiss() } label: { Image(systemName: "xmark").font(.system(size: 13, weight: .bold)).foregroundColor(.white).frame(width: 34, height: 34).background(.black.opacity(0.45)).clipShape(Circle()) }
+                }.padding(.horizontal, 18).padding(.top, 14)
+            }
+            .frame(height: 300)
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(spacing: 8) { Image(systemName: "banknote.fill").foregroundColor(Brand.yellow)
+                    Text(T("Deposit at any Raiffeisen ATM — cash lands in your account instantly.", "Depozito në çdo ATM Raiffeisen — paratë mbërrijnë në llogari menjëherë.")).font(.system(size: 13)).foregroundColor(Brand.mute) }
+                    .padding(.horizontal, 20).padding(.vertical, 12)
+                ScrollView { VStack(spacing: 10) { ForEach(atms) { a in atmRow(a) } }.padding(.horizontal, 20).padding(.bottom, 24) }
+            }
+        }
+        .background(Brand.bg.ignoresSafeArea())
+    }
+    @ViewBuilder private func atmRow(_ a: ATM) -> some View {
+        Button { directions(a) } label: { AppCard { HStack(spacing: 14) {
+            IconTile(system: "banknote.fill")
+            VStack(alignment: .leading, spacing: 2) { Text(a.name).font(.system(size: 14, weight: .semibold)).foregroundColor(Brand.text).lineLimit(1); Text(a.addr).font(.system(size: 12)).foregroundColor(Brand.mute).lineLimit(1) }
+            Spacer(minLength: 0)
+            VStack(alignment: .trailing, spacing: 3) { Text(a.dist).font(.system(size: 12, weight: .semibold)).foregroundColor(Brand.yellow); HStack(spacing: 3) { Image(systemName: "arrow.triangle.turn.up.right.diamond.fill"); Text(T("Go", "Shko")) }.font(.system(size: 11, weight: .semibold)).foregroundColor(Brand.mute) }
+        } } }.buttonStyle(PressStyle())
     }
 }

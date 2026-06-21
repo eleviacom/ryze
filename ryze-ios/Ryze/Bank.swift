@@ -66,6 +66,7 @@ final class BankModel: ObservableObject {
     ]
 
     var totalALL: Double { accounts.first { $0.currency == "ALL" }?.balance ?? 0 }
+    var totalEUR: Double { accounts.first { $0.currency == "EUR" }?.balance ?? 0 }
     var savedTotal: Double { goals.reduce(0) { $0 + $1.saved } }
 
     private func allIndex() -> Int? { accounts.firstIndex { $0.currency == "ALL" } }
